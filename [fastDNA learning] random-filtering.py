@@ -5,6 +5,7 @@ from timeit import default_timer as timer
 from Bio.Seq import Seq
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
+from joblib import Parallel, delayed
 
 # timeit
 start = timer()
@@ -27,11 +28,20 @@ print(random_phylum_host)
 filenames = list(random_phylum_host.values())
 print(len(filenames))
 
-# parse selected files and merge them into single fasta file
+# get list of taxid (labels in fastDNA)
+labels = [host_data[host]["taxid"] for host in filenames]
+print(labels)
+
+# parse selected files and merge them into single fasta file; create labels file
 records = [list(SeqIO.parse(f"D:/praktyki2020/edwards2016/host/fasta/{file}.fna", "fasta"))[0] for file in filenames]
 print(len(records))
 print(records)
 
+with open("D:/praktyki2020/edwards2016/host/random_phylum-training_labels.txt", "w") as fh:
+    for label in labels:
+        fh.write(label + "\n")
+
+#par = Parallel(n_jobs=-1)(delayed(SeqIO.write)(records, "D:/praktyki2020/edwards2016/host/random_phylum-training_fastDNA.fasta", "fasta") for record in records)
 SeqIO.write(records, "D:/praktyki2020/edwards2016/host/random_phylum-training_fastDNA.fasta", "fasta")
 print(f"Written {len(records)} records.")
 
