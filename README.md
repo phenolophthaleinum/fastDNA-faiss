@@ -2,7 +2,7 @@
 ## fastDNA model learning by random genome sampling from a phylum:
 - Command (dimensions: 10; k-mer size: 10; training read length: 100; epoch: 1; rest is default):
 ```
-$ ./fastdna supervised -input ../edwards2016/host/random_phylum-training_fastDNA.fasta -labels ../edwards2016/host/random_phylum-training_labels.txt -output edwards_random_model -dim 10 -length 100 -epoch 1 -minn 10 -maxn 10
+:λ fastDNA ./fastdna supervised -input ../edwards2016/host/random_phylum-training_fastDNA.fasta -labels ../edwards2016/host/random_phylum-training_labels.txt -output edwards_random_model -dim 10 -length 100 -minn 10 -maxn 10 -epoch 1
 ```
 - Head of result (from `edwards_random_model.vec`)
 ```
