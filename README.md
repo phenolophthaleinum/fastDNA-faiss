@@ -4,7 +4,7 @@
 ```
 :λ fastDNA ./fastdna supervised -input ../edwards2016/host/random_phylum-training_fastDNA.fasta -labels ../edwards2016/host/random_phylum-training_labels.txt -output edwards_random_model -dim 10 -length 100 -minn 10 -maxn 10 -epoch 1
 ```
-- Head of result (from `edwards_random_model.vec`)
+- Head of an example result (from generated `edwards_random_model.vec`)
 ```
 524800 10
 AAAAATTTTT -0.21718 -0.14016 -0.088678 0.28453 -0.076305 0.15032 -0.013353 0.04682 0.16902 0.10214
