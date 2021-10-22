@@ -15,7 +15,7 @@ def fasta_parallel(file, label):
     with open("X:/edwards2016/host/random_phylum-training_fastDNA.fasta", "a") as w_fh:
         SeqIO.write(record, w_fh, "fasta")
     #records.append(record)
-    with open("X:/edwards2016/host/random_phylum-training_labels.txt", "w") as fh:
+    with open("X:/edwards2016/host/random_phylum-training_labels.txt", "a") as fh:
         fh.write(label + "\n")
 
 
@@ -50,7 +50,8 @@ def main():
     for file, label in zip(filenames, labels):
         print(f"{file} - {label}")
 
-    par = Parallel(n_jobs=-1)(delayed(fasta_parallel)(f"X:/edwards2016/host/fasta/{file}.fna", label) for file, label in zip(filenames, labels))
+    par = Parallel(n_jobs=-1, batch_size="auto", backend="threading")(delayed(fasta_parallel)(f"X:/edwards2016/host/fasta/{file}.fna", label) for file, label in zip(filenames, labels))
+
     # print(len(records))
     # print(records)
 

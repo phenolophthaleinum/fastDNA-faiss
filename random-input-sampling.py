@@ -19,7 +19,8 @@ def sample_sequences(file, length, n):
     #     print(f"{record.id} has none seq")
     #print(f"{record.id} : {len(record.seq)}")
     #samples = []
-    with open("X:/edwards2016/host/random_samples-training_fastDNA.fasta", "a") as w_fh:
+    #with open("X:/edwards2016/host/random_samples-training_fastDNA.fasta", "a") as w_fh:
+    with open("X:/edwards2016/virus/random_samples_virus.fasta", "a") as w_fh:
         for i in range(n):
             pick = secrets.choice(range(0, len(record.seq) - length))
             #new_seq = record.seq[pick:pick + length]
@@ -48,7 +49,13 @@ def main():
     # debugging --------------------------------------------------------------------------------------------------------
 
     # parallel sampling records of all files and dumping them into one file
-    par = Parallel(n_jobs=-1)(delayed(sample_sequences)(file, 200, 10) for file in glob.glob("X:/edwards2016/host/fasta/*.fna"))
+    ## X:/edwards2016/host/fasta/*.fna
+    #par = Parallel(n_jobs=-2, pre_dispatch="all", batch_size="auto", backend="threading")(delayed(sample_sequences)(file, 200, 10) for file in glob.glob("X:/edwards2016/host/fasta/NC_001900.fna"))
+    par = Parallel(n_jobs=-2, pre_dispatch="all", batch_size="auto", backend="threading")(
+        delayed(sample_sequences)(file, 200, 10) for file in ["X:/edwards2016/virus/fasta/NC_001900.fna"])
+    # with multiprocessing.Pool(processes=8) as pool:
+    #     pool.starmap(sample_sequences, zip(glob.glob("X:/edwards2016/host/fasta/*.fna"), itertools.repeat(200), itertools.repeat(10)))
+
 
     # mapping samples to taxid and dumping them into a file
     p_records = list(SeqIO.parse("X:/edwards2016/host/random_samples-training_fastDNA.fasta", "fasta"))
@@ -61,7 +68,7 @@ def main():
     for id in set(ids_records):
         keys = [index for index, value in enumerate(ids_records) if value == id]
         for key in keys:
-            d[key] = host_data[id]["taxid"]
+            d[key] = id
     #print(d)
     with open("X:/edwards2016/host/sample_map.json", "w", encoding='utf-8') as fh:
         json.dump(d, fh, indent=4)
@@ -75,8 +82,8 @@ def main():
 
     #print(json.dumps(d, sort_keys=True))
     # debugging purposes
-    # from collections import Counter
-    # print(Counter(ids_records))
+    from collections import Counter
+    print(json.dumps(Counter(ids_records), indent=4))
 
     # with multiprocessing.Pool(processes=8) as pool:
     #     pool.starmap(sample_sequences, zip(glob.glob("X:/edwards2016/host/fasta/*.fna"), itertools.repeat(200), itertools.repeat(10)))
