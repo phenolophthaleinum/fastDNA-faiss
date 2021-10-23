@@ -4,10 +4,7 @@ import json
 
 dim = 10
 k_nearest = 10
-#database = np.loadtxt("/home/hyperscroll/fastDNA/edwards_vectors.txt", dtype="float32")
-#n_database = database.shape[0]
 query = np.loadtxt("/home/hyperscroll/fastDNA/virus_vectors.txt", dtype="float32")
-# n_query = query.shape[0]
 index = faiss.read_index("/home/hyperscroll/fastDNA/host_index.index")
 with open("/home/hyperscroll/edwards2016/host/sample_map.json", "r") as fh:
     map_data = {int(key): value for key, value in json.load(fh).items()}

@@ -98,3 +98,9 @@ Classification: [['NC_008319' 'NC_017293' 'NC_016781' 'NC_010741' 'NC_007624' 'N
  ['NC_015596' 'NC_006576' 'NC_016024' 'NC_018290' 'NC_016516' 'NC_018268'
   'NC_016010' 'NC_015757' 'NC_013118' 'NC_017454']]
 ```
+## Visualisation of vector clouds
+- Execution through `vector_visualisation.py`
+- Very big plot is generated, takes long time to read in the browser and works slow
+- Example screenshots:
+![Edwards vectors - whole](../master/docs/edwards_vectors.png)
+![Edwards vectors - up view](../master/docs/edwards_vectors-up.png)
