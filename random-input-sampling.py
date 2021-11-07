@@ -33,6 +33,9 @@ def sample_sequences(file: str, length: int, n: int) -> List[SeqRecord]:
             description=desc
         )
         new_records.append(new_record)
+    # if virus, this is possible
+    with open(f"X:/edwards2016/virus/samples/{new_records[0].id}_samples.fasta", "a") as w_fh:
+        SeqIO.write(new_records, w_fh, "fasta")
     return new_records
 
 
@@ -47,22 +50,29 @@ def main():
     utils.get_host_data()
 
     # parallel sampling records of all files and dumping them into one file
-    new_records = Parallel(n_jobs=-1)(delayed(sample_sequences)(file, 200, 10) for file in glob.glob("D:/praktyki2020/edwards2016/host/fasta/*.fna"))
+    new_records = Parallel(n_jobs=-1)(delayed(sample_sequences)(file, 200, 100) for file in glob.glob("X:/edwards2016/virus/fasta/*.fna"))
     final_records = []
-    for sublist in new_records:
-        final_records.extend(sublist)
-    with open("D:/praktyki2020/edwards2016/host/random_samples-training_fastDNA.fasta", "a") as w_fh:
-        SeqIO.write(final_records, w_fh, "fasta")
 
-    # # mapping samples to nbci ids and dumping them into a file
-    # p_records = list(SeqIO.parse("D:/praktyki2020/edwards2016/host/random_samples-training_fastDNA.fasta", "fasta"))
+    # for host
+    # for sublist in new_records:
+    #     final_records.extend(sublist)
+    # with open("X:/edwards2016/host/random_100_samples-training_fastDNA.fasta", "a") as w_fh:
+    #     SeqIO.write(final_records, w_fh, "fasta")
+
+    # for virus, but second slower
+    # for sublist in new_records:
+    #     with open(f"X:/edwards2016/virus/samples/{sublist[0].id}_samples.fasta", "a") as w_fh:
+    #         SeqIO.write(sublist, w_fh, "fasta")
+
+    # mapping samples to nbci ids and dumping them into a file
+    # p_records = list(SeqIO.parse("X:/edwards2016/host/random_100_samples-training_fastDNA.fasta", "fasta"))
     # ids_records = [record.id.split(".")[0] for record in p_records]
     # d = {}
     # for id in set(ids_records):
     #     keys = [index for index, value in enumerate(ids_records) if value == id]
     #     for key in keys:
     #         d[key] = id
-    # with open("D:/praktyki2020/edwards2016/host/sample_map.json", "w", encoding='utf-8') as fh:
+    # with open("X:/edwards2016/host/sample_map_100.json", "w", encoding='utf-8') as fh:
     #     json.dump(d, fh, indent=4)
 
     end = timer()
