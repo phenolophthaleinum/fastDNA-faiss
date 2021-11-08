@@ -40,7 +40,7 @@ def do_search(file, k_nearest, faiss_index, map_data):
         pre_rank[index].append(2 - float(distance))
     sum_rank = {key: sum(values) for key, values in pre_rank.items()}
     ranks = sum_rank.items()
-    part = {file.split("/")[-1].split(".")[0]: sorted(ranks, key=lambda elem: elem[1], reverse=True)}
+    part = {"_".join(file.split("/")[-1].split(".")[0].split("_")[:2]): sorted(ranks, key=lambda elem: elem[1], reverse=True)}
     return part
     #global_rank.update(part)
 
