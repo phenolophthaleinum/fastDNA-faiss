@@ -31,7 +31,7 @@ def main():
     # filtering all hosts by phylum
     phylum_host = defaultdict(list)
     for host in host_data:
-        phylum = host_data[host]["lineage_names"][1]
+        phylum = host_data[host]["lineage_names"][4]  # 1 - phylum, 4 - family
         phylum_host[phylum].append(host)
 
     # random sampling of a single host from a phylum
@@ -40,7 +40,7 @@ def main():
 
     # list of filenames to be used
     filenames = list(random_phylum_host.values())
-    print(len(filenames))
+    print(filenames)
 
     # get list of taxid (labels in fastDNA)
     labels = [host_data[host]["taxid"] for host in filenames]
@@ -48,18 +48,18 @@ def main():
 
     # parse selected files and merge them into single fasta file; create labels file
     #records = [list(SeqIO.parse(f"D:/praktyki2020/edwards2016/host/fasta/{file}.fna", "fasta"))[0] for file in filenames]
-    for file, label in zip(filenames, labels):
-        print(f"{file} - {label}")
+    # for file, label in zip(filenames, labels):
+    #     print(f"{file} - {label}")
 
-    par = Parallel(n_jobs=-1, verbose=11, pre_dispatch='all', batch_size="auto", backend="loky")(delayed(fasta_parallel)(f"X:/edwards2016/host/fasta/{file}.fna") for file in filenames)
-    print(par)
+    #par = Parallel(n_jobs=-1, verbose=11, pre_dispatch='all', batch_size="auto", backend="loky")(delayed(fasta_parallel)(f"D:/edwards2016/host/fasta/{file}.fna") for file in filenames)
+    #print(par)
     # print(len(records))
     # print(records)
 
-    with open("X:/edwards2016/host/random_phylum-training_fastDNA.fasta", "a") as w_fh:
-        SeqIO.write(par, w_fh, "fasta")
-
-    with open("X:/edwards2016/host/random_phylum-training_labels.txt", "w") as fh:
+    # with open("D:/edwards2016/host/random_family-training_fastDNA.fasta", "a") as w_fh:
+    #     SeqIO.write(par, w_fh, "fasta")
+    #
+    with open("D:/edwards2016/host/random_family-training_labels_test.txt", "w") as fh:
         for label in labels:
             fh.write(label + "\n")
 

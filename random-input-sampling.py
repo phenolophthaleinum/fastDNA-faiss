@@ -34,7 +34,7 @@ def sample_sequences(file: str, length: int, n: int) -> List[SeqRecord]:
         )
         new_records.append(new_record)
     # if virus, this is possible
-    with open(f"D:/edwards2016/virus/samples/{new_records[0].id}_samples.fasta", "a") as w_fh:
+    with open(f"D:/edwards2016/virus/sample_100-len_250/samples/{new_records[0].id}_samples.fasta", "a") as w_fh:
         SeqIO.write(new_records, w_fh, "fasta")
     return new_records
 
@@ -50,13 +50,13 @@ def main():
     utils.get_host_data()
 
     # parallel sampling records of all files and dumping them into one file
-    new_records = Parallel(n_jobs=-1)(delayed(sample_sequences)(file, 100, 100) for file in glob.glob("D:/edwards2016/virus/fasta/*.fna"))
+    new_records = Parallel(n_jobs=-1, verbose=True)(delayed(sample_sequences)(file, 250, 100) for file in glob.glob("D:/edwards2016/virus/fasta/*.fna"))
     final_records = []
 
     # for host
     # for sublist in new_records:
     #     final_records.extend(sublist)
-    # with open("D:/edwards2016/host/random_100_samples_100_len-training_fastDNA.fasta", "a") as w_fh:
+    # with open("D:/edwards2016/host/random_100_samples_250_len-training_fastDNA.fasta", "a") as w_fh:
     #     SeqIO.write(final_records, w_fh, "fasta")
 
     # for virus, but second slower
@@ -65,14 +65,14 @@ def main():
     #         SeqIO.write(sublist, w_fh, "fasta")
 
     # mapping samples to nbci ids and dumping them into a file
-    # p_records = list(SeqIO.parse("D:/edwards2016/host/random_100_samples_100_len-training_fastDNA.fasta", "fasta"))
+    # p_records = list(SeqIO.parse("D:/edwards2016/host/random_100_samples_250_len-training_fastDNA.fasta", "fasta"))
     # ids_records = [record.id.split(".")[0] for record in p_records]
     # d = {}
     # for id in set(ids_records):
     #     keys = [index for index, value in enumerate(ids_records) if value == id]
     #     for key in keys:
     #         d[key] = id
-    # with open("D:/edwards2016/host/sample_map_100_100_len.json", "w", encoding='utf-8') as fh:
+    # with open("D:/edwards2016/host/sample_map_100_250_len.json", "w", encoding='utf-8') as fh:
     #     json.dump(d, fh, indent=4)
 
     end = timer()

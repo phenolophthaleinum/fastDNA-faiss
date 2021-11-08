@@ -9,7 +9,7 @@ def fasta2vector(file):
     #print(file)
     fastdna_dir = "/home/hyperscroll/fastDNA/"
     name = file.split("/")[-1].split(".")[0]
-    os.system(f"{fastdna_dir}fastdna print-word-vectors {fastdna_dir}edwards_random_model.bin < {file} > /home/hyperscroll/edwards2016/virus/vectors/{name}_vector.txt")
+    os.system(f"{fastdna_dir}fastdna print-word-vectors {fastdna_dir}edwards_random_family_model.bin < {file} > /home/hyperscroll/edwards2016/virus/sample_100-len_250/vectors/{name}_vector.txt")
 
 
 def main():
@@ -23,7 +23,7 @@ def main():
     #print(name)
     #os.system(
     #    f"{fastdna_dir}fastdna print-word-vectors {fastdna_dir}edwards_random_model.bin < /home/hyperscroll/edwards2016/virus/samples/NC_000866.4_samples.fasta > /home/hyperscroll/edwards2016/virus/vectors/{name}_vector.txt")
-    vectors = Parallel(n_jobs=-1)(delayed(fasta2vector)(file) for file in glob.glob("/home/hyperscroll/edwards2016/virus/samples/*.fasta"))
+    vectors = Parallel(n_jobs=-1)(delayed(fasta2vector)(file) for file in glob.glob("/home/hyperscroll/edwards2016/virus/sample_100-len_250/samples/*.fasta"))
     final_records = []
 
     # for host
