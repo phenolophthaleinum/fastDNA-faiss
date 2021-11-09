@@ -1,5 +1,6 @@
 import json
 import functools
+import configparser
 from timeit import default_timer as timer
 from colorama import init, Fore
 
@@ -11,6 +12,16 @@ def get_host_data():
     with open("host.json", "r") as fh:
         host_data = json.load(fh)
     return host_data
+
+
+def get_config():
+    """
+        Reads important settings and variables to run the analysis properly
+    """
+    config = configparser.ConfigParser()
+    config.read("config.cfg")
+    config_dict = {section: dict(config.items(section)) for section in config.sections()}
+    return config_dict
 
 
 def time_this(func):

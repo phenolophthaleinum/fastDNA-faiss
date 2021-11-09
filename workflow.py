@@ -3,6 +3,7 @@ import os
 import glob
 from colorama import Fore, init
 from timeit import default_timer as timer
+import argparse
 
 
 def fasta2vector(file):
@@ -12,7 +13,7 @@ def fasta2vector(file):
     os.system(f"{fastdna_dir}fastdna print-word-vectors {fastdna_dir}edwards_random_family_model.bin < {file} > /home/hyperscroll/edwards2016/virus/sample_100-len_250/vectors/{name}_vector.txt")
 
 
-def main():
+def main_procedure():
     # colorama
     init()
 
@@ -54,4 +55,28 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="fastDNA+faiss virus-host interaction analysis")
+    parser.add_argument("-w", "--wd", required=True,
+                        help="Working directory, where all files will be deployed")
+    parser.add_argument("--host", required=False, action="store_true",
+                        help="Host mode: every available host genome is randomly sampled according to a given criteria,"
+                             " then a cloud of host vectors is generated and compiled into a faiss index")
+    parser.add_argument("--virus", required=False, action="store_true",
+                        help="Virus mode: every available virus genome is randomly sampled according to a given "
+                             "criteria, then a cloud of virus vectors is generated which is compared with host cloud "
+                             "and results are generated in a form of a rank of virus-host pairs.")
+    parser.add_argument("--full", required=False, action="store_true",
+                        help="Full mode: Combines host and virus mode in one go.")
+    # parser.add_argument("-o", "--output", required=True,
+    #                     help="Path to result FASTA file, labels file and model file.")
+    parser.add_argument("--length", required=True,
+                        help="Length of the samples")
+    parser.add_argument("-n", "--n_samples", required=True,
+                        help="Number of samples to take from a genome")
+    parser.add_argument("-t", "--thread", required=True,
+                        help="Number of threads to use")
+
+    args = parser.parse_args()
+
+    main_procedure(args.input_dir, args.output, args.filter, args.dim, args.length, args.minn, args.maxn, args.epoch,
+                   args.thread)
