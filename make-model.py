@@ -9,6 +9,7 @@ from joblib import Parallel, delayed
 import argparse
 import utils
 import os
+from colorama import Fore, init
 
 
 all_tax_levels = {
@@ -33,6 +34,9 @@ def fasta_parallel(file):
 
 
 def main_procedure(input_dir, out_dir, filter, dim, length, minn, maxn, epoch, thread):
+    # colorama
+    init()
+
     # timeit
     start = timer()
 
@@ -88,7 +92,7 @@ def main_procedure(input_dir, out_dir, filter, dim, length, minn, maxn, epoch, t
 
     end = timer()
     runtime = end - start
-    print(f"Done in {runtime:.6f}")
+    print(f"{Fore.GREEN}[make-model] Done in {runtime:.6f}")
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ import glob
 from colorama import Fore, init
 from timeit import default_timer as timer
 import argparse
+import random_sampling
 
 
 def fasta2vector(file):
