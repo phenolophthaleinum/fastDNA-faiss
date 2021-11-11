@@ -14,6 +14,12 @@ def get_host_data():
     return host_data
 
 
+def get_virus_data():
+    with open("virus.json", "r") as fh:
+        virus_data = json.load(fh)
+    return virus_data
+
+
 def get_config():
     """
         Reads important settings and variables to run the analysis properly
