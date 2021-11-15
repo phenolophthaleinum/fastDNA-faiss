@@ -28,10 +28,11 @@ from colorama import Fore, init
 # print(json.dumps(final_rank, indent=4))
 
 
-def do_search(file, k_nearest, faiss_index, map_data):
+def do_search(file, k_nearest, index, map_data):
     query = np.loadtxt(file, dtype="float32")
-    index = faiss.read_index(faiss_index)
+    #index = faiss.read_index(faiss_index)
     distances, indices = index.search(query, int(k_nearest))
+    #distances, indices = faiss_index.search(query, int(k_nearest))
     classification = np.vectorize(map_data.get)(indices)
     #ranks = []
     pre_rank = defaultdict(list)
@@ -53,8 +54,9 @@ def run_procedure(input_dir, output, k_nearest, faiss_index, map):
     start = timer()
     with open(map, "r") as fh:
         map_data = {int(key): value for key, value in json.load(fh).items()}
-    ranks = Parallel(n_jobs=-1)(
-        delayed(do_search)(file, k_nearest, faiss_index, map_data) for file in glob.glob(f"{input_dir}*.txt"))
+    index = faiss.read_index(faiss_index)
+    ranks = Parallel(verbose=True, n_jobs=-1)(
+        delayed(do_search)(file, k_nearest, index, map_data) for file in glob.glob(f"{input_dir}*.txt"))
     for result in ranks:
         global_rank.update(result)
     with open(output, "w") as fd:

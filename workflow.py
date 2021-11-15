@@ -4,82 +4,100 @@ import glob
 from colorama import Fore, init
 from timeit import default_timer as timer
 import argparse
+import utils
 import random_sampling
+import index_building
+import pathlib
 
 
-def fasta2vector(file):
+def virus2vector(file, wd):
     #print(file)
-    fastdna_dir = "/home/hyperscroll/fastDNA/"
+    #fastdna_dir = "/home/hyperscroll/fastDNA/"
     name = file.split("/")[-1].split(".")[0]
-    os.system(f"{fastdna_dir}fastdna print-word-vectors {fastdna_dir}edwards_random_model_dim_3.bin < {file} > /home/hyperscroll/edwards2016/virus/dim3/vectors/{name}_vector.txt")
+    os.system(f"{config['GENERAL']['fastdna_dir']}fastdna print-word-vectors {config['GENERAL']['active_model']} < {file} > {wd}virus/vectors/{name}_vector.txt")
 
 
-def main_procedure():
+def host2vector(file, wd):
+    os.system(f"{config['GENERAL']['fastdna_dir']}fastdna print-word-vectors {config['GENERAL']['active_model']} < {file} > {wd}host/vectors/host_vectors.txt")
+
+
+def main_procedure(wd, host, virus, full, length, n_samples, thread):
     # colorama
     init()
 
-    # timer
-    start = timer()
+    # global timer
+    total_start = timer()
+
+    dirs = ["samples", "vectors", "maps", "index"]
+    for dir in dirs:
+        pathlib.Path(f"{wd}host/{dir}").mkdir(parents=True, exist_ok=True)
+        if dirs.index(dir) < 2:
+            pathlib.Path(f"{wd}virus/{dir}").mkdir(parents=True, exist_ok=True)
+
+    # SAMPLING
+    random_sampling.main_procedure(wd, host, virus, full, config["HOST"]["host_genomes"],
+                                   config["VIRUS"]["virus_genomes"], length, n_samples)
     #fastdna_dir = "/home/hyperscroll/fastDNA/"
     #name = "/home/hyperscroll/edwards2016/virus/samples/NC_000866.4_samples.fasta".split("/")[-1].split(".")[0]
     #print(name)
     #os.system(
     #    f"{fastdna_dir}fastdna print-word-vectors {fastdna_dir}edwards_random_model.bin < /home/hyperscroll/edwards2016/virus/samples/NC_000866.4_samples.fasta > /home/hyperscroll/edwards2016/virus/vectors/{name}_vector.txt")
-    vectors = Parallel(n_jobs=-1)(delayed(fasta2vector)(file) for file in glob.glob("/home/hyperscroll/edwards2016/virus/samples/*.fasta"))
-    final_records = []
 
-    # for host
-    # for sublist in new_records:
-    #     final_records.extend(sublist)
-    # with open("X:/edwards2016/host/random_100_samples-training_fastDNA.fasta", "a") as w_fh:
-    #     SeqIO.write(final_records, w_fh, "fasta")
-
-    # for virus, but second slower
-    # for sublist in new_records:
-    #     with open(f"X:/edwards2016/virus/samples/{sublist[0].id}_samples.fasta", "a") as w_fh:
-    #         SeqIO.write(sublist, w_fh, "fasta")
-
-    # mapping samples to nbci ids and dumping them into a file
-    # p_records = list(SeqIO.parse("X:/edwards2016/host/random_100_samples-training_fastDNA.fasta", "fasta"))
-    # ids_records = [record.id.split(".")[0] for record in p_records]
-    # d = {}
-    # for id in set(ids_records):
-    #     keys = [index for index, value in enumerate(ids_records) if value == id]
-    #     for key in keys:
-    #         d[key] = id
-    # with open("X:/edwards2016/host/sample_map_100.json", "w", encoding='utf-8') as fh:
-    #     json.dump(d, fh, indent=4)
-
+    # VECTORISING
+    start = timer()
+    if virus:
+        vectors = Parallel(verbose=True, n_jobs=-1)(delayed(virus2vector)(file, wd)
+                                      for file in glob.glob(f"{wd}virus/samples/*.fasta"))
+    if host:
+        host2vector(f"{wd}host/samples/host_samples.fasta", wd)
+    if full:
+        vectors = Parallel(n_jobs=-1)(delayed(virus2vector)(file, wd)
+                                      for file in glob.glob(f"{wd}virus/samples/*.fasta"))
+        host2vector(f"{wd}host/samples/host_samples.fasta", wd)
     end = timer()
     runtime = end - start
-    print(f"{Fore.GREEN} Done in {runtime:.6f} seconds")
+    print(f"{Fore.GREEN} [fasta2vector] time: {runtime:.6f} seconds")
+
+    # INDEXING
+    if host or full:
+        start = timer()
+        index_building.build_index(f"{wd}host/vectors/host_vectors.txt", f"{wd}host/index/host_index.index")
+        end = timer()
+        runtime = end - start
+        print(f"{Fore.GREEN} [index_building] time: {runtime:.6f} seconds")
+
+    total_end = timer()
+    total_runtime = total_end - total_start
+    print(f"{Fore.GREEN} Total elapsed time: {total_runtime:.6f} seconds")
 
 
 if __name__ == "__main__":
-    main_procedure()
+    #main_procedure()
     # do not delete, this actually a main code
-    # parser = argparse.ArgumentParser(description="fastDNA+faiss virus-host interaction analysis")
-    # parser.add_argument("-w", "--wd", required=True,
-    #                     help="Working directory, where all files will be deployed")
-    # parser.add_argument("--host", required=False, action="store_true",
-    #                     help="Host mode: every available host genome is randomly sampled according to a given criteria,"
-    #                          " then a cloud of host vectors is generated and compiled into a faiss index")
-    # parser.add_argument("--virus", required=False, action="store_true",
-    #                     help="Virus mode: every available virus genome is randomly sampled according to a given "
-    #                          "criteria, then a cloud of virus vectors is generated which is compared with host cloud "
-    #                          "and results are generated in a form of a rank of virus-host pairs.")
-    # parser.add_argument("--full", required=False, action="store_true",
-    #                     help="Full mode: Combines host and virus mode in one go.")
-    # # parser.add_argument("-o", "--output", required=True,
-    # #                     help="Path to result FASTA file, labels file and model file.")
-    # parser.add_argument("--length", required=True,
-    #                     help="Length of the samples")
-    # parser.add_argument("-n", "--n_samples", required=True,
-    #                     help="Number of samples to take from a genome")
-    # parser.add_argument("-t", "--thread", required=True,
-    #                     help="Number of threads to use")
-    #
-    # args = parser.parse_args()
-    #
-    # main_procedure(args.input_dir, args.output, args.filter, args.dim, args.length, args.minn, args.maxn, args.epoch,
-    #                args.thread)
+    parser = argparse.ArgumentParser(description="fastDNA+faiss virus-host interaction analysis")
+    parser.add_argument("-w", "--wd", required=True,
+                        help="Working directory, where all files will be deployed")
+    parser.add_argument("--host", required=False, action="store_true",
+                        help="Host mode: every available host genome is randomly sampled according to a given criteria,"
+                             " then a cloud of host vectors is generated and compiled into a faiss index")
+    parser.add_argument("--virus", required=False, action="store_true",
+                        help="Virus mode: every available virus genome is randomly sampled according to a given "
+                             "criteria, then a cloud of virus vectors is generated which is compared with host cloud "
+                             "and results are generated in a form of a rank of virus-host pairs.")
+    parser.add_argument("--full", required=False, action="store_true",
+                        help="Full mode: Combines host and virus mode in one go.")
+    # parser.add_argument("-m", "--model", required=True,
+    #                     help="fastDNA trained model full path")
+    # parser.add_argument("-o", "--output", required=True,
+    #                     help="Path to result FASTA file, labels file and model file.")
+    parser.add_argument("--length", required=True,
+                        help="Length of the samples")
+    parser.add_argument("-n", "--n_samples", required=True,
+                        help="Number of samples to take from a genome")
+    parser.add_argument("-t", "--thread", required=True,
+                        help="Number of threads to use")
+
+    config = utils.get_config()
+    args = parser.parse_args()
+
+    main_procedure(args.wd, args.host, args.virus, args.full, int(args.length), int(args.n_samples), int(args.thread))

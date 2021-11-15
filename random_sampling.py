@@ -62,12 +62,12 @@ def main_procedure(wd, host, virus, full, host_dir, virus_dir, length, n_samples
         # for host
         for sublist in new_records:
             final_records.extend(sublist)
-        with open(f"{wd}host/samples/random_100_samples_250_len-training_fastDNA.fasta", "a") as w_fh:
+        with open(f"{wd}host/samples/host_samples.fasta", "a") as w_fh:
             SeqIO.write(final_records, w_fh, "fasta")
 
         # mapping samples to nbci ids and dumping them into a file; edit 10.11.21 - much faster
         p_records = list(
-            SeqIO.parse(f"{wd}host/samples/random_100_samples_250_len-training_fastDNA.fasta", "fasta"))
+            SeqIO.parse(f"{wd}host/samples/host_samples.fasta", "fasta"))
         ids_records = [record.id.split(".")[0] for record in p_records]
         d = {}
         for index, value in enumerate(ids_records):
@@ -76,7 +76,7 @@ def main_procedure(wd, host, virus, full, host_dir, virus_dir, length, n_samples
         #     keys = [index for index, value in enumerate(ids_records) if value == id]
         #     for key in keys:
         #         d[key] = id
-        with open(f"{wd}host/maps/sample_map_100_250_len.json", "w", encoding='utf-8') as fh:
+        with open(f"{wd}host/maps/sample_map.json", "w", encoding='utf-8') as fh:
             json.dump(d, fh, indent=4)
 
     if virus:
@@ -90,11 +90,11 @@ def main_procedure(wd, host, virus, full, host_dir, virus_dir, length, n_samples
         # for host
         for sublist in new_records:
             final_records.extend(sublist)
-        with open(f"{wd}host/samples/random_100_samples_250_len-training_fastDNA.fasta", "a") as w_fh:
+        with open(f"{wd}host/samples/host_samples.fasta", "a") as w_fh:
             SeqIO.write(final_records, w_fh, "fasta")
 
         # mapping samples to nbci ids and dumping them into a file; edit 10.11.21 - much faster
-        p_records = list(SeqIO.parse(f"{wd}host/samples/random_100_samples_250_len-training_fastDNA.fasta", "fasta"))
+        p_records = list(SeqIO.parse(f"{wd}host/samples/host_samples.fasta", "fasta"))
         ids_records = [record.id.split(".")[0] for record in p_records]
         d = {}
         for index, value in enumerate(ids_records):
@@ -103,7 +103,7 @@ def main_procedure(wd, host, virus, full, host_dir, virus_dir, length, n_samples
         #     keys = [index for index, value in enumerate(ids_records) if value == id]
         #     for key in keys:
         #         d[key] = id
-        with open("{wd}host/maps/sample_map_100_250_len.json", "w", encoding='utf-8') as fh:
+        with open(f"{wd}host/maps/sample_map.json", "w", encoding='utf-8') as fh:
             json.dump(d, fh, indent=4)
 
         new_records = Parallel(n_jobs=-1, verbose=True)(

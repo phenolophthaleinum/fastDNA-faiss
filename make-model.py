@@ -84,7 +84,7 @@ def main_procedure(input_dir, out_dir, filter, dim, length, minn, maxn, epoch, t
             fh.write(label + "\n")
 
     # run fastDNA training
-    model_file = f"random_model-{filter}-dim_{dim}-len_{length}"
+    model_file = f"random_model-{filter}-dim_{dim}-len_{length}-epoch{epoch}"
     os.system(f"{config['GENERAL']['fastdna_dir']}fastdna supervised -input {out_dir}{filtered_fasta_file} -labels {out_dir}{labels_file} -output {out_dir}{model_file} -dim {dim} -length {length} -minn {minn} -maxn {maxn} -epoch {epoch} -thread {thread}")
     #par = Parallel(n_jobs=-1)(delayed(SeqIO.write)(records, "D:/praktyki2020/edwards2016/host/random_phylum-training_fastDNA.fasta", "fasta") for record in records)
     #SeqIO.write(records, "X:/edwards2016/host/random_phylum-training_fastDNA.fasta", "fasta")
@@ -103,7 +103,7 @@ if __name__ == "__main__":
                         help="Path to result FASTA file, labels file and model file.")
     parser.add_argument("--filter", required=True,
                         help="Taxonomy level to which genomes should be filtered.")
-    parser.add_argument("-d", "-dim", required=True,
+    parser.add_argument("-d", "--dim", required=True,
                         help="Dimensionality of vectors")
     parser.add_argument("--length", required=True,
                         help="Length of sequences")
