@@ -11,7 +11,7 @@ from typing import List
 from colorama import Fore, init
 
 
-def sample_sequences(file: str, length: int, n: int, wd: str, virus:bool) -> List[SeqRecord]:
+def sample_sequences(file: str, length: int, n: int, wd: str, virus: bool) -> List[SeqRecord]:
     """Function reads each given fasta file, randomly samples n subsequences of a defined length, creates new records with those subsequences and puts these new records into a list (which is finally returned).
 
     Args:

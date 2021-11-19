@@ -1,5 +1,6 @@
 import glob
 from collections import defaultdict
+from typing import Dict, Tuple, List
 
 import numpy as np
 import faiss
@@ -28,7 +29,7 @@ from colorama import Fore, init
 # print(json.dumps(final_rank, indent=4))
 
 
-def do_search(file, k_nearest, index, map_data):
+def do_search(file: str, k_nearest: str, index: object, map_data: Dict[int, str]) -> Dict[str, List[Tuple[str, float]]]:
     query = np.loadtxt(file, dtype="float32")
     #index = faiss.read_index(faiss_index)
     distances, indices = index.search(query, int(k_nearest))

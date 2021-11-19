@@ -1,7 +1,11 @@
+import glob
 import json
+import random
 import secrets
 from collections import defaultdict
 from timeit import default_timer as timer
+from typing import List, Union, Tuple
+
 from Bio.Seq import Seq
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
@@ -22,8 +26,14 @@ all_tax_levels = {
      "species": 6
 }
 
+# importing json data about hosts
+host_data = utils.get_host_data()
 
-def fasta_parallel(file):
+# read config
+config = utils.get_config()
+
+
+def fasta_parallel(file: str) -> SeqRecord:
     record = SeqIO.read(file, "fasta")
     return record
     # with open("X:/edwards2016/host/random_phylum-training_fastDNA.fasta", "a") as w_fh:
@@ -33,36 +43,59 @@ def fasta_parallel(file):
     #     fh.write(label + "\n")
 
 
-def main_procedure(input_dir, out_dir, filter, dim, length, minn, maxn, epoch, thread):
-    # colorama
-    init()
-
-    # timeit
-    start = timer()
-
-    # importing json data about hosts
-    host_data = utils.get_host_data()
-
-    # reading config
-    config = utils.get_config()
-
+def tax_filtering(filter: str, reps: int) -> Tuple[List[str], List[str]]:
     # filtering all hosts by a chosen level
     filter_host = defaultdict(list)
     for host in host_data:
         level = host_data[host]["lineage_names"][all_tax_levels[filter]]  # tax level code
         filter_host[level].append(host)
 
-    # random sampling of a single host from a phylum
-    random_level_host = {level: secrets.choice(filter_host[level]) for level in filter_host}
+    # random sampling of a single host from a level
+    random_level_host = {
+        level: random.sample(filter_host[level], len(filter_host[level]) if len(filter_host[level]) < reps else reps)
+        for
+        level in filter_host}
     print(random_level_host)
 
     # list of filenames to be used
     filenames = list(random_level_host.values())
+    # print(filenames)
+
+    # flatten if needed
+    if isinstance(filenames[0], list):
+        temp_files = [item for sublist in filenames for item in sublist]
+        filenames = temp_files
     print(filenames)
 
     # get list of taxid (labels in fastDNA)
     labels = [host_data[host]["taxid"] for host in filenames]
     print(len(labels))
+
+    return filenames, labels
+
+
+def no_filtering(input_dir: str) -> Tuple[List[str], List[str]]:
+    filenames = [path.split("/")[-1].split(".")[0] for path in glob.glob(f"{input_dir}*.fna")]
+    print(filenames)
+    labels = [host_data[host]["taxid"] for host in filenames]
+
+    return filenames, labels
+
+
+def main_procedure(input_dir, out_dir, filter, dim, length, minn, maxn, epoch, thread, reps, rm, save_vec):
+    # colorama
+    init()
+
+    # timeit
+    start = timer()
+
+    filenames = []
+    labels = []
+
+    if filter != "none":
+        filenames, labels = tax_filtering(filter, reps)
+    if filter == "none":
+        filenames, labels = no_filtering(input_dir)
 
     # parse selected files and merge them into single fasta file; create labels file
     #records = [list(SeqIO.parse(f"D:/praktyki2020/edwards2016/host/fasta/{file}.fna", "fasta"))[0] for file in filenames]
@@ -85,10 +118,17 @@ def main_procedure(input_dir, out_dir, filter, dim, length, minn, maxn, epoch, t
 
     # run fastDNA training
     model_file = f"random_model-{filter}-dim_{dim}-len_{length}-epoch{epoch}"
-    os.system(f"{config['GENERAL']['fastdna_dir']}fastdna supervised -input {out_dir}{filtered_fasta_file} -labels {out_dir}{labels_file} -output {out_dir}{model_file} -dim {dim} -length {length} -minn {minn} -maxn {maxn} -epoch {epoch} -thread {thread}")
+    if save_vec:
+        os.system(f"{config['GENERAL']['fastdna_dir']}fastdna supervised -input {out_dir}{filtered_fasta_file} -labels {out_dir}{labels_file} -output {out_dir}{model_file} -dim {dim} -length {length} -minn {minn} -maxn {maxn} -epoch {epoch} -thread {thread} -saveVec")
+    else:
+        os.system(f"{config['GENERAL']['fastdna_dir']}fastdna supervised -input {out_dir}{filtered_fasta_file} -labels {out_dir}{labels_file} -output {out_dir}{model_file} -dim {dim} -length {length} -minn {minn} -maxn {maxn} -epoch {epoch} -thread {thread}")
     #par = Parallel(n_jobs=-1)(delayed(SeqIO.write)(records, "D:/praktyki2020/edwards2016/host/random_phylum-training_fastDNA.fasta", "fasta") for record in records)
     #SeqIO.write(records, "X:/edwards2016/host/random_phylum-training_fastDNA.fasta", "fasta")
     #print(f"Written {len(records)} records.")
+
+    if rm:
+        os.system(f"rm {out_dir}{filtered_fasta_file}")
+        os.system(f"rm {out_dir}{labels_file}")
 
     end = timer()
     runtime = end - start
@@ -101,22 +141,29 @@ if __name__ == "__main__":
                         help="Directory with host genomes.")
     parser.add_argument("-o", "--output", required=True,
                         help="Path to result FASTA file, labels file and model file.")
-    parser.add_argument("--filter", required=True,
-                        help="Taxonomy level to which genomes should be filtered.")
+    parser.add_argument("-f", "--filter", required=True,
+                        choices=["phylum", "class", "order", "family", "genus", "species", "none"],
+                        help="Taxonomy level to which genomes should be filtered. Choosing 'none' implies no taxonomy filtering.")
+    parser.add_argument("-r", "--reps", required=False, default=1,
+                        help="Maximum number of representatives from the filtered group. Default value is 1.")
     parser.add_argument("-d", "--dim", required=True,
                         help="Dimensionality of vectors")
-    parser.add_argument("--length", required=True,
+    parser.add_argument("-l", "--length", required=True,
                         help="Length of sequences")
     parser.add_argument("--minn", required=True,
-                        help="Minn")
+                        help="Minimum k-mer size")
     parser.add_argument("--maxn", required=True,
-                        help="Maxn")
-    parser.add_argument("--epoch", required=True,
-                        help="Epoch")
+                        help="Maximum k-mer size (max k=15, otherwise fastDNA fails)")
+    parser.add_argument("-e", "--epoch", required=True,
+                        help="Number of epochs (each added epoch increases runtime significantly)")
     parser.add_argument("-t", "--thread", required=True,
                         help="Number of threads to use")
+    parser.add_argument("--rm", required=False, action="store_false", default=False,
+                        help="Remove potentially redundant files after model creation. Default is 'false'.")
+    parser.add_argument("--saveVec", required=False, action="store_false", default=False,
+                        help="Enables saving of a readable model file (.vec). Enabling this may significantly increase execution time. Default is 'false'.")
 
     args = parser.parse_args()
 
     main_procedure(args.input_dir, args.output, args.filter, args.dim, args.length, args.minn, args.maxn, args.epoch,
-                   args.thread)
+                   args.thread, int(args.reps), args.rm, args.saveVec)

@@ -10,14 +10,14 @@ import index_building
 import pathlib
 
 
-def virus2vector(file, wd):
+def virus2vector(file: str, wd: str):
     #print(file)
     #fastdna_dir = "/home/hyperscroll/fastDNA/"
     name = file.split("/")[-1].split(".")[0]
     os.system(f"{config['GENERAL']['fastdna_dir']}fastdna print-word-vectors {config['GENERAL']['active_model']} < {file} > {wd}virus/vectors/{name}_vector.txt")
 
 
-def host2vector(file, wd):
+def host2vector(file: str, wd: str):
     os.system(f"{config['GENERAL']['fastdna_dir']}fastdna print-word-vectors {config['GENERAL']['active_model']} < {file} > {wd}host/vectors/host_vectors.txt")
 
 
