@@ -2,7 +2,7 @@ import argparse
 import json
 from pathlib import Path
 
-fh = open('X:/edwards2016/runs/run-dim_60-len_125-n_100-epoch_2-k_6-genus-rep_3/rank/rank-k_60.json')
+fh = open('X:/edwards2016/runs/run-dim_60-len_125-n_600-epoch_2-k_7-none_Slim/rank/rank-k_60.json')
 db = json.load(fh)
 fh.close()
 
