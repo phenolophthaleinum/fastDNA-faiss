@@ -83,7 +83,7 @@ python make-model.py -i /home/hyperscroll/edwards2016/host/fasta/ -o /home/hyper
 ```commandline
 python workflow.py -h
 
-usage: workflow.py [-h] -w WD [--host] [--virus] [--full] --length LENGTH -n N_SAMPLES -t THREAD
+usage: workflow.py [-h] -w WD [--host] [--virus] [--full] --length LENGTH --n_vir N_VIR --n_host N_HOST -t THREAD
 
 fastDNA+faiss virus-host interaction analysis
 
@@ -97,8 +97,8 @@ optional arguments:
                         generated in a form of a rank of virus-host pairs.
   --full                Full mode: Combines host and virus mode in one go.
   --length LENGTH       Length of the samples
-  -n N_SAMPLES, --n_samples N_SAMPLES
-                        Number of samples to take from a genome
+  --n_vir N_VIR         Number of samples to take from a virus genome
+  --n_host N_HOST       Number of samples to take from a host genome
   -t THREAD, --thread THREAD
                         Number of threads to use
 ```

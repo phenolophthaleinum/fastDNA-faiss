@@ -1,6 +1,7 @@
 import glob
 from collections import defaultdict
 from typing import Dict, Tuple, List
+import math
 
 import numpy as np
 import faiss
@@ -31,15 +32,27 @@ from colorama import Fore, init
 
 def do_search(file: str, k_nearest: str, index: object, map_data: Dict[int, str]) -> Dict[str, List[Tuple[str, float]]]:
     query = np.loadtxt(file, dtype="float32")
+    dim = np.shape(query)[1]
+    hyper = math.sqrt(dim)
     #index = faiss.read_index(faiss_index)
     distances, indices = index.search(query, int(k_nearest))
     #distances, indices = faiss_index.search(query, int(k_nearest))
     classification = np.vectorize(map_data.get)(indices)
     #ranks = []
     pre_rank = defaultdict(list)
+    # TODO new scoring method (diagonal of a hypercube) - ??
+    # TODO filter scores for each sample to only contain scores from unique host
+    # TODO raise error to see where negative scores appear
+    print(f"Max dist: {distances.max()}")
+    print(f"Min dist: {distances.min()}")
+
     for index, distance in np.stack((classification.flatten(), distances.flatten()), axis=1):
-        #ranks.append((index, 2 - float(distance)))
-        pre_rank[index].append(2 - float(distance))
+        #ranks.append((index, 2 - float(distance))) # this is wrong
+        # 2 - dist
+        #pre_rank[index].append(2 - float(distance))
+        # hyper - dist
+        pre_rank[index].append(hyper - float(distance))
+
     sum_rank = {key: sum(values) for key, values in pre_rank.items()}
     ranks = sum_rank.items()
     part = {"_".join(file.split("/")[-1].split(".")[0].split("_")[:2]): sorted(ranks, key=lambda elem: elem[1], reverse=True)}

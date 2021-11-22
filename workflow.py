@@ -21,7 +21,7 @@ def host2vector(file: str, wd: str):
     os.system(f"{config['GENERAL']['fastdna_dir']}fastdna print-word-vectors {config['GENERAL']['active_model']} < {file} > {wd}host/vectors/host_vectors.txt")
 
 
-def main_procedure(wd, host, virus, full, length, n_samples, thread):
+def main_procedure(wd, host, virus, full, length, n_vir_samples, n_host_samples, thread):
     # colorama
     init()
 
@@ -36,7 +36,7 @@ def main_procedure(wd, host, virus, full, length, n_samples, thread):
 
     # SAMPLING
     random_sampling.main_procedure(wd, host, virus, full, config["HOST"]["host_genomes"],
-                                   config["VIRUS"]["virus_genomes"], length, n_samples)
+                                   config["VIRUS"]["virus_genomes"], length, n_vir_samples, n_host_samples)
     #fastdna_dir = "/home/hyperscroll/fastDNA/"
     #name = "/home/hyperscroll/edwards2016/virus/samples/NC_000866.4_samples.fasta".split("/")[-1].split(".")[0]
     #print(name)
@@ -92,8 +92,10 @@ if __name__ == "__main__":
     #                     help="Path to result FASTA file, labels file and model file.")
     parser.add_argument("--length", required=True,
                         help="Length of the samples")
-    parser.add_argument("-n", "--n_samples", required=True,
-                        help="Number of samples to take from a genome")
+    parser.add_argument("--n_vir", required=True,
+                        help="Number of samples to take from a virus genome")
+    parser.add_argument("--n_host", required=True,
+                        help="Number of samples to take from a host genome")
     parser.add_argument("-t", "--thread", required=True,
                         help="Number of threads to use")
 

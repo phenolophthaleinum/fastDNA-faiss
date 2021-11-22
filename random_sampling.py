@@ -44,7 +44,9 @@ def sample_sequences(file: str, length: int, n: int, wd: str, virus: bool) -> Li
     return new_records
 
 
-def main_procedure(wd, host, virus, full, host_dir, virus_dir, length, n_samples):
+# DONE differentiate number of samples from virus and hosts (more from hosts most likely)
+# TODO new sample sources - not only from all edwards host genomes but from each species representative
+def main_procedure(wd, host, virus, full, host_dir, virus_dir, length, n_vir_samples, n_host_samples):
     # colorama
     init()
 
@@ -57,7 +59,8 @@ def main_procedure(wd, host, virus, full, host_dir, virus_dir, length, n_samples
     final_records = []
     # parallel sampling records of all files and dumping them into one file
     if host:
-        new_records = Parallel(n_jobs=-1, verbose=True)(delayed(sample_sequences)(file, length, n_samples, wd, virus) for file in glob.glob(f"{host_dir}*.fna"))
+        new_records = Parallel(n_jobs=-1, verbose=True)(
+            delayed(sample_sequences)(file, length, n_host_samples, wd, virus) for file in glob.glob(f"{host_dir}*.fna"))
 
         # for host
         for sublist in new_records:
@@ -81,11 +84,12 @@ def main_procedure(wd, host, virus, full, host_dir, virus_dir, length, n_samples
 
     if virus:
         new_records = Parallel(n_jobs=-1, verbose=True)(
-            delayed(sample_sequences)(file, length, n_samples, wd, virus) for file in glob.glob(f"{virus_dir}*.fna"))
+            delayed(sample_sequences)(file, length, n_vir_samples, wd, virus) for file in glob.glob(f"{virus_dir}*.fna"))
 
     if full:
         new_records = Parallel(n_jobs=-1, verbose=True)(
-            delayed(sample_sequences)(file, length, n_samples, wd, virus=False) for file in glob.glob(f"{host_dir}*.fna"))
+            delayed(sample_sequences)(file, length, n_host_samples, wd, virus=False) for file in
+            glob.glob(f"{host_dir}*.fna"))
 
         # for host
         for sublist in new_records:
@@ -107,7 +111,8 @@ def main_procedure(wd, host, virus, full, host_dir, virus_dir, length, n_samples
             json.dump(d, fh, indent=4)
 
         new_records = Parallel(n_jobs=-1, verbose=True)(
-            delayed(sample_sequences)(file, length, n_samples, wd, virus=True) for file in glob.glob(f"{virus_dir}*.fna"))
+            delayed(sample_sequences)(file, length, n_vir_samples, wd, virus=True) for file in
+            glob.glob(f"{virus_dir}*.fna"))
 
     # for virus, but second slower
     # for sublist in new_records:
@@ -117,7 +122,6 @@ def main_procedure(wd, host, virus, full, host_dir, virus_dir, length, n_samples
     end = timer()
     runtime = end - start
     print(f"{Fore.GREEN}[random-sampling] Done in {runtime:.6f} seconds")
-
 
 # if __name__ == "__main__":
 #     main()
