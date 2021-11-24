@@ -45,7 +45,7 @@ def sample_sequences(file: str, length: int, n: int, wd: str, virus: bool) -> Li
 
 
 # DONE differentiate number of samples from virus and hosts (more from hosts most likely)
-# TODO new sample sources - not only from all edwards host genomes but from each species representative
+# DONE new sample sources - not only from all edwards host genomes but from each species representative
 def main_procedure(wd, host, virus, full, host_dir, virus_dir, length, n_vir_samples, n_host_samples):
     # colorama
     init()
