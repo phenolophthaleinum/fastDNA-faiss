@@ -8,6 +8,7 @@
  */
 
 #include <iostream>
+#include <sstream>
 #include <queue>
 #include <iomanip>
 #include "fasttext.h"
@@ -202,7 +203,7 @@ void predict(const std::vector<std::string>& args) {
 }
 
 void printWordVectors(const std::vector<std::string> args) {
-  if (args.size() != 3) {
+  if (args.size() != 4) {
     printPrintWordVectorsUsage();
     exit(EXIT_FAILURE);
   }
@@ -210,11 +211,37 @@ void printWordVectors(const std::vector<std::string> args) {
   fasttext.loadModel(std::string(args[2]));
   std::string word;
   Vector vec(fasttext.getDimension());
+  std::ofstream file;
+  file.open((args[3] + ".vec").c_str(), std::ios_base::binary | std::ios_base::out);
+  std::cout << (args[3] + ".vec").c_str() << std::endl;
   while (1) {
     fasttext.getWordVector(vec, std::cin);
     if (std::cin.eof()) { break; }
-    std::cout << vec << std::endl;
+    //std::cout << vec << std::endl;
+    
+    // MM edit
+    //file.write((char*)(&vec[0]), vec.size() * sizeof(vec[0]));
+    // 
+    file.write((char*)vec.data(), vec.size() * sizeof(real));
+    
+    //file.put('\n');
+    //std::string vec_str = vec.c_str();
+    // doesnt work:
+    //std::string vec_str{ std::begin(vec), std::end(vec) };
+    //std::cout << vec.data() << std::endl;
+    //std::cout << vec.data().c_str() << std::endl;
+
+    //std::string vec_str;
+    //std::stringstream ss;
+    //ss << vec;
+    //vec_str = ss.str();
+    ////std::cout << vec_str << std::endl;
+    //file.write(vec_str.c_str(), vec_str.size());
+    //file.put('\n');
+    //file.write((char*)(&vec_str), vec_str.size() * sizeof(std::string));
+    //file << vec << "\n";
   }
+  file.close();
   exit(0);
 }
 
