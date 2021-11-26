@@ -14,14 +14,18 @@ def virus2vector(file: str, wd: str):
     #print(file)
     #fastdna_dir = "/home/hyperscroll/fastDNA/"
     name = file.split("/")[-1].split(".")[0]
-    os.system(f"{config['GENERAL']['fastdna_dir']}fastdna print-word-vectors {config['GENERAL']['active_model']} < {file} > {wd}virus/vectors/{name}_vector.txt")
+    # txt version
+    # os.system(f"{config['GENERAL']['fastdna_dir']}fastdna print-word-vectors {config['GENERAL']['active_model']} < {file} > {wd}virus/vectors/{name}_vector.txt")
+    os.system(f"{config['GENERAL']['fastdna_dir']}fastdna print-word-vectors {config['GENERAL']['active_model']} {wd}virus/vectors/{name}_vector < {file}")
 
 
 def host2vector(file: str, wd: str):
-    os.system(f"{config['GENERAL']['fastdna_dir']}fastdna print-word-vectors {config['GENERAL']['active_model']} < {file} > {wd}host/vectors/host_vectors.txt")
+    # txt version
+    # os.system(f"{config['GENERAL']['fastdna_dir']}fastdna print-word-vectors {config['GENERAL']['active_model']} < {file} > {wd}host/vectors/host_vectors.txt")
+    os.system(f"{config['GENERAL']['fastdna_dir']}fastdna print-word-vectors {config['GENERAL']['active_model']} {wd}host/vectors/host_vectors < {file}")
 
 
-def main_procedure(wd, host, virus, full, length, n_vir_samples, n_host_samples, thread):
+def main_procedure(wd, host, virus, full, length, n_vir_samples, n_host_samples, dim, thread):
     # colorama
     init()
 
@@ -61,7 +65,7 @@ def main_procedure(wd, host, virus, full, length, n_vir_samples, n_host_samples,
     # INDEXING
     if host or full:
         start = timer()
-        index_building.build_index(f"{wd}host/vectors/host_vectors.txt", f"{wd}host/index/host_index.index")
+        index_building.build_index(f"{wd}host/vectors/host_vectors.vec", dim, n_host_samples, f"{wd}host/index/host_index.index")
         end = timer()
         runtime = end - start
         print(f"{Fore.GREEN} [index_building] time: {runtime:.6f} seconds")
@@ -92,6 +96,8 @@ if __name__ == "__main__":
     #                     help="Path to result FASTA file, labels file and model file.")
     parser.add_argument("--length", required=True,
                         help="Length of the samples")
+    parser.add_argument("-d", "--dim", required=True,
+                        help="Dimensionality of vectors")
     parser.add_argument("--n_vir", required=True,
                         help="Number of samples to take from a virus genome")
     parser.add_argument("--n_host", required=True,
@@ -102,4 +108,4 @@ if __name__ == "__main__":
     config = utils.get_config()
     args = parser.parse_args()
 
-    main_procedure(args.wd, args.host, args.virus, args.full, int(args.length), int(args.n_samples), int(args.thread))
+    main_procedure(args.wd, args.host, args.virus, args.full, int(args.length), int(args.n_vir), int(args.n_host), int(args.dim), int(args.thread))

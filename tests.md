@@ -46,6 +46,14 @@
 |run-dim_60-len_125-n_300-epoch_2-k_7-none_Slim|294.426457| full  | 125 |  300|
 |run-dim_60-len_125-n_600-epoch_2-k_7-none_Slim|512.230759| full  | 125 |  600|
 
+## workflow.py (asymmetric sampling)
+
+|Run id|Runtime [s]  |Run type|--length|--n_vir|--n_host|
+|---|---|---|---|---|---|
+|run-dim_60-len_125-n_100_600-epoch_2-none_newEdwards| 261.744882| full  | 125  | 100| 600|
+|run-dim_60-len_125-n_300_600-epoch_2-none_newEdwards| 261.368303| full  | 125  | 300| 600|
+|run-dim_60-len_125-n_300_600-epoch_2-genus| 751.706315| full  | 125  | 300| 600|
+|run-dim_60-len_125-n_300_600-epoch_2-none_Slim_newEdwards (new vector saving)| 77.261955| full  | 125  | 300| 600|
 
 
 
@@ -77,6 +85,10 @@
 |run-dim_60-len_125-n_300-epoch_2-k_7-none_Slim|445.913480|60|
 |run-dim_60-len_125-n_100-epoch_2-k_7-none_Slim (2nd)|128.676293|60|
 |run-dim_60-len_125-n_600-epoch_2-k_7-none_Slim|927.781056|60|
+|run-dim_60-len_125-n_100_600-epoch_2-none_newEdwards|396.819071|60|
+|run-dim_60-len_125-n_300_600-epoch_2-none_newEdwards|432.643582|60|
+|run-dim_60-len_125-n_300_600-epoch_2-genus|1565.948420|60|
+|run-dim_60-len_125-n_300_600-epoch_2-none_Slim_newEdwards|423.511798|60|
 
 
 
@@ -107,6 +119,10 @@
 |run-dim_60-len_125-n_300-epoch_2-k_7-none_Slim (60 k_nearest, SlimEdwards)|19.634146341463417|33.41463414634146|43.292682926829265|49.51219512195122|58.78048780487804|65.0|100
 |run-dim_60-len_125-n_100-epoch_2-k_7-none_Slim (60 k_nearest, SlimEdwards, 2nd time; gives same result as the 1st run)|16.21951219512195| 29.878048780487802|38.78048780487805|47.68292682926829|61.46341463414634|69.26829268292683|100
 |run-dim_60-len_125-n_600-epoch_2-k_7-none_Slim (60 k_nearest, SlimEdwards)|21.463414634146343|36.21951219512195|44.51219512195122|52.80487804878049|61.09756097560975|68.78048780487805|100
+|run-dim_60-len_125-n_100_600-epoch_2-none_newEdwards (60 k_nearest, k=7)|5.731707317073171,|23.902439024390244,|34.268292682926834,|44.75609756097561,|56.95121951219512,|64.02439024390245,|100
+|run-dim_60-len_125-n_300_600-epoch_2-none_newEdwards (60 k_nearest, k=7)|8.048780487804878,|29.39024390243902,|40.0,|48.170731707317074,|58.17073170731707,|64.14634146341463,|100
+|run-dim_60-len_125-n_300_600-epoch_2-genus (60 k_nearest, k=7)|11.585365853658537,| 29.024390243902438,|38.90243902439025,|46.58536585365854,|57.56097560975609|65.1219512195122|100
+|run-dim_60-len_125-n_300_600-epoch_2-none_Slim_newEdwards (60 k_nearest, k=7)|8.414634146341465,| 28.41463414634146,|39.390243902439025,|49.26829268292683,|58.90243902439024,|66.09756097560975,|100
 
 
 

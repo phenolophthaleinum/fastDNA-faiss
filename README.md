@@ -3,16 +3,24 @@
 This needs to be set up correctly, otherwise none of the modules will not work.
 > [GENERAL]
 
-- fastdna_dir = path to fastDNA directory; (should be a version from this repository, because of its enchanced features, then path is following: `./fastDNA/`)
-- active_model = path to a model file (.bin) to be used 
+- ```editorconfig
+    fastdna_dir = path to fastDNA directory; (should be a version from this repository, because of its enchanced features, then path is following: `./fastDNA/`)
+  ```
+- ```editorconfig
+  active_model = path to a model file (.bin) to be used
+  ``` 
 
 > [HOST]
 
-- host_genomes = path to all host genomes fasta files (.fna)
+- ```editorconfig
+  host_genomes = path to all host genomes fasta files (.fna)
+  ```
 
 > [VIRUS]
 
-- virus_genomes = path to all virus genomes fasta files (.fna)
+- ```editorconfig
+  virus_genomes = path to all virus genomes fasta files (.fna)
+  ```
 
 ## Step 1: Model creation - make-model.py module
 - Samples all given host genomes according to chosen taxonomy level or takes whole genome set to create model
@@ -70,12 +78,12 @@ python make-model.py -i /home/hyperscroll/edwards2016/host/fasta/ -o /home/hyper
     │   ├─ samples/
     │   │   └─ host_samples.fasta
     │   └─ vectors/
-    │       └─ host_vectors.txt
+    │       └─ host_vectors.vec
     ├─ rank/
     │   └─ user_defined_rank_name.json
     └─ virus/
         ├─ samples/
-        │   └─ {virus_nbci-id}_vector.txt
+        │   └─ {virus_nbci-id}_vector.vec
         └─ vectors/
             └─ {virus_accession}_samples.fasta
 ```
@@ -83,7 +91,8 @@ python make-model.py -i /home/hyperscroll/edwards2016/host/fasta/ -o /home/hyper
 ```commandline
 python workflow.py -h
 
-usage: workflow.py [-h] -w WD [--host] [--virus] [--full] --length LENGTH --n_vir N_VIR --n_host N_HOST -t THREAD
+usage: workflow.py [-h] -w WD [--host] [--virus] [--full] --length LENGTH -d DIM --n_vir N_VIR --n_host N_HOST -t
+                   THREAD
 
 fastDNA+faiss virus-host interaction analysis
 
@@ -97,6 +106,7 @@ optional arguments:
                         generated in a form of a rank of virus-host pairs.
   --full                Full mode: Combines host and virus mode in one go.
   --length LENGTH       Length of the samples
+  -d DIM, --dim DIM     Dimensionality of vectors
   --n_vir N_VIR         Number of samples to take from a virus genome
   --n_host N_HOST       Number of samples to take from a host genome
   -t THREAD, --thread THREAD
@@ -109,7 +119,7 @@ optional arguments:
 ```commandline
 python faiss_search.py -h
 
-usage: faiss_search.py [-h] -i INPUT_DIR -o OUTPUT -k K_NEAREST -f FAISS_INDEX -m MAP
+usage: faiss_search.py [-h] -i INPUT_DIR -o OUTPUT -d DIM --n_samples N_SAMPLES -k K_NEAREST -f FAISS_INDEX -m MAP
 
 faiss search deployer
 
@@ -119,6 +129,9 @@ optional arguments:
                         Directory with virus samples of vectors.
   -o OUTPUT, --output OUTPUT
                         Path to result file with rankings.
+  -d DIM, --dim DIM     Dimensionality of vectors
+  --n_samples N_SAMPLES
+                        Number of samples from each host genome
   -k K_NEAREST, --k_nearest K_NEAREST
                         How many (k) nearest samples should be found
   -f FAISS_INDEX, --faiss_index FAISS_INDEX

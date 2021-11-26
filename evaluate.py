@@ -6,7 +6,7 @@ from bokeh.models import BasicTicker, ColorBar, LinearColorMapper, PrintfTickFor
 from bokeh.plotting import figure, show
 from bokeh.sampledata.unemployment1948 import data
 
-fh = open('X:/edwards2016/runs/run-dim_60-len_125-n_600-epoch_2-k_7-none_Slim/rank/rank-k_60.json')
+fh = open('X:/edwards2016/runs/run-dim_60-len_125-n_300_600-epoch_2-none_Slim_newEdwards/rank/rank-k_60.json')
 db = json.load(fh)
 fh.close()
 
@@ -70,30 +70,30 @@ for i, tax_rank in enumerate(TAX_RANKS):
     d[tax_rank] = l[i] / len(vjson) * 100
 
 print(d)
-print(data)
-data['Year'] = data['Year'].astype(str)
-data = data.set_index('Year')
-data.drop('Annual', axis=1, inplace=True)
-data.columns.name = 'Month'
-print(data)
-df = pd.DataFrame(data.stack(), columns=['rate']).reset_index()
-print(df)
-d2pd = pd.DataFrame.from_dict(d2, orient='index', columns=list(TAX_RANKS))
-d2pd.index.name = "Virus"
-d2pd.columns.name = "Tax level"
-taxranks = list(d2pd.columns)
-viruses = list(d2pd.index)
-print(d2pd)
-TOOLS = "hover,save,pan,box_zoom,reset,wheel_zoom"
-p = figure(title="fastDNA-faiss predictions matches",
-           x_range=viruses, y_range=taxranks,
-           x_axis_location="above", sizing_mode='stretch_both',
-           tools=TOOLS, toolbar_location='below',
-           tooltips=[('predicted', '@Tax level')])
-colors = ["#75968f", "#550b1d"]
-mapper = LinearColorMapper(palette=colors, low=True, high=False)
-p.rect(x="Virus", y="Tax level", width=1, height=1,
-       source=d2pd,
-       fill_color={'field': 'rate', 'transform': mapper},
-       line_color=None)
-show(p)
+# print(data)
+# data['Year'] = data['Year'].astype(str)
+# data = data.set_index('Year')
+# data.drop('Annual', axis=1, inplace=True)
+# data.columns.name = 'Month'
+# print(data)
+# df = pd.DataFrame(data.stack(), columns=['rate']).reset_index()
+# print(df)
+# d2pd = pd.DataFrame.from_dict(d2, orient='index', columns=list(TAX_RANKS))
+# d2pd.index.name = "Virus"
+# d2pd.columns.name = "Tax level"
+# taxranks = list(d2pd.columns)
+# viruses = list(d2pd.index)
+# print(d2pd)
+# TOOLS = "hover,save,pan,box_zoom,reset,wheel_zoom"
+# p = figure(title="fastDNA-faiss predictions matches",
+#            x_range=viruses, y_range=taxranks,
+#            x_axis_location="above", sizing_mode='stretch_both',
+#            tools=TOOLS, toolbar_location='below',
+#            tooltips=[('predicted', '@Tax level')])
+# colors = ["#75968f", "#550b1d"]
+# mapper = LinearColorMapper(palette=colors, low=True, high=False)
+# p.rect(x="Virus", y="Tax level", width=1, height=1,
+#        source=d2pd,
+#        fill_color={'field': 'rate', 'transform': mapper},
+#        line_color=None)
+# show(p)

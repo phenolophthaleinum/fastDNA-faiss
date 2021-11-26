@@ -1,0 +1,44 @@
+>negative score
+python faiss_search.py -i /home/hyperscroll/edwards2016/runs/run-dim_60-len_125-n_300_600-epoch_2-genus/virus/vectors/ -o /home/hyperscroll/edwards2016/runs/run-dim_60-len_125-n_300_600-epoch_2-genus/rank/rank-k_60.json -k 60 -f /home/hyperscroll/edwards2016/runs/run-dim_60-len_125-n_300_600-epoch_2-genus/host/index/host_index.index -m /home/hyperscroll/edwards2016/runs/run-dim_60-len_125-n_300_600-epoch_2-genus/host/maps/sample_map.json
+[Parallel(n_jobs=-1)]: Using backend LokyBackend with 16 concurrent workers.
+[Parallel(n_jobs=-1)]: Done  18 tasks      | elapsed:   10.8s
+[Parallel(n_jobs=-1)]: Done 168 tasks      | elapsed:  1.5min
+[Parallel(n_jobs=-1)]: Done 418 tasks      | elapsed:  3.5min
+/home/hyperscroll/.local/lib/python3.8/site-packages/joblib/externals/loky/process_executor.py:702: UserWarning: A worker stopped while some jobs were given to the executor. This can be caused by a too short worker timeout or by a memory leak.
+  warnings.warn(
+joblib.externals.loky.process_executor._RemoteTraceback:
+"""
+Traceback (most recent call last):
+  File "/home/hyperscroll/.local/lib/python3.8/site-packages/joblib/externals/loky/process_executor.py", line 436, in _process_worker
+    r = call_item()
+  File "/home/hyperscroll/.local/lib/python3.8/site-packages/joblib/externals/loky/process_executor.py", line 288, in __call__
+    return self.fn(*self.args, **self.kwargs)
+  File "/home/hyperscroll/.local/lib/python3.8/site-packages/joblib/_parallel_backends.py", line 595, in __call__
+    return self.func(*args, **kwargs)
+  File "/home/hyperscroll/.local/lib/python3.8/site-packages/joblib/parallel.py", line 262, in __call__
+    return [func(*args, **kwargs)
+  File "/home/hyperscroll/.local/lib/python3.8/site-packages/joblib/parallel.py", line 262, in <listcomp>
+    return [func(*args, **kwargs)
+  File "faiss_search.py", line 59, in do_search
+    raise ValueError(f"Negative score: {score}; index: {index}; distance: {distance}")
+ValueError: Negative score: -2.913420615170331; index: NC_012960; distance: 18.405354
+"""
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "faiss_search.py", line 113, in <module>
+    run_procedure(args.input_dir, args.output, args.k_nearest, args.faiss_index, args.map)
+  File "faiss_search.py", line 77, in run_procedure
+    ranks = Parallel(verbose=True, n_jobs=-1)(
+  File "/home/hyperscroll/.local/lib/python3.8/site-packages/joblib/parallel.py", line 1056, in __call__
+    self.retrieve()
+  File "/home/hyperscroll/.local/lib/python3.8/site-packages/joblib/parallel.py", line 935, in retrieve
+    self._output.extend(job.get(timeout=self.timeout))
+  File "/home/hyperscroll/.local/lib/python3.8/site-packages/joblib/_parallel_backends.py", line 542, in wrap_future_result
+    return future.result(timeout=timeout)
+  File "/home/hyperscroll/anaconda3/lib/python3.8/concurrent/futures/_base.py", line 439, in result
+    return self.__get_result()
+  File "/home/hyperscroll/anaconda3/lib/python3.8/concurrent/futures/_base.py", line 388, in __get_result
+    raise self._exception
+ValueError: Negative score: -2.913420615170331; index: NC_012960; distance: 18.405354

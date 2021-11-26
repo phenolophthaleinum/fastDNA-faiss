@@ -98,7 +98,7 @@ if __name__ == "__main__":
     #     delayed(copy_parallel)(f"D:\\edwards2016\\host\\fasta\\{file}.fna",
     #                            f"D:\\edwards2016\\host\\fasta-species-rep_1\\{file}.fna") for file in filenames)
     for file in filenames:
-        copy_parallel(f"D:\\edwards2016\\host\\fasta\\{file}.fna", f"D:\\edwards2016\\host\\fasta-species-rep_1\\{file}.fna")
+        copy_parallel(f"X:\\edwards2016\\host\\fasta\\{file}.fna", f"X:\\edwards2016\\host\\fasta-species-rep_1\\{file}.fna")
 
     end = timer()
     runtime = end - start

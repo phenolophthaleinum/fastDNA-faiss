@@ -30,9 +30,14 @@ from colorama import Fore, init
 # print(json.dumps(final_rank, indent=4))
 
 
-def do_search(file: str, k_nearest: str, index: object, map_data: Dict[int, str]) -> Dict[str, List[Tuple[str, float]]]:
-    query = np.loadtxt(file, dtype="float32")
-    dim = np.shape(query)[1]
+def do_search(file: str, dim: int, n_samples: int, k_nearest: str, index: object, map_data: Dict[int, str]) -> Dict[str, List[Tuple[str, float]]]:
+    # with txt file;
+    # query = np.loadtxt(file, dtype="float32")
+    # dim = np.shape(query)[1]
+    # with binary:
+    query = np.fromfile(file, dtype="float32")
+    #n_host = query.size / (n_samples * dim)
+    query = query.reshape(n_samples, dim)
     hyper = 2 * math.sqrt(dim)
     #index = faiss.read_index(faiss_index)
     distances, indices = index.search(query, int(k_nearest))
@@ -40,7 +45,7 @@ def do_search(file: str, k_nearest: str, index: object, map_data: Dict[int, str]
     classification = np.vectorize(map_data.get)(indices)
     #ranks = []
     pre_rank = defaultdict(list)
-    # DONE new scoring method (diagonal of a hypercube) - ??
+    # DONE new scoring method (diagonal of a hypercube)
     # TODO filter scores for each sample to only contain scores from unique host
     # DONE raise error to see where negative scores appear - probably no errors (i will be sure if i test on better machine)
     # print(f"Max dist: {distances.max()}")
@@ -53,10 +58,11 @@ def do_search(file: str, k_nearest: str, index: object, map_data: Dict[int, str]
         # hyper - dist
 
         score = hyper - float(distance)
-        if score >= 0:
-            pre_rank[index].append(score)
-        else:
-            raise ValueError(f"Negative score: {score}; index: {index}; distance: {distance}")
+        pre_rank[index].append(score)
+        # if score >= 0:
+        #     pre_rank[index].append(score)
+        # else:
+        #     raise ValueError(f"Negative score: {score}; index: {index}; distance: {distance}")
 
     sum_rank = {key: sum(values) for key, values in pre_rank.items()}
     ranks = sum_rank.items()
@@ -65,7 +71,7 @@ def do_search(file: str, k_nearest: str, index: object, map_data: Dict[int, str]
     #global_rank.update(part)
 
 
-def run_procedure(input_dir, output, k_nearest, faiss_index, map):
+def run_procedure(input_dir, output, k_nearest, dim, n_samples, faiss_index, map):
     # colorama
     init()
 
@@ -75,7 +81,10 @@ def run_procedure(input_dir, output, k_nearest, faiss_index, map):
         map_data = {int(key): value for key, value in json.load(fh).items()}
     index = faiss.read_index(faiss_index)
     ranks = Parallel(verbose=True, n_jobs=-1)(
-        delayed(do_search)(file, k_nearest, index, map_data) for file in glob.glob(f"{input_dir}*.txt"))
+            delayed(do_search)(file, dim, n_samples, k_nearest, index, map_data) for file in glob.glob(f"{input_dir}*.vec"))
+    # txt version
+    # ranks = Parallel(verbose=True, n_jobs=-1)(
+    #     delayed(do_search)(file, k_nearest, index, map_data) for file in glob.glob(f"{input_dir}*.txt"))
     for result in ranks:
         global_rank.update(result)
     with open(output, "w") as fd:
@@ -98,8 +107,10 @@ if __name__ == "__main__":
                         help="Directory with virus samples of vectors.")
     parser.add_argument("-o", "--output", required=True,
                         help="Path to result file with rankings.")
-    # parser.add_argument("-d", "-dim", required=True,
-    #                     help="Dimensionality of vectors")
+    parser.add_argument("-d", "--dim", required=True,
+                        help="Dimensionality of vectors")
+    parser.add_argument("--n_samples", required=True,
+                        help="Number of samples from each host genome")
     parser.add_argument("-k", "--k_nearest", required=True,
                         help="How many (k) nearest samples should be found")
     parser.add_argument("-f", "--faiss_index", required=True,
@@ -110,4 +121,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     global_rank = {}
-    run_procedure(args.input_dir, args.output, args.k_nearest, args.faiss_index, args.map)
+    run_procedure(args.input_dir, args.output, args.k_nearest, int(args.dim), int(args.n_samples), args.faiss_index, args.map)
