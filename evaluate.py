@@ -6,7 +6,7 @@ from bokeh.models import BasicTicker, ColorBar, LinearColorMapper, PrintfTickFor
 from bokeh.plotting import figure, show
 from bokeh.sampledata.unemployment1948 import data
 
-fh = open('X:/edwards2016/runs/run-dim_60-len_125-n_300_600-epoch_2-none_Slim_newEdwards/rank/rank-k_60.json')
+fh = open('X:/edwards2016/runs/run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim/rank/rank-k_60-sqrt-test.json')
 db = json.load(fh)
 fh.close()
 

@@ -42,3 +42,172 @@ Traceback (most recent call last):
   File "/home/hyperscroll/anaconda3/lib/python3.8/concurrent/futures/_base.py", line 388, in __get_result
     raise self._exception
 ValueError: Negative score: -2.913420615170331; index: NC_012960; distance: 18.405354
+
+>negative score: run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim
+Negative score: -0.000587615170331901; virus, host: ('NC_021866', 'NC_018610'); distance: 15.492521
+
+Negative score: -0.018642615170332277; virus, host: ('NC_021866', 'NC_010519'); distance: 15.510576
+
+Negative score: -0.04234161517033108; virus, host: ('NC_021866', 'NC_015458'); distance: 15.534275
+
+Negative score: -0.04469961517033205; virus, host: ('NC_021866', 'NC_017445'); distance: 15.536633
+
+Negative score: -0.06116761517033176; virus, host: ('NC_021866', 'NC_017503'); distance: 15.553101
+
+Negative score: -0.09604861517033214; virus, host: ('NC_021866', 'NC_015733'); distance: 15.587982
+
+Negative score: -0.11317161517033192; virus, host: ('NC_021866', 'NC_011059'); distance: 15.605105
+
+Negative score: -0.1550221151703326; virus, host: ('NC_021866', 'NC_017328'); distance: 15.6469555
+
+Negative score: -0.16017761517033158; virus, host: ('NC_021866', 'NC_019936'); distance: 15.652111
+
+Negative score: -0.18922261517033157; virus, host: ('NC_021866', 'NC_018406'); distance: 15.681156
+
+Negative score: -0.1918776151703323; virus, host: ('NC_021866', 'NC_022040'); distance: 15.683811
+
+Negative score: -0.19603061517033105; virus, host: ('NC_021866', 'NC_009482'); distance: 15.687964
+
+Negative score: -0.20098761517033203; virus, host: ('NC_021866', 'NC_017068'); distance: 15.692921
+
+Negative score: -0.20713161517033107; virus, host: ('NC_021866', 'NC_018525'); distance: 15.699065
+
+Negative score: -0.20917061517033275; virus, host: ('NC_021866', 'NC_006270'); distance: 15.701104
+
+Negative score: -0.23802061517033124; virus, host: ('NC_021866', 'NC_013961'); distance: 15.729954
+
+Negative score: -0.24352861517033197; virus, host: ('NC_021866', 'NC_017317'); distance: 15.735462
+
+Negative score: -0.25654961517033215; virus, host: ('NC_021866', 'NC_017215'); distance: 15.748483
+
+Negative score: -0.2625576151703317; virus, host: ('NC_021866', 'NC_013166'); distance: 15.754491
+
+Negative score: -0.26434261517033164; virus, host: ('NC_021866', 'NC_014727'); distance: 15.756276
+
+Negative score: -0.2644666151703312; virus, host: ('NC_021866', 'NC_021738'); distance: 15.7564
+
+Negative score: -0.27599561517033244; virus, host: ('NC_021866', 'NC_017455'); distance: 15.767929
+
+Negative score: -0.2953996151703322; virus, host: ('NC_021866', 'NC_015428'); distance: 15.787333
+
+Negative score: -0.31310561517033264; virus, host: ('NC_021866', 'NC_020540'); distance: 15.805039
+
+Negative score: -0.33820961517033155; virus, host: ('NC_021866', 'NC_012968'); distance: 15.830143
+
+Negative score: -0.3385696151703321; virus, host: ('NC_021866', 'NC_008789'); distance: 15.830503
+
+Negative score: -0.3444316151703326; virus, host: ('NC_021866', 'NC_014541'); distance: 15.836365
+
+Negative score: -0.3612566151703316; virus, host: ('NC_021866', 'NC_006177'); distance: 15.85319
+
+Negative score: -0.3622536151703315; virus, host: ('NC_021866', 'NC_013198'); distance: 15.854187
+
+Negative score: -0.3657386151703328; virus, host: ('NC_021866', 'NC_015516'); distance: 15.857672
+
+Negative score: -0.3734646151703327; virus, host: ('NC_021866', 'NC_017474'); distance: 15.865398
+
+Negative score: -0.37825461517033254; virus, host: ('NC_021866', 'NC_020938'); distance: 15.870188
+
+Negative score: -0.11615561517033157; virus, host: ('NC_021866', 'NC_016613'); distance: 15.608089
+
+Negative score: -0.17665161517033212; virus, host: ('NC_021866', 'NC_004829'); distance: 15.668585
+
+Negative score: -0.27897361517033126; virus, host: ('NC_021866', 'NC_006832'); distance: 15.770907
+
+Negative score: -0.3383956151703327; virus, host: ('NC_021866', 'NC_013971'); distance: 15.830329
+
+Negative score: -0.38997161517033163; virus, host: ('NC_021866', 'NC_003098'); distance: 15.881905
+
+Negative score: -0.5153586151703315; virus, host: ('NC_021866', 'NC_016620'); distance: 16.007292
+
+Negative score: -0.5263616151703303; virus, host: ('NC_021866', 'NC_018592'); distance: 16.018295
+
+Negative score: -0.6845426151703329; virus, host: ('NC_021866', 'NC_009439'); distance: 16.176476
+
+Negative score: -0.7363226151703302; virus, host: ('NC_021866', 'NC_014378'); distance: 16.228256
+
+Negative score: -0.7436356151703336; virus, host: ('NC_021866', 'NC_012491'); distance: 16.235569
+
+Negative score: -0.8444636151703335; virus, host: ('NC_021866', 'NC_018609'); distance: 16.336397
+
+Negative score: -0.869531615170331; virus, host: ('NC_021866', 'NC_017033'); distance: 16.361465
+
+Negative score: -0.8701576151703314; virus, host: ('NC_021866', 'NC_014552'); distance: 16.362091
+
+Negative score: -0.9058166151703304; virus, host: ('NC_021866', 'NC_014758'); distance: 16.39775
+
+Negative score: -0.9202296151703315; virus, host: ('NC_021866', 'NC_022794'); distance: 16.412163
+
+Negative score: -0.9334816151703329; virus, host: ('NC_021866', 'NC_013361'); distance: 16.425415
+
+Negative score: -0.9571256151703302; virus, host: ('NC_021866', 'NC_015458'); distance: 16.449059
+
+Negative score: -0.9611516151703334; virus, host: ('NC_021866', 'NC_017582'); distance: 16.453085
+
+Negative score: -0.976074615170333; virus, host: ('NC_021866', 'NC_012659'); distance: 16.468008
+
+Negative score: -0.9833516151703314; virus, host: ('NC_021866', 'NC_016829'); distance: 16.475285
+
+Negative score: -1.0156506151703333; virus, host: ('NC_021866', 'NC_010519'); distance: 16.507584
+
+Negative score: -1.0191996151703329; virus, host: ('NC_021866', 'NC_014371'); distance: 16.511133
+
+Negative score: -1.022878615170331; virus, host: ('NC_021866', 'NC_018610'); distance: 16.514812
+
+Negative score: -1.0544136151703327; virus, host: ('NC_021866', 'NC_017445'); distance: 16.546347
+
+Negative score: -1.1034336151703314; virus, host: ('NC_021866', 'NC_017503'); distance: 16.595367
+
+Negative score: -1.1408676151703325; virus, host: ('NC_021866', 'NC_015733'); distance: 16.632801
+
+Negative score: -1.1511866151703316; virus, host: ('NC_021866', 'NC_011059'); distance: 16.64312
+
+Negative score: -1.1928356151703312; virus, host: ('NC_021866', 'NC_018525'); distance: 16.684769
+
+Negative score: -1.2149506151703307; virus, host: ('NC_021866', 'NC_019936'); distance: 16.706884
+
+Negative score: -1.218359615170332; virus, host: ('NC_021866', 'NC_022040'); distance: 16.710293
+
+Negative score: -1.2221166151703322; virus, host: ('NC_021866', 'NC_018406'); distance: 16.71405
+
+Negative score: -1.222891615170333; virus, host: ('NC_021866', 'NC_017328'); distance: 16.714825
+
+Negative score: -1.248388615170331; virus, host: ('NC_021866', 'NC_014727'); distance: 16.740322
+
+Negative score: -1.2501966151703314; virus, host: ('NC_021866', 'NC_009482'); distance: 16.74213
+
+Negative score: -1.2584866151703302; virus, host: ('NC_021866', 'NC_017068'); distance: 16.75042
+
+Negative score: -1.2596706151703323; virus, host: ('NC_021866', 'NC_017317'); distance: 16.751604
+
+Negative score: -1.267870615170331; virus, host: ('NC_021866', 'NC_021738'); distance: 16.759804
+
+Negative score: -1.268068615170332; virus, host: ('NC_021866', 'NC_006270'); distance: 16.760002
+
+Negative score: -1.2729246151703322; virus, host: ('NC_021866', 'NC_020540'); distance: 16.764858
+
+Negative score: -1.3015846151703307; virus, host: ('NC_021866', 'NC_017455'); distance: 16.793518
+
+Negative score: -1.3103856151703326; virus, host: ('NC_021866', 'NC_015428'); distance: 16.802319
+
+Negative score: -1.313755615170333; virus, host: ('NC_021866', 'NC_013961'); distance: 16.805689
+
+Negative score: -1.334858615170333; virus, host: ('NC_021866', 'NC_012968'); distance: 16.826792
+
+Negative score: -1.3381356151703336; virus, host: ('NC_021866', 'NC_013166'); distance: 16.830069
+
+Negative score: -1.3414066151703317; virus, host: ('NC_021866', 'NC_017215'); distance: 16.83334
+
+Negative score: -1.3614296151703336; virus, host: ('NC_021866', 'NC_014552'); distance: 16.853363
+
+Negative score: -1.3947946151703334; virus, host: ('NC_021866', 'NC_018016'); distance: 16.886728
+
+Negative score: -1.3960446151703323; virus, host: ('NC_021866', 'NC_015516'); distance: 16.887978
+
+Negative score: -1.4059926151703301; virus, host: ('NC_021866', 'NC_013198'); distance: 16.897926
+
+Negative score: -1.408064615170332; virus, host: ('NC_021866', 'NC_006177'); distance: 16.899998
+
+Negative score: -1.4166246151703312; virus, host: ('NC_021866', 'NC_014541'); distance: 16.908558
+
+Negative score: -1.4224916151703333; virus, host: ('NC_021866', 'NC_014618'); distance: 16.914425

@@ -46,23 +46,62 @@ def do_search(file: str, dim: int, n_samples: int, k_nearest: str, index: object
     #ranks = []
     pre_rank = defaultdict(list)
     # DONE new scoring method (diagonal of a hypercube)
-    # TODO filter scores for each sample to only contain scores from unique host
+    # TODO filter scores for each sample to only contain scores from unique host (take only best; if there will be less than 60 distance - no problem) - maybe DONE
     # DONE raise error to see where negative scores appear - probably no errors (i will be sure if i test on better machine)
     # print(f"Max dist: {distances.max()}")
     # print(f"Min dist: {distances.min()}")
-
-    for index, distance in np.stack((classification.flatten(), distances.flatten()), axis=1):
+    # print(np.stack((classification.flatten(), distances.flatten()), axis=1))
+    # print(np.stack((classification.flatten(), distances.flatten()), axis=1).shape[0])
+    current_sample = 0
+    enum = 0
+    dict_sample = defaultdict(list)
+    # no filtering
+    # for idx, distance, in np.stack((classification.flatten(), distances.flatten()), axis=1):
+    #     #ranks.append((index, 2 - float(distance))) # this is wrong
+    #     # 2 - dist
+    #     #pre_rank[index].append(2 - float(distance))
+    #     # hyper - dist
+    #     # TODO check faiss metrics or take vectors and compute by yourself
+    #     # TODO max dla modelu + ewentualnie violin plot z pewnego pozbioru wartosci
+    #     # no sqrt on distance
+    #     #score = hyper - float(distance)
+    #     # sqrt on dist
+    #     if enum % dim == 0:
+    #         current_sample += 1
+    #     print(f"Sample: {current_sample}")
+    #     score = hyper - math.sqrt(float(distance))
+    #     pre_rank[idx].append(score)
+    #     if score < 0:
+    #         print(f"Negative score: {score}; virus, host: {('_'.join(file.split('/')[-1].split('.')[0].split('_')[:2]), idx)}; distance: {distance}\n")
+    #     # if score >= 0:
+    #     #     pre_rank[index].append(score)
+    #     # else:
+    #     #     raise ValueError(f"Negative score: {score}; index: {index}; distance: {distance}")
+    #     enum += 1
+    # filtering
+    for idx, distance, in np.stack((classification.flatten(), distances.flatten()), axis=1):
         #ranks.append((index, 2 - float(distance))) # this is wrong
         # 2 - dist
         #pre_rank[index].append(2 - float(distance))
         # hyper - dist
-
-        score = hyper - float(distance)
-        pre_rank[index].append(score)
+        # TODO check faiss metrics or take vectors and compute by yourself - moze niepotrzebne
+        # TODO max dla modelu + ewentualnie violin plot z pewnego pozbioru wartosci
+        # no sqrt on distance
+        #score = hyper - float(distance)
+        # sqrt on dist
+        score = hyper - math.sqrt(float(distance))
+        if score < 0:
+            print(f"Negative score: {score}; virus, host: {('_'.join(file.split('/')[-1].split('.')[0].split('_')[:2]), idx)}; distance: {distance}\n")
+        dict_sample[idx].append(score)
+        if (enum % dim == 0) and (enum > 0):
+            for host in dict_sample:
+                pre_rank[idx].append(max(dict_sample[host]))
+            dict_sample.clear()
         # if score >= 0:
         #     pre_rank[index].append(score)
         # else:
         #     raise ValueError(f"Negative score: {score}; index: {index}; distance: {distance}")
+        enum += 1
 
     sum_rank = {key: sum(values) for key, values in pre_rank.items()}
     ranks = sum_rank.items()
