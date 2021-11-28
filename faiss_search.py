@@ -11,6 +11,8 @@ from joblib import Parallel, delayed
 from timeit import default_timer as timer
 from colorama import Fore, init
 
+# import holoviews as hv
+# from holoviews import dim, opts
 # dim = 10
 # k_nearest = 10
 # query = np.loadtxt("/home/hyperscroll/fastDNA/virus_vectors.txt", dtype="float32")
@@ -55,6 +57,7 @@ def do_search(file: str, dim: int, n_samples: int, k_nearest: str, index: object
     current_sample = 0
     enum = 0
     dict_sample = defaultdict(list)
+    dict_data = defaultdict(list)
     # no filtering
     # for idx, distance, in np.stack((classification.flatten(), distances.flatten()), axis=1):
     #     #ranks.append((index, 2 - float(distance))) # this is wrong
@@ -96,7 +99,14 @@ def do_search(file: str, dim: int, n_samples: int, k_nearest: str, index: object
         if (enum % dim == 0) and (enum > 0):
             for host in dict_sample:
                 pre_rank[idx].append(max(dict_sample[host]))
+                    # dictionary = {f"Host: {h}": hv.Scatter(scores) for h, scores in dict_data.items()}
+                    # hv.HoloMap(dictionary, kdims="Host")
             dict_sample.clear()
+        if "_".join(file.split("/")[-1].split(".")[0].split("_")[:2]) == "NC_000866" and enum >= 35999:
+            # dictionary = {f"Host: {h}": hv.Scatter(scores) for h, scores in dict_data.items()}
+            # hv.HoloMap(dictionary, kdims="Host")
+            with open("NC_000866_plot_data.json", "w") as f:
+                json.dump(pre_rank, f)
         # if score >= 0:
         #     pre_rank[index].append(score)
         # else:
