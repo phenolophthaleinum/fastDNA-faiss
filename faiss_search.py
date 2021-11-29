@@ -55,7 +55,7 @@ def do_search(file: str, dim: int, n_samples: int, k_nearest: str, index: object
     # print(np.stack((classification.flatten(), distances.flatten()), axis=1))
     # print(np.stack((classification.flatten(), distances.flatten()), axis=1).shape[0])
     current_sample = 0
-    enum = 0
+    enum = 1
     dict_sample = defaultdict(list)
     dict_data = defaultdict(list)
     # no filtering
@@ -92,17 +92,18 @@ def do_search(file: str, dim: int, n_samples: int, k_nearest: str, index: object
         # no sqrt on distance
         #score = hyper - float(distance)
         # sqrt on dist
-        score = hyper - math.sqrt(float(distance))
+        #score = hyper - math.sqrt(float(distance))
+        score = 1 - math.sqrt(float(distance))
         if score < 0:
             print(f"Negative score: {score}; virus, host: {('_'.join(file.split('/')[-1].split('.')[0].split('_')[:2]), idx)}; distance: {distance}\n")
         dict_sample[idx].append(score)
-        if (enum % dim == 0) and (enum > 0):
+        if (enum % dim == 0):
             for host in dict_sample:
                 pre_rank[idx].append(max(dict_sample[host]))
                     # dictionary = {f"Host: {h}": hv.Scatter(scores) for h, scores in dict_data.items()}
                     # hv.HoloMap(dictionary, kdims="Host")
             dict_sample.clear()
-        if "_".join(file.split("/")[-1].split(".")[0].split("_")[:2]) == "NC_000866" and enum >= 35999:
+        if "_".join(file.split("/")[-1].split(".")[0].split("_")[:2]) == "NC_000866" and enum == 36000:
             # dictionary = {f"Host: {h}": hv.Scatter(scores) for h, scores in dict_data.items()}
             # hv.HoloMap(dictionary, kdims="Host")
             with open("NC_000866_plot_data.json", "w") as f:

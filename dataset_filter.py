@@ -50,11 +50,11 @@ def tax_filtering(filter: str, reps: int) -> List[str]:
         filter_host[level].append(host)
 
     # optionally show original dataset composition
-    # counts = []
-    # for key in filter_host:
-    #     counts.append((key, len(filter_host[key])))
-    # counts.sort(key=lambda x: x[1], reverse=True)
-    # print(counts)
+    counts = []
+    for key in filter_host:
+        counts.append((key, len(filter_host[key])))
+    counts.sort(key=lambda x: x[1], reverse=True)
+    print(counts)
 
     # print(f"{key}: {len(filter_host[key])}")
     # print(filter_host.items())
@@ -97,8 +97,8 @@ if __name__ == "__main__":
     # par = Parallel(n_jobs=-1, verbose=11, pre_dispatch='all', batch_size="auto", backend="loky")(
     #     delayed(copy_parallel)(f"D:\\edwards2016\\host\\fasta\\{file}.fna",
     #                            f"D:\\edwards2016\\host\\fasta-species-rep_1\\{file}.fna") for file in filenames)
-    for file in filenames:
-        copy_parallel(f"X:\\edwards2016\\host\\fasta\\{file}.fna", f"X:\\edwards2016\\host\\fasta-species-rep_1\\{file}.fna")
+    # for file in filenames:
+    #     copy_parallel(f"D:\\edwards2016\\host\\fasta\\{file}.fna", f"D:\\edwards2016\\host\\fasta-species-rep_1\\{file}.fna")
 
     end = timer()
     runtime = end - start
