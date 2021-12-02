@@ -31,7 +31,9 @@ from colorama import Fore, init
 # final_rank = dict(sorted(sum_rank.items(), key=lambda elem: elem[1], reverse=True))
 # print(json.dumps(final_rank, indent=4))
 
-
+# TODO prepraracja przykladu [-1,..., -1] x [1, ..., 1] dim=60 do faissa i dac surowe dystanse
+# TODO wyszukac blad z ucinaniem jsona
+# test paralelizmu nadal
 def do_search(file: str, dim: int, n_samples: int, k_nearest: str, index: object, map_data: Dict[int, str]) -> Dict[str, List[Tuple[str, float]]]:
     # with txt file;
     # query = np.loadtxt(file, dtype="float32")
@@ -46,10 +48,8 @@ def do_search(file: str, dim: int, n_samples: int, k_nearest: str, index: object
     #distances, indices = faiss_index.search(query, int(k_nearest))
     classification = np.vectorize(map_data.get)(indices)
     #ranks = []
+    coef = 1 / (4 * dim)
     pre_rank = defaultdict(list)
-    # DONE new scoring method (diagonal of a hypercube)
-    # TODO filter scores for each sample to only contain scores from unique host (take only best; if there will be less than 60 distance - no problem) - maybe DONE
-    # DONE raise error to see where negative scores appear - probably no errors (i will be sure if i test on better machine)
     # print(f"Max dist: {distances.max()}")
     # print(f"Min dist: {distances.min()}")
     # print(np.stack((classification.flatten(), distances.flatten()), axis=1))
@@ -64,8 +64,6 @@ def do_search(file: str, dim: int, n_samples: int, k_nearest: str, index: object
     #     # 2 - dist
     #     #pre_rank[index].append(2 - float(distance))
     #     # hyper - dist
-    #     # TODO check faiss metrics or take vectors and compute by yourself
-    #     # TODO max dla modelu + ewentualnie violin plot z pewnego pozbioru wartosci
     #     # no sqrt on distance
     #     #score = hyper - float(distance)
     #     # sqrt on dist
@@ -83,17 +81,17 @@ def do_search(file: str, dim: int, n_samples: int, k_nearest: str, index: object
     #     enum += 1
     # filtering
     for idx, distance, in np.stack((classification.flatten(), distances.flatten()), axis=1):
+
         #ranks.append((index, 2 - float(distance))) # this is wrong
         # 2 - dist
         #pre_rank[index].append(2 - float(distance))
         # hyper - dist
-        # TODO check faiss metrics or take vectors and compute by yourself - moze niepotrzebne
-        # TODO max dla modelu + ewentualnie violin plot z pewnego pozbioru wartosci
         # no sqrt on distance
         #score = hyper - float(distance)
         # sqrt on dist
         #score = hyper - math.sqrt(float(distance))
-        score = 1 - math.sqrt(float(distance))
+        #score = 1 - math.sqrt(float(distance))
+        score = float(distance) * coef
         if score < 0:
             print(f"Negative score: {score}; virus, host: {('_'.join(file.split('/')[-1].split('.')[0].split('_')[:2]), idx)}; distance: {distance}\n")
         dict_sample[idx].append(score)
@@ -130,7 +128,7 @@ def run_procedure(input_dir, output, k_nearest, dim, n_samples, faiss_index, map
     with open(map, "r") as fh:
         map_data = {int(key): value for key, value in json.load(fh).items()}
     index = faiss.read_index(faiss_index)
-    ranks = Parallel(verbose=True, n_jobs=-1)(
+    ranks = Parallel(verbose=True, n_jobs=-1, prefer="threads")(
             delayed(do_search)(file, dim, n_samples, k_nearest, index, map_data) for file in glob.glob(f"{input_dir}*.vec"))
     # txt version
     # ranks = Parallel(verbose=True, n_jobs=-1)(

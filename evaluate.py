@@ -2,11 +2,11 @@ import argparse
 import json
 from pathlib import Path
 import pandas as pd
-from bokeh.models import BasicTicker, ColorBar, LinearColorMapper, PrintfTickFormatter
-from bokeh.plotting import figure, show
-from bokeh.sampledata.unemployment1948 import data
+# from bokeh.models import BasicTicker, ColorBar, LinearColorMapper, PrintfTickFormatter
+# from bokeh.plotting import figure, show
+# from bokeh.sampledata.unemployment1948 import data
 
-fh = open('X:/edwards2016/runs/run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim/rank/rank-k_60-sqrt-test.json')
+fh = open('D:/edwards2016/runs/run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim/rank/rank-k_60-sqrt-test.json')
 db = json.load(fh)
 fh.close()
 
