@@ -211,3 +211,56 @@ Negative score: -1.408064615170332; virus, host: ('NC_021866', 'NC_006177'); dis
 Negative score: -1.4166246151703312; virus, host: ('NC_021866', 'NC_014541'); distance: 16.908558
 
 Negative score: -1.4224916151703333; virus, host: ('NC_021866', 'NC_014618'); distance: 16.914425
+
+ [[0.33, 0.232, 0.4545]
+  [0.43, 0.44, 0.1]
+  [0.25, 0.2, 0.4]
+  [0.1, 0.21, 0.31]]
+
+ [[1, 2, 3]
+  [2, 2, 0]
+  [3, 3, 1]
+  [0, 1, 2]]
+Chyba zrozumiałem na czym polega problem ucinającego się jsona.
+
+Generalnie to co zwraca faiss to jest to macierz dystansów i indeksów o wielkości n_samples x k-nearest, zatem dla testowego przykładu jest to 600x60, zatem jest łącznie 36000 dystansów. Wśród indeksów znajduje się w każdym wierszu 60 najbliższych wektorów hosta do danej próbki wirusowej, które mogą się powtarzać. Taka sytuacja natomiast nie musi występować w dystansach, ponieważ powtarzające się wystąpienia hosta mogą mieć inne wartości. Pomysł był taki, aby brać wartości maksymalne dla każdego hosta znajdującego się w k-nearest. To wszystko jak najbardziej działa, ale powoduje, że zmniejszamy ilość branych pod uwagę ostatecznie ilościowo hostów. Wiem, że pokrętny opis, dlatego pokażę to na przykładzie:
+
+distances =
+
+[[0.33, 0.232, 0.4545]
+ [0.43, 0.44, 0.1]
+ [0.25, 0.2, 0.4]
+ [0.1, 0.21, 0.31]]
+(kolejność jest prawdopodobnie malejąca w wyniku faissa, ale to tutaj nieistotne)
+
+indices =
+[[1, 2, 3]
+ [2, 2, 0]
+ [3, 3, 1]
+ [0, 1, 2]]
+
+Teraz, biorąc maksymalne wartości dla każdego dopasowanego hosta w każdej próbce, otrzymamy takie słowniki dystansów:
+d1 = {
+    1: [0.33]
+    2: [0.232]
+    3: [0.4545]
+}
+d2 = {
+    0: [0.1]
+    2: [0.44]
+}
+d3 = {
+    1: [0.4]
+    3: [0.25]
+}
+d4 = {
+    0: [0.1]
+    1: [0.21]
+    2: [0.31]
+}
+Widać, że wielkości tych słowników są różne, co nie miałoby miejsca w starym sposobie liczenia i wyciągania dystansów, ponieważ tam braliśmy zawsze całe k-nearest.
+Czyli poprzednio byłoby w każdym takim słowniku po 3 klucze, a teraz jest 3,2,2,3 i dokładnie w taki sposób są tracone te obliczenia. Zwykle to są małe wartości, ale
+konsekwentnie zawsze parę kluczy ucieka - przykładowy output z żywego przypadku:
+
+
+Tldr; kod jest dobry, zgodnie z tym jak miało być, ale przez moje niedopatrzenie nie uprzedziłem, że może tak być, że będą wyrzucane pewne k-nearesty. Pytanie co teraz?
