@@ -17,7 +17,7 @@ from colorama import Fore, init
 
 
 # @delayed
-@wrap_non_picklable_objects
+# @wrap_non_picklable_objects
 def do_search(file: str, dim: int, n_samples: int, k_nearest: int, index: faiss.IndexFlatL2,
               map_data: Dict[int, str]) -> Dict[str, List[Tuple[str, float]]]:
     """
@@ -29,8 +29,8 @@ def do_search(file: str, dim: int, n_samples: int, k_nearest: int, index: faiss.
         index (IndexFlatL2): faiss index object to be searched
         map_data (dict[int, str]): dictionary describing index - genome_name relations
 
-    Returns:
-        dict: dictionary of viruses with assigned list of the nearest hosts ranked by summed up scores (sum of scores 0-1 for each matched query sample) in a descending order
+    Returns: dict: dictionary of viruses with assigned list of the nearest hosts ranked by summed up scores (sum of
+    scores 0-1 for each matched query sample) in a descending order
     """
     query = np.fromfile(file, dtype="float32")
     query = query.reshape(n_samples, dim)

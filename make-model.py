@@ -15,15 +15,14 @@ import utils
 import os
 from colorama import Fore, init
 
-
 all_tax_levels = {
     "superkingdom": 0,
-     "phylum": 1,
-     "class": 2,
-     "order": 3,
-     "family": 4,
-     "genus": 5,
-     "species": 6
+    "phylum": 1,
+    "class": 2,
+    "order": 3,
+    "family": 4,
+    "genus": 5,
+    "species": 6
 }
 
 # importing json data about hosts
@@ -82,7 +81,8 @@ def no_filtering(input_dir: str) -> Tuple[List[str], List[str]]:
     return filenames, labels
 
 
-def main_procedure(input_dir, out_dir, filter, dim, length, minn, maxn, epoch, thread, reps, rm, save_vec):
+def main_procedure(input_dir: str, out_dir: str, filter: str, dim: str, length: str, minn: str, maxn: str, epoch: str,
+                   thread: str, reps: int, rm: bool, save_vec: bool):
     # colorama
     init()
 
@@ -98,12 +98,13 @@ def main_procedure(input_dir, out_dir, filter, dim, length, minn, maxn, epoch, t
         filenames, labels = no_filtering(input_dir)
 
     # parse selected files and merge them into single fasta file; create labels file
-    #records = [list(SeqIO.parse(f"D:/praktyki2020/edwards2016/host/fasta/{file}.fna", "fasta"))[0] for file in filenames]
+    # records = [list(SeqIO.parse(f"D:/praktyki2020/edwards2016/host/fasta/{file}.fna", "fasta"))[0] for file in filenames]
     # for file, label in zip(filenames, labels):
     #     print(f"{file} - {label}")
 
-    par = Parallel(n_jobs=-1, verbose=11, pre_dispatch='all', batch_size="auto", backend="loky")(delayed(fasta_parallel)(f"{input_dir}{file}.fna") for file in filenames)
-    #print(par)
+    par = Parallel(n_jobs=-1, verbose=11, pre_dispatch='all', batch_size="auto", backend="loky")(
+        delayed(fasta_parallel)(f"{input_dir}{file}.fna") for file in filenames)
+    # print(par)
     # print(len(records))
     # print(records)
 
@@ -119,12 +120,14 @@ def main_procedure(input_dir, out_dir, filter, dim, length, minn, maxn, epoch, t
     # run fastDNA training
     model_file = f"random_model-{filter}-dim_{dim}-len_{length}-epoch{epoch}"
     if save_vec:
-        os.system(f"{config['GENERAL']['fastdna_dir']}fastdna supervised -input {out_dir}{filtered_fasta_file} -labels {out_dir}{labels_file} -output {out_dir}{model_file} -dim {dim} -length {length} -minn {minn} -maxn {maxn} -epoch {epoch} -thread {thread} -saveVec")
+        os.system(
+            f"{config['GENERAL']['fastdna_dir']}fastdna supervised -input {out_dir}{filtered_fasta_file} -labels {out_dir}{labels_file} -output {out_dir}{model_file} -dim {dim} -length {length} -minn {minn} -maxn {maxn} -epoch {epoch} -thread {thread} -saveVec")
     else:
-        os.system(f"{config['GENERAL']['fastdna_dir']}fastdna supervised -input {out_dir}{filtered_fasta_file} -labels {out_dir}{labels_file} -output {out_dir}{model_file} -dim {dim} -length {length} -minn {minn} -maxn {maxn} -epoch {epoch} -thread {thread}")
-    #par = Parallel(n_jobs=-1)(delayed(SeqIO.write)(records, "D:/praktyki2020/edwards2016/host/random_phylum-training_fastDNA.fasta", "fasta") for record in records)
-    #SeqIO.write(records, "X:/edwards2016/host/random_phylum-training_fastDNA.fasta", "fasta")
-    #print(f"Written {len(records)} records.")
+        os.system(
+            f"{config['GENERAL']['fastdna_dir']}fastdna supervised -input {out_dir}{filtered_fasta_file} -labels {out_dir}{labels_file} -output {out_dir}{model_file} -dim {dim} -length {length} -minn {minn} -maxn {maxn} -epoch {epoch} -thread {thread}")
+    # par = Parallel(n_jobs=-1)(delayed(SeqIO.write)(records, "D:/praktyki2020/edwards2016/host/random_phylum-training_fastDNA.fasta", "fasta") for record in records)
+    # SeqIO.write(records, "X:/edwards2016/host/random_phylum-training_fastDNA.fasta", "fasta")
+    # print(f"Written {len(records)} records.")
 
     if rm:
         os.system(f"rm {out_dir}{filtered_fasta_file}")

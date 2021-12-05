@@ -11,21 +11,24 @@ import pathlib
 
 
 def virus2vector(file: str, wd: str):
-    #print(file)
-    #fastdna_dir = "/home/hyperscroll/fastDNA/"
+    # print(file)
+    # fastdna_dir = "/home/hyperscroll/fastDNA/"
     name = file.split("/")[-1].split(".")[0]
     # txt version
     # os.system(f"{config['GENERAL']['fastdna_dir']}fastdna print-word-vectors {config['GENERAL']['active_model']} < {file} > {wd}virus/vectors/{name}_vector.txt")
-    os.system(f"{config['GENERAL']['fastdna_dir']}fastdna print-word-vectors {config['GENERAL']['active_model']} {wd}virus/vectors/{name}_vector < {file}")
+    os.system(
+        f"{config['GENERAL']['fastdna_dir']}fastdna print-word-vectors {config['GENERAL']['active_model']} {wd}virus/vectors/{name}_vector < {file}")
 
 
 def host2vector(file: str, wd: str):
     # txt version
     # os.system(f"{config['GENERAL']['fastdna_dir']}fastdna print-word-vectors {config['GENERAL']['active_model']} < {file} > {wd}host/vectors/host_vectors.txt")
-    os.system(f"{config['GENERAL']['fastdna_dir']}fastdna print-word-vectors {config['GENERAL']['active_model']} {wd}host/vectors/host_vectors < {file}")
+    os.system(
+        f"{config['GENERAL']['fastdna_dir']}fastdna print-word-vectors {config['GENERAL']['active_model']} {wd}host/vectors/host_vectors < {file}")
 
 
-def main_procedure(wd, host, virus, full, length, n_vir_samples, n_host_samples, dim, thread):
+def main_procedure(wd: str, host: bool, virus: bool, full: bool, length: int, n_vir_samples: int, n_host_samples: int,
+                   dim: int, thread: int):
     # colorama
     init()
 
@@ -41,17 +44,17 @@ def main_procedure(wd, host, virus, full, length, n_vir_samples, n_host_samples,
     # SAMPLING
     random_sampling.main_procedure(wd, host, virus, full, config["HOST"]["host_genomes"],
                                    config["VIRUS"]["virus_genomes"], length, n_vir_samples, n_host_samples)
-    #fastdna_dir = "/home/hyperscroll/fastDNA/"
-    #name = "/home/hyperscroll/edwards2016/virus/samples/NC_000866.4_samples.fasta".split("/")[-1].split(".")[0]
-    #print(name)
-    #os.system(
+    # fastdna_dir = "/home/hyperscroll/fastDNA/"
+    # name = "/home/hyperscroll/edwards2016/virus/samples/NC_000866.4_samples.fasta".split("/")[-1].split(".")[0]
+    # print(name)
+    # os.system(
     #    f"{fastdna_dir}fastdna print-word-vectors {fastdna_dir}edwards_random_model.bin < /home/hyperscroll/edwards2016/virus/samples/NC_000866.4_samples.fasta > /home/hyperscroll/edwards2016/virus/vectors/{name}_vector.txt")
 
     # VECTORISING
     start = timer()
     if virus:
         vectors = Parallel(verbose=True, n_jobs=-1)(delayed(virus2vector)(file, wd)
-                                      for file in glob.glob(f"{wd}virus/samples/*.fasta"))
+                                                    for file in glob.glob(f"{wd}virus/samples/*.fasta"))
     if host:
         host2vector(f"{wd}host/samples/host_samples.fasta", wd)
     if full:
@@ -65,7 +68,8 @@ def main_procedure(wd, host, virus, full, length, n_vir_samples, n_host_samples,
     # INDEXING
     if host or full:
         start = timer()
-        index_building.build_index(f"{wd}host/vectors/host_vectors.vec", dim, n_host_samples, f"{wd}host/index/host_index.index")
+        index_building.build_index(f"{wd}host/vectors/host_vectors.vec", dim, n_host_samples,
+                                   f"{wd}host/index/host_index.index")
         end = timer()
         runtime = end - start
         print(f"{Fore.GREEN} [index_building] time: {runtime:.6f} seconds")
@@ -76,7 +80,7 @@ def main_procedure(wd, host, virus, full, length, n_vir_samples, n_host_samples,
 
 
 if __name__ == "__main__":
-    #main_procedure()
+    # main_procedure()
     # do not delete, this actually a main code
     parser = argparse.ArgumentParser(description="fastDNA+faiss virus-host interaction analysis")
     parser.add_argument("-w", "--wd", required=True,
@@ -108,4 +112,5 @@ if __name__ == "__main__":
     config = utils.get_config()
     args = parser.parse_args()
 
-    main_procedure(args.wd, args.host, args.virus, args.full, int(args.length), int(args.n_vir), int(args.n_host), int(args.dim), int(args.thread))
+    main_procedure(args.wd, args.host, args.virus, args.full, int(args.length), int(args.n_vir), int(args.n_host),
+                   int(args.dim), int(args.thread))

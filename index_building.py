@@ -2,7 +2,7 @@ import numpy as np
 import faiss
 
 
-def build_index(vectors_path, dim, n_samples, index_path):
+def build_index(vectors_path: str, dim: int, n_samples: int, index_path: str):
     #dim = 10
     #database = np.loadtxt("/home/hyperscroll/fastDNA/edwards_vectors_100_sample_250_len.txt", dtype="float32")
     #database = np.loadtxt(vectors_path, dtype="float32")

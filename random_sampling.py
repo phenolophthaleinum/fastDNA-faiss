@@ -46,7 +46,8 @@ def sample_sequences(file: str, length: int, n: int, wd: str, virus: bool) -> Li
 
 # DONE differentiate number of samples from virus and hosts (more from hosts most likely)
 # DONE new sample sources - not only from all edwards host genomes but from each species representative
-def main_procedure(wd, host, virus, full, host_dir, virus_dir, length, n_vir_samples, n_host_samples):
+def main_procedure(wd: str, host: bool, virus: bool, full: bool, host_dir: str, virus_dir: str, length: int,
+                   n_vir_samples: int, n_host_samples: int):
     # colorama
     init()
 
@@ -60,7 +61,8 @@ def main_procedure(wd, host, virus, full, host_dir, virus_dir, length, n_vir_sam
     # parallel sampling records of all files and dumping them into one file
     if host:
         new_records = Parallel(n_jobs=-1, verbose=True)(
-            delayed(sample_sequences)(file, length, n_host_samples, wd, virus) for file in glob.glob(f"{host_dir}*.fna"))
+            delayed(sample_sequences)(file, length, n_host_samples, wd, virus) for file in
+            glob.glob(f"{host_dir}*.fna"))
 
         # for host
         for sublist in new_records:
@@ -84,7 +86,8 @@ def main_procedure(wd, host, virus, full, host_dir, virus_dir, length, n_vir_sam
 
     if virus:
         new_records = Parallel(n_jobs=-1, verbose=True)(
-            delayed(sample_sequences)(file, length, n_vir_samples, wd, virus) for file in glob.glob(f"{virus_dir}*.fna"))
+            delayed(sample_sequences)(file, length, n_vir_samples, wd, virus) for file in
+            glob.glob(f"{virus_dir}*.fna"))
 
     if full:
         new_records = Parallel(n_jobs=-1, verbose=True)(
