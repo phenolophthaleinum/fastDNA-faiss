@@ -2,6 +2,7 @@ import glob
 from collections import defaultdict
 from typing import Dict, Tuple, List
 import math
+from pathlib import Path
 
 import numpy as np
 import faiss
@@ -36,7 +37,7 @@ def do_search(file: str, dim: int, n_samples: int, k_nearest: int, index: faiss.
     query = query.reshape(n_samples, dim)
     distances, indices = index.search(query, k_nearest)
     classification = np.vectorize(map_data.get)(indices)
-    coef = 1 / (4 * dim)
+    coef = 1 / (2 * math.sqrt(dim))
     pre_rank = defaultdict(list)
     enum = 1
     dict_sample = defaultdict(list)
@@ -63,8 +64,8 @@ def do_search(file: str, dim: int, n_samples: int, k_nearest: int, index: faiss.
 
     sum_rank = {key: sum(values) for key, values in pre_rank.items()}
     ranks = sum_rank.items()
-    part = {"_".join(file.split("/")[-1].split(".")[0].split("_")[:2]): sorted(ranks, key=lambda elem: elem[1],
-                                                                               reverse=True)}
+    p = Path(file)
+    part = {"_".join(str(p.stem).split("_")[:2]): sorted(ranks, key=lambda elem: elem[1], reverse=True)}
     return part
 
 

@@ -81,8 +81,8 @@ def no_filtering(input_dir: str) -> Tuple[List[str], List[str]]:
     return filenames, labels
 
 
-def main_procedure(input_dir: str, out_dir: str, filter: str, dim: str, length: str, minn: str, maxn: str, epoch: str,
-                   thread: str, reps: int, rm: bool, save_vec: bool):
+def main_procedure(input_dir: str, out_dir: str, filter: str, dim: int, length: int, minn: int, maxn: int, epoch: int,
+                   thread: int, reps: int, rm: bool, save_vec: bool):
     # colorama
     init()
 
@@ -168,5 +168,5 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    main_procedure(args.input_dir, args.output, args.filter, args.dim, args.length, args.minn, args.maxn, args.epoch,
-                   args.thread, int(args.reps), args.rm, args.saveVec)
+    main_procedure(args.input_dir, args.output, args.filter, int(args.dim), int(args.length), int(args.minn), int(args.maxn), int(args.epoch),
+                   int(args.thread), int(args.reps), args.rm, args.saveVec)
