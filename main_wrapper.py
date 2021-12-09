@@ -3,6 +3,9 @@ import configparser
 import utils
 import os
 import glob
+from timeit import default_timer as timer
+
+from colorama import Fore, init
 
 
 # jakie nazwy plikow
@@ -28,16 +31,39 @@ def run_procedure(
         search_k_nearest: int,
         search_final_rank: str
 ):
+    # colorama
+    init()
+
+    # global timer
+    total_start = timer()
+
     # read config file
-    cfg = utils.get_config()
+    cfg = utils.get_config_obj()
     # run make-model
-    os.system(f"python make-model.py -i {model_input_dir} -o {model_output} -f {model_filter} -r {model_reps} -d {general_dim} -l {general_length} --minn {model_minn} --maxn {model_maxn} -e {model_epoch} -t {general_threads} {model_rm} {model_saveVec}")
+    print(f"python make-model.py -i {model_input_dir} -o {model_output} -f {model_filter} -r {model_reps} -d {general_dim} -l {general_length} --minn {model_minn} --maxn {model_maxn} -e {model_epoch} -t {general_threads} {model_rm} {model_saveVec}")
+    try:
+        os.system(f"python make-model.py -i {model_input_dir} -o {model_output} -f {model_filter} -r {model_reps} -d {general_dim} -l {general_length} --minn {model_minn} --maxn {model_maxn} -e {model_epoch} -t {general_threads} {model_rm} {model_saveVec}")
+    except RuntimeError:
+        exit()
     # assign right model for the next steps
     # also, important, remember to change host and virus values in config.cfg accordingly
     cfg['GENERAL']['active_model'] = glob.glob(f"{model_output}*.bin")[0] # trzeba sie umowic na konwencje nazwywania i organizacji folderow
+    with open("config.cfg", "w") as cf:
+        cfg.write(cf)
     # run file preprocessing
-    os.system(f"python workflow.py -w {workflow_wd} {workflow_mode} --length {general_length} -d {general_dim} --n_vir {workflow_n_vir} --n_host {workflow_n_host} -t {general_threads}")
+    try:
+        os.system(f"python workflow.py -w {workflow_wd} {workflow_mode} --length {general_length} -d {general_dim} --n_vir {workflow_n_vir} --n_host {workflow_n_host} -t {general_threads}")
+    except RuntimeError:
+        exit()
     # run faiss-search
-    os.system(f"python faiss-search.py -i {workflow_wd}virus/vectors/ -o {workflow_wd}rank/{search_final_rank} -d {general_dim} --n_samples {workflow_n_host} -k {search_k_nearest} -f {glob.glob(f'{workflow_wd}host/index/*.index')[0]} -m {glob.glob(f'{workflow_wd}host/maps/*.json')[0]}")
+    try:
+        os.system(f"python faiss_search.py -i {workflow_wd}virus/vectors/ -o {workflow_wd}rank/{search_final_rank} -d {general_dim} --n_samples {workflow_n_host} -k {search_k_nearest} -f {glob.glob(f'{workflow_wd}host/index/*.index')[0]} -m {glob.glob(f'{workflow_wd}host/maps/*.json')[0]}")
+    except RuntimeError:
+        exit()
+
     # run evaluation
     # ?
+
+    total_end = timer()
+    total_runtime = total_end - total_start
+    print(f"{Fore.GREEN} Total elapsed time: {total_runtime:.6f} seconds")

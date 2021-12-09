@@ -35,11 +35,13 @@ def main_procedure(wd: str, host: bool, virus: bool, full: bool, length: int, n_
     # global timer
     total_start = timer()
 
+    # create necessary directories in the main working directory
     dirs = ["samples", "vectors", "maps", "index"]
     for dir in dirs:
         pathlib.Path(f"{wd}host/{dir}").mkdir(parents=True, exist_ok=True)
         if dirs.index(dir) < 2:
             pathlib.Path(f"{wd}virus/{dir}").mkdir(parents=True, exist_ok=True)
+    pathlib.Path(f"{wd}rank").mkdir(parents=True, exist_ok=True)
 
     # SAMPLING
     random_sampling.main_procedure(wd, host, virus, full, config["HOST"]["host_genomes"],

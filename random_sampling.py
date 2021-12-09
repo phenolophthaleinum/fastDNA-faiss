@@ -27,11 +27,22 @@ def sample_sequences(file: str, length: int, n: int, wd: str, virus: bool) -> Li
     new_records = []
     record = SeqIO.read(file, "fasta")
     for i in range(n):
-        pick = secrets.choice(range(0, len(record.seq) - length))
+        new_seq = None
+        valid = False
+        pick = None
+        while not valid:
+            pick = secrets.choice(range(0, len(record.seq) - length))
+            new_seq = Seq(str(record.seq[pick:pick + length]))
+            n_content = new_seq.count("N")
+            if n_content / length < 15:
+                valid = True
+            else:
+                print(f"Too high N content ({n_content/length}%). Sampling again")
+
         desc = f'{record.description} sample_{i} gen_pos:({pick}:{pick + length})'
         new_record = SeqRecord(
             id=record.id,
-            seq=Seq(str(record.seq[pick:pick + length])),
+            seq=new_seq,
             description=desc
         )
         new_records.append(new_record)

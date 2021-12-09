@@ -5,7 +5,7 @@ from timeit import default_timer as timer
 from colorama import init, Fore
 
 
-def get_host_data():
+def get_host_data() -> dict:
     """
         Reads Edwards' dataset host information.
     """
@@ -14,13 +14,13 @@ def get_host_data():
     return host_data
 
 
-def get_virus_data():
+def get_virus_data() -> dict:
     with open("virus.json", "r") as fh:
         virus_data = json.load(fh)
     return virus_data
 
 
-def get_config():
+def get_config() -> dict:
     """
         Reads important settings and variables to run the analysis properly
     """
@@ -28,6 +28,12 @@ def get_config():
     config.read("config.cfg")
     config_dict = {section: dict(config.items(section)) for section in config.sections()}
     return config_dict
+
+
+def get_config_obj():
+    config = configparser.ConfigParser()
+    config.read("config.cfg")
+    return config
 
 
 def time_this(func):

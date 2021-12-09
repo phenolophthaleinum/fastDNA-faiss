@@ -21,7 +21,34 @@ This needs to be set up correctly, otherwise none of the modules will not work.
 - ```editorconfig
   virus_genomes = path to all virus genomes fasta files (.fna)
   ```
+## Running wrapped version
+- Import main_wrapper
+- Call run_procedure
+- Example:
+```python
+import main_wrapper as ff
 
+ff.run_procedure(
+    model_input_dir="/home/hyperscroll/edwards2016/host/fasta/",
+    model_output="/home/hyperscroll/edwards2016/models/wrapped/",
+    model_filter="phylum",
+    model_minn=6,
+    model_maxn=6,
+    model_reps=1,
+    model_epoch=1,
+    model_rm="--rm",
+    model_saveVec="",
+    general_dim=10,
+    general_length=125,
+    general_threads=16,
+    workflow_wd="/home/hyperscroll/edwards2016/runs/wrapped_test/",
+    workflow_mode="--full",
+    workflow_n_vir=200,
+    workflow_n_host=200,
+    search_k_nearest=60,
+    search_final_rank="wrapped_rank.json"
+)
+```
 ## Step 1: Model creation - make-model.py module
 - Samples all given host genomes according to chosen taxonomy level or takes whole genome set to create model
 - Created model (.bin) is for fastDNA vector embedding

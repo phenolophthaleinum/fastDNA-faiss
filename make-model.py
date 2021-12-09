@@ -130,6 +130,7 @@ def main_procedure(input_dir: str, out_dir: str, filter: str, dim: int, length: 
     # print(f"Written {len(records)} records.")
 
     if rm:
+        print("removing")
         os.system(f"rm {out_dir}{filtered_fasta_file}")
         os.system(f"rm {out_dir}{labels_file}")
 
@@ -161,9 +162,9 @@ if __name__ == "__main__":
                         help="Number of epochs (each added epoch increases runtime significantly)")
     parser.add_argument("-t", "--thread", required=True,
                         help="Number of threads to use")
-    parser.add_argument("--rm", required=False, action="store_false", default=False,
+    parser.add_argument("--rm", required=False, action="store_true", default=False,
                         help="Remove potentially redundant files after model creation. Default is 'false'.")
-    parser.add_argument("--saveVec", required=False, action="store_false", default=False,
+    parser.add_argument("--saveVec", required=False, action="store_true", default=False,
                         help="Enables saving of a readable model file (.vec). Enabling this may significantly increase execution time. Default is 'false'.")
 
     args = parser.parse_args()
