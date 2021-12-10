@@ -28,7 +28,7 @@ def host2vector(file: str, wd: str):
 
 
 def main_procedure(wd: str, host: bool, virus: bool, full: bool, length: int, n_vir_samples: int, n_host_samples: int,
-                   dim: int, thread: int):
+                   dim: int, thread: int, n_nuc_threshold: float):
     # colorama
     init()
 
@@ -45,7 +45,8 @@ def main_procedure(wd: str, host: bool, virus: bool, full: bool, length: int, n_
 
     # SAMPLING
     random_sampling.main_procedure(wd, host, virus, full, config["HOST"]["host_genomes"],
-                                   config["VIRUS"]["virus_genomes"], length, n_vir_samples, n_host_samples)
+                                   config["VIRUS"]["virus_genomes"], length, n_vir_samples, n_host_samples,
+                                   n_nuc_threshold)
     # fastdna_dir = "/home/hyperscroll/fastDNA/"
     # name = "/home/hyperscroll/edwards2016/virus/samples/NC_000866.4_samples.fasta".split("/")[-1].split(".")[0]
     # print(name)
@@ -108,6 +109,8 @@ if __name__ == "__main__":
                         help="Number of samples to take from a virus genome")
     parser.add_argument("--n_host", required=True,
                         help="Number of samples to take from a host genome")
+    parser.add_argument("--n_nucleotide_threshold", required=True,
+                        help="Ambiguous nucleotide content threshold in sampled sequences (in percents)")
     parser.add_argument("-t", "--thread", required=True,
                         help="Number of threads to use")
 
@@ -115,4 +118,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     main_procedure(args.wd, args.host, args.virus, args.full, int(args.length), int(args.n_vir), int(args.n_host),
-                   int(args.dim), int(args.thread))
+                   int(args.dim), int(args.thread), float(args.n_nucleotide_threshold))

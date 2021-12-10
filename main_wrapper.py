@@ -28,6 +28,7 @@ def run_procedure(
         workflow_mode: str,
         workflow_n_vir: int,
         workflow_n_host: int,
+        workflow_n_nucleotide_threshold: float,
         search_k_nearest: int,
         search_final_rank: str
 ):
@@ -52,7 +53,7 @@ def run_procedure(
         cfg.write(cf)
     # run file preprocessing
     try:
-        os.system(f"python workflow.py -w {workflow_wd} {workflow_mode} --length {general_length} -d {general_dim} --n_vir {workflow_n_vir} --n_host {workflow_n_host} -t {general_threads}")
+        os.system(f"python workflow.py -w {workflow_wd} {workflow_mode} --length {general_length} -d {general_dim} --n_vir {workflow_n_vir} --n_host {workflow_n_host} -t {general_threads} --n_nucleotide_threshold {workflow_n_nucleotide_threshold}")
     except RuntimeError:
         exit()
     # run faiss-search

@@ -92,7 +92,9 @@
 |run-dim_60-len_125-n_300_600-epoch_2-none_Slim_newEdwards|423.511798|60|
 |run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim|999.171753|60|
 |run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim (2nd, sqrt(dist))|990.417626|60|
-|run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim (3nd, sqrt(dist), new scoring(with filter))|970.415532|60|
+|run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim (3rd, sqrt(dist), new scoring(with filter))|970.415532|60|
+|run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim (4rd, newest-correct scoring(with filter))|626.470819|60|
+
 
 
 

@@ -45,6 +45,7 @@ ff.run_procedure(
     workflow_mode="--full",
     workflow_n_vir=200,
     workflow_n_host=200,
+    workflow_n_nucleotide_threshold=15,
     search_k_nearest=60,
     search_final_rank="wrapped_rank.json"
 )

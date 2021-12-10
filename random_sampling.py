@@ -11,7 +11,7 @@ from typing import List
 from colorama import Fore, init
 
 
-def sample_sequences(file: str, length: int, n: int, wd: str, virus: bool) -> List[SeqRecord]:
+def sample_sequences(file: str, length: int, n: int, wd: str, n_nuc_threshold: float, virus: bool, ) -> List[SeqRecord]:
     """Function reads each given fasta file, randomly samples n subsequences of a defined length, creates new records with those subsequences and puts these new records into a list (which is finally returned).
 
     Args:
@@ -19,6 +19,7 @@ def sample_sequences(file: str, length: int, n: int, wd: str, virus: bool) -> Li
         wd (str): Working directory path
         length (int): Length of a sampled subsequence
         n (int): Number of subsequences to be sampled
+        n_nuc_threshold (float): Ambiguous nucleotide content threshold in sampled sequences (in percents)
         virus (bool): Flag which enables or disables virus genomes sampling
 
     Returns:
@@ -34,7 +35,7 @@ def sample_sequences(file: str, length: int, n: int, wd: str, virus: bool) -> Li
             pick = secrets.choice(range(0, len(record.seq) - length))
             new_seq = Seq(str(record.seq[pick:pick + length]))
             n_content = new_seq.count("N")
-            if n_content / length < 15:
+            if n_content / length < n_nuc_threshold:
                 valid = True
             else:
                 print(f"Too high N content ({n_content/length}%). Sampling again")
@@ -58,7 +59,7 @@ def sample_sequences(file: str, length: int, n: int, wd: str, virus: bool) -> Li
 # DONE differentiate number of samples from virus and hosts (more from hosts most likely)
 # DONE new sample sources - not only from all edwards host genomes but from each species representative
 def main_procedure(wd: str, host: bool, virus: bool, full: bool, host_dir: str, virus_dir: str, length: int,
-                   n_vir_samples: int, n_host_samples: int):
+                   n_vir_samples: int, n_host_samples: int, n_nuc_threshold: float):
     # colorama
     init()
 
@@ -72,7 +73,7 @@ def main_procedure(wd: str, host: bool, virus: bool, full: bool, host_dir: str, 
     # parallel sampling records of all files and dumping them into one file
     if host:
         new_records = Parallel(n_jobs=-1, verbose=True)(
-            delayed(sample_sequences)(file, length, n_host_samples, wd, virus) for file in
+            delayed(sample_sequences)(file, length, n_host_samples, wd, virus, n_nuc_threshold) for file in
             glob.glob(f"{host_dir}*.fna"))
 
         # for host
@@ -97,12 +98,12 @@ def main_procedure(wd: str, host: bool, virus: bool, full: bool, host_dir: str, 
 
     if virus:
         new_records = Parallel(n_jobs=-1, verbose=True)(
-            delayed(sample_sequences)(file, length, n_vir_samples, wd, virus) for file in
+            delayed(sample_sequences)(file, length, n_vir_samples, wd, virus, n_nuc_threshold) for file in
             glob.glob(f"{virus_dir}*.fna"))
 
     if full:
         new_records = Parallel(n_jobs=-1, verbose=True)(
-            delayed(sample_sequences)(file, length, n_host_samples, wd, virus=False) for file in
+            delayed(sample_sequences)(file, length, n_host_samples, wd, n_nuc_threshold, virus=False) for file in
             glob.glob(f"{host_dir}*.fna"))
 
         # for host
@@ -125,7 +126,7 @@ def main_procedure(wd: str, host: bool, virus: bool, full: bool, host_dir: str, 
             json.dump(d, fh, indent=4)
 
         new_records = Parallel(n_jobs=-1, verbose=True)(
-            delayed(sample_sequences)(file, length, n_vir_samples, wd, virus=True) for file in
+            delayed(sample_sequences)(file, length, n_vir_samples, wd, n_nuc_threshold, virus=True) for file in
             glob.glob(f"{virus_dir}*.fna"))
 
     # for virus, but second slower
