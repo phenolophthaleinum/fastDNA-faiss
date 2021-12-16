@@ -3,7 +3,11 @@ import configparser
 import utils
 import os
 import glob
+import taxonomic_discordance as td
+import json
 from timeit import default_timer as timer
+from pathlib import Path
+
 
 from colorama import Fore, init
 
@@ -63,8 +67,21 @@ def run_procedure(
         exit()
 
     # run evaluation
-    # ?
+    host_json = Path('host.json')
+    with host_json.open() as hj:
+        host_dict = json.load(hj)
+
+    virus_json = Path('virus.json')
+    with virus_json.open() as hj:
+        virus_dict = json.load(hj)
+
+    tax_dists = td.load_matrix_parallel('tax_matrix_p2.lzma')
+
+    with open(f"{workflow_wd}rank/{search_final_rank}", 'r') as ph:
+        preds = json.load(ph)
 
     total_end = timer()
     total_runtime = total_end - total_start
     print(f"{Fore.GREEN} Total elapsed time: {total_runtime:.6f} seconds")
+
+    return td.taxonomic_accordance(tax_dists, preds, virus_dict)
