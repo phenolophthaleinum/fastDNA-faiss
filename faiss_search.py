@@ -1,4 +1,5 @@
 import glob
+import os
 from collections import defaultdict
 from typing import Dict, Tuple, List
 import math
@@ -85,6 +86,10 @@ def run_procedure(input_dir: str, output: str, k_nearest: int, dim: int, n_sampl
 
     for result in ranks:
         global_rank.update(result)
+
+    rank_file = Path(output)
+    if rank_file.exists():
+        os.system(f"rm {output}")
     with open(output, "w") as fd:
         json.dump(global_rank, fd, indent=4)
 

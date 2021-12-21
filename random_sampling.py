@@ -1,6 +1,8 @@
 import json
+import os
 import secrets
 import glob
+from pathlib import Path
 import utils
 from timeit import default_timer as timer
 from Bio.Seq import Seq
@@ -38,7 +40,7 @@ def sample_sequences(file: str, length: int, n: int, wd: str, n_nuc_threshold: f
             if n_content / length < n_nuc_threshold:
                 valid = True
             else:
-                print(f"Too high N content ({n_content/length}%). Sampling again")
+                print(f"Too high N content ({n_content / length}%). Sampling again")
 
         desc = f'{record.description} sample_{i} gen_pos:({pick}:{pick + length})'
         new_record = SeqRecord(
@@ -50,7 +52,7 @@ def sample_sequences(file: str, length: int, n: int, wd: str, n_nuc_threshold: f
 
     if virus:
         # if virus, this is possible
-        with open(f"{wd}virus/samples/{new_records[0].id}_samples.fasta", "a") as w_fh:
+        with open(f"{wd}virus/samples/{new_records[0].id}_samples.fasta", "w") as w_fh:
             SeqIO.write(new_records, w_fh, "fasta")
 
     return new_records
@@ -79,7 +81,11 @@ def main_procedure(wd: str, host: bool, virus: bool, full: bool, host_dir: str, 
         # for host
         for sublist in new_records:
             final_records.extend(sublist)
-        with open(f"{wd}host/samples/host_samples.fasta", "a") as w_fh:
+
+        # host_file = Path(f"{wd}host/samples/host_samples.fasta")
+        # if host_file.exists():
+        #     os.system(f"{wd}host/samples/host_samples.fasta")
+        with open(f"{wd}host/samples/host_samples.fasta", "w") as w_fh:
             SeqIO.write(final_records, w_fh, "fasta")
 
         # mapping samples to nbci ids and dumping them into a file; edit 10.11.21 - much faster
@@ -109,7 +115,7 @@ def main_procedure(wd: str, host: bool, virus: bool, full: bool, host_dir: str, 
         # for host
         for sublist in new_records:
             final_records.extend(sublist)
-        with open(f"{wd}host/samples/host_samples.fasta", "a") as w_fh:
+        with open(f"{wd}host/samples/host_samples.fasta", "w") as w_fh:
             SeqIO.write(final_records, w_fh, "fasta")
 
         # mapping samples to nbci ids and dumping them into a file; edit 10.11.21 - much faster

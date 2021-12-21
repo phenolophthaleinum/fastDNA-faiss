@@ -139,6 +139,8 @@ def load_matrix_parallel(path: PathLike) -> DistanceMatrix:
     return matrix
 
 
+# distances: DistanceMatrix
+# :param distances: species -> genome distances form TaxonomicDiscordance.get_distances()
 def taxonomic_discordance(distances: DistanceMatrix,
                           sorted_predictions: Dict[str, List[Tuple[str, float]]],
                           master_virus_dict: Dict[str, Dict[str, Any]],
@@ -151,7 +153,6 @@ def taxonomic_discordance(distances: DistanceMatrix,
     all possible on the hierarchical taxon tree (worst of possible predictions)
     The calculated for "top_n" predictions extracted from probability-sorted prediction dict
     Weight of each is prediction adjusted inversely to its rank.
-    :param distances: species -> genome distances form TaxonomicDiscordance.get_distances()
     :param sorted_predictions: {virus_id_0: [('host_id_BEST', p_BEST), (...), ('host_id_WORST', p_WORST)], virus_id_1 ...}
     :param master_virus_dict: dictionary of virus metadata stored in 'virus.json'
     :param top_n: number of top prediction to assess
@@ -186,6 +187,8 @@ def taxonomic_discordance(distances: DistanceMatrix,
     return observed_shift / max_shift
 
 
+# distance_dict: DistanceMatrix
+# :param distance_dict: species -> genome distances form TaxonomicDiscordance.get_distances()
 def taxonomic_accordance(distance_dict: DistanceMatrix,
                          sorted_predictions: Dict[str, List[Tuple[str, float]]],
                          master_virus_dict: Dict[str, Dict[str, Any]],
@@ -194,7 +197,6 @@ def taxonomic_accordance(distance_dict: DistanceMatrix,
     Reverse of taxonomic discordance (1 - taxonomic_discordance)
     This is 0-1 metric that is getting closer to maximum
     when predictions align with known host taxonomy
-    :param distance_dict: species -> genome distances form TaxonomicDiscordance.get_distances()
     :param sorted_predictions: {virus_id_0: [('host_id_BEST', p_BEST), (...), ('host_id_WORST', p_WORST)], virus_id_1 ...}
     :param master_virus_dict: dictionary of virus metadata stored in 'virus.json'
     :param top_n: number of top prediction to assess
@@ -226,22 +228,22 @@ def taxonomic_accordance(distance_dict: DistanceMatrix,
 #         virus_dict = json.load(hj)
 #
 #     # dists = DistanceMatrix(host_dict)
-#     # # dists.save('tax_matrix.pkl')
+#     # # # dists.save('tax_matrix.pkl')
 #     # dists.save_parallel('tax_matrix_p2.lzma', ('lzma', 3))
 #
 #     o = load_matrix_parallel('tax_matrix_p2.lzma')
 #
-#     print(o.matrix)
+#     #print(o.matrix)
 #
-#     with open("D:/edwards2016/runs/run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim/rank/rank-test.json", 'r') as preds:
+#     with open("X:/edwards2016/runs/run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim/rank/rank-k_60-new_score.json", 'r') as preds:
 #         preds_d = json.load(preds)
-#     pred_json = Path('predictions/blastn.json')
-#
-#     with pred_json.open() as pj:
-#         preds = json.load(pj)
+#     # pred_json = Path('predictions/blastn.json')
+#     #
+#     # with pred_json.open() as pj:
+#     #     preds = json.load(pj)
 #
 #     print(taxonomic_accordance(o,
-#                                preds,
+#                                preds_d,
 #                                virus_dict))
 #
 #     total_end = timer()

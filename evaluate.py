@@ -6,7 +6,8 @@ import pandas as pd
 # from bokeh.plotting import figure, show
 # from bokeh.sampledata.unemployment1948 import data
 
-fh = open('X:/edwards2016/runs/run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim/rank/rank-k_60-new_score.json')
+# fh = open('X:/edwards2016/runs/run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim/rank/rank-k_60-new_score.json')
+fh = open('X:/edwards2016/runs/wrapped_test/rank/wrapped_rank.json')
 db = json.load(fh)
 fh.close()
 
