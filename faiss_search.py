@@ -81,7 +81,8 @@ def run_procedure(input_dir: str, output: str, k_nearest: int, dim: int, n_sampl
     index = faiss.read_index(faiss_index)
     print(type(index))
     # set_loky_pickler("pickle")
-    ranks = Parallel(verbose=True, n_jobs=-1, prefer="threads")(
+    # temporarily changed to loky; add later: prefer="threads"
+    ranks = Parallel(verbose=True, n_jobs=-1)(
         delayed(do_search)(file, dim, n_samples, k_nearest, index, map_data) for file in glob.glob(f"{input_dir}*.vec"))
 
     for result in ranks:

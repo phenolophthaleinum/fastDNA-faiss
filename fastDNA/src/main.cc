@@ -203,6 +203,7 @@ void predict(const std::vector<std::string>& args) {
 }
 
 void printWordVectors(const std::vector<std::string> args) {
+    //!=3 if text !=4 for binary
   if (args.size() != 4) {
     printPrintWordVectorsUsage();
     exit(EXIT_FAILURE);
@@ -211,17 +212,21 @@ void printWordVectors(const std::vector<std::string> args) {
   fasttext.loadModel(std::string(args[2]));
   std::string word;
   Vector vec(fasttext.getDimension());
+  //uncomment for binary
   std::ofstream file;
   file.open((args[3] + ".vec").c_str(), std::ios_base::binary | std::ios_base::out);
   std::cout << (args[3] + ".vec").c_str() << std::endl;
   while (1) {
     fasttext.getWordVector(vec, std::cin);
     if (std::cin.eof()) { break; }
+    //txt
     //std::cout << vec << std::endl;
     
     // MM edit
     //file.write((char*)(&vec[0]), vec.size() * sizeof(vec[0]));
     // 
+    // 
+    //uncomment for binary
     file.write((char*)vec.data(), vec.size() * sizeof(real));
     
     //file.put('\n');
@@ -241,6 +246,7 @@ void printWordVectors(const std::vector<std::string> args) {
     //file.write((char*)(&vec_str), vec_str.size() * sizeof(std::string));
     //file << vec << "\n";
   }
+  //binary
   file.close();
   exit(0);
 }

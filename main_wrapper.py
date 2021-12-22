@@ -31,7 +31,9 @@ def run_procedure(
         workflow_n_host: int,
         workflow_n_nucleotide_threshold: float,
         search_k_nearest: int,
-        search_final_rank: str
+        search_final_rank: str,
+        bayes_best_score: float,
+        bayes_best_dir: str
 ):
     # colorama
     init()
@@ -41,12 +43,17 @@ def run_procedure(
 
     # read config file
     cfg = utils.get_config_obj()
+
+    # clear out models dir
+    if len(glob.glob(f"{model_output}*.bin")) != 0:
+        os.system(f"rm {model_output}*")
     # run make-model
+    # minn = maxn
     print(
-        f"python make-model.py -i {model_input_dir} -o {model_output} -f {model_filter} -r {model_reps} -d {general_dim} -l {general_length} --minn {model_minn} --maxn {model_maxn} -e {model_epoch} -t {general_threads} {model_rm} {model_saveVec}")
+        f"python make-model.py -i {model_input_dir} -o {model_output} -f {model_filter} -r {model_reps} -d {general_dim} -l {general_length} --minn {model_maxn} --maxn {model_maxn} -e {model_epoch} -t {general_threads} {model_rm} {model_saveVec}")
     try:
         os.system(
-            f"python make-model.py -i {model_input_dir} -o {model_output} -f {model_filter} -r {model_reps} -d {general_dim} -l {general_length} --minn {model_minn} --maxn {model_maxn} -e {model_epoch} -t {general_threads} {model_rm} {model_saveVec}")
+            f"python make-model.py -i {model_input_dir} -o {model_output} -f {model_filter} -r {model_reps} -d {general_dim} -l {general_length} --minn {model_maxn} --maxn {model_maxn} -e {model_epoch} -t {general_threads} {model_rm} {model_saveVec}")
     except RuntimeError:
         exit()
     # assign right model for the next steps
@@ -77,7 +84,7 @@ def run_procedure(
     with virus_json.open() as hj:
         virus_dict = json.load(hj)
 
-    #tax_dists = td.load_matrix_parallel('tax_matrix_p2.lzma')
+    # tax_dists = td.load_matrix_parallel('tax_matrix_p2.lzma')
     dists = td.DistanceMatrix(host_dict)
 
     with open(f"{workflow_wd}rank/{search_final_rank}", 'r') as ph:
@@ -87,5 +94,11 @@ def run_procedure(
     total_runtime = total_end - total_start
     print(f"{Fore.GREEN} Total elapsed time: {total_runtime:.6f} seconds")
 
-    #return td.taxonomic_accordance(tax_dists, preds, virus_dict)
-    return td.taxonomic_accordance(dists, preds, virus_dict)
+    # return td.taxonomic_accordance(tax_dists, preds, virus_dict)
+    accordance = td.taxonomic_accordance(dists, preds, virus_dict)
+    print(f"[OPT]   Taxonomic accordance: {accordance}")
+    print(f"[OPT]   Current best: {bayes_best_score}")
+    if accordance > bayes_best_score:
+        os.system(f"cp -R {workflow_wd} {bayes_best_dir}")
+
+    return accordance

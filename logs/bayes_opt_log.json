@@ -1,0 +1,5 @@
+{"target": 0.2784229490022091, "params": {"general_dim": 10.834044009405147, "general_length": 86.01622467210791, "model_maxn": 6.000114374817345}, "datetime": {"datetime": "2021-12-22 23:11:12", "elapsed": 0.0, "delta": 0.0}}
+{"target": 0.2735587583148471, "params": {"general_dim": 10.604665145263679, "general_length": 57.337794540855654, "model_maxn": 6.092338594768798}, "datetime": {"datetime": "2021-12-22 23:13:19", "elapsed": 126.558822, "delta": 126.558822}}
+{"target": 0.27944844789356116, "params": {"general_dim": 10.400831532796843, "general_length": 87.04912862588706, "model_maxn": 6.6847851010731665}, "datetime": {"datetime": "2021-12-22 23:15:18", "elapsed": 246.001345, "delta": 119.442523}}
+{"target": 0.28087583148557915, "params": {"general_dim": 10.0, "general_length": 92.3265704258452, "model_maxn": 7.0}, "datetime": {"datetime": "2021-12-22 23:17:20", "elapsed": 368.052026, "delta": 122.050681}}
+{"target": 0.3072893569844696, "params": {"general_dim": 12.0, "general_length": 100.0, "model_maxn": 6.575951358732105}, "datetime": {"datetime": "2021-12-22 23:19:17", "elapsed": 484.627593, "delta": 116.575567}}
