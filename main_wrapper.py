@@ -99,6 +99,10 @@ def run_procedure(
     print(f"[OPT]   Taxonomic accordance: {accordance}")
     print(f"[OPT]   Current best: {bayes_best_score}")
     if accordance > bayes_best_score:
+        model_p = Path(f'{bayes_best_dir}{model_output.split("/")[-2]}/')
+        if model_p.exists():
+            os.system(f'rm -r {str(model_p)}')
         os.system(f"cp -R {workflow_wd} {bayes_best_dir}")
+        os.system(f"cp -R {model_output} {bayes_best_dir}")
 
     return accordance
