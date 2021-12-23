@@ -1,7 +1,7 @@
 import glob
 import os
 from collections import defaultdict
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple, List, Iterable
 import math
 from pathlib import Path
 
@@ -16,6 +16,7 @@ from joblib import Parallel, delayed
 from joblib import wrap_non_picklable_objects
 from timeit import default_timer as timer
 from colorama import Fore, init
+from multiprocessing import cpu_count
 
 
 # @delayed
@@ -70,6 +71,22 @@ def do_search(file: str, dim: int, n_samples: int, k_nearest: int, index: faiss.
     return part
 
 
+def batch_search(files: Tuple[str], dim: int, n_samples: int, k_nearest: int, index: faiss.IndexFlatL2,
+                 map_data: Dict[int, str]) -> Dict[str, List[Tuple[str, float]]]:
+    local_rank = {}
+    for file in files:
+        local_rank.update(do_search(file, dim, n_samples, k_nearest, index, map_data))
+    return local_rank
+
+
+def partition_queries(files: Iterable[str], partitions: int = cpu_count() - 1) -> np.ndarray:
+    partitions = np.array_split(np.array(files), partitions)
+    # debug for partitions
+    # print(partitions)
+    # print([ar.shape for ar in partitions])
+    return partitions
+
+
 def run_procedure(input_dir: str, output: str, k_nearest: int, dim: int, n_samples: int, faiss_index: str, map: str):
     # colorama
     init()
@@ -82,8 +99,11 @@ def run_procedure(input_dir: str, output: str, k_nearest: int, dim: int, n_sampl
     print(type(index))
     # set_loky_pickler("pickle")
     # temporarily changed to loky; add later: prefer="threads"
+    # ranks = Parallel(verbose=True, n_jobs=-1)(
+    #     delayed(do_search)(file, dim, n_samples, k_nearest, index, map_data) for file in glob.glob(f"{input_dir}*.vec"))
     ranks = Parallel(verbose=True, n_jobs=-1)(
-        delayed(do_search)(file, dim, n_samples, k_nearest, index, map_data) for file in glob.glob(f"{input_dir}*.vec"))
+        delayed(batch_search)(batch, dim, n_samples, k_nearest, index, map_data) for batch in
+        partition_queries(glob.glob(f"{input_dir}*.vec")))
 
     for result in ranks:
         global_rank.update(result)

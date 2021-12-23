@@ -39,7 +39,7 @@ def bayes():
         )
         if ff_score > best:
             best = ff_score
-            f"[OPT]   New best: {best}"
+            print(f"[OPT]   New best: {best}")
         return ff_score
 
     # x, y - parameters set to be optimised
