@@ -215,7 +215,8 @@ void printWordVectors(const std::vector<std::string> args) {
   //uncomment for binary
   std::ofstream file;
   file.open((args[3] + ".vec").c_str(), std::ios_base::binary | std::ios_base::out);
-  std::cout << (args[3] + ".vec").c_str() << std::endl;
+  //uncomment to show computed filenames
+  //std::cout << (args[3] + ".vec").c_str() << std::endl;
   while (1) {
     fasttext.getWordVector(vec, std::cin);
     if (std::cin.eof()) { break; }
