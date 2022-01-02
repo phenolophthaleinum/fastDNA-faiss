@@ -71,7 +71,7 @@ def run_procedure(
     # run faiss-search
     try:
         os.system(
-            f"python faiss_search.py -i {workflow_wd}virus/vectors/ -o {workflow_wd}rank/{search_final_rank} -d {general_dim} --n_samples {workflow_n_host} -k {search_k_nearest} -f {glob.glob(f'{workflow_wd}host/index/*.index')[0]} -m {glob.glob(f'{workflow_wd}host/maps/*.json')[0]}")
+            f"python faiss_search.py -i {workflow_wd}virus/vectors/ -o {workflow_wd}rank/{search_final_rank} -d {general_dim} --n_samples {workflow_n_vir} -k {search_k_nearest} -f {glob.glob(f'{workflow_wd}host/index/*.index')[0]} -m {glob.glob(f'{workflow_wd}host/maps/*.json')[0]}")
     except RuntimeError:
         exit()
 

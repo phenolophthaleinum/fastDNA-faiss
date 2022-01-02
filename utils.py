@@ -36,6 +36,25 @@ def get_config_obj():
     return config
 
 
+def make_tax_json():
+    host_data = get_host_data()
+    keys = list(host_data.keys())
+    for key in keys:
+        taxid = host_data[key]["taxid"]
+        host_data[key]["ncbi_id"] = host_data[key].pop("taxid")
+        host_data[key]["ncbi_id"] = key
+        data = host_data[key]
+        host_data[taxid] = host_data.pop(key)
+    with open("tax.json", "w") as fh:
+        json.dump(host_data, fh, indent=4)
+
+
+def get_tax_data() -> dict:
+    with open("tax.json", "r") as fh:
+        tax_data = json.load(fh)
+    return tax_data
+
+
 def time_this(func):
     """
         Decorator which returns information about execution of decorated function.
