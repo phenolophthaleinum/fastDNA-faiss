@@ -84,7 +84,7 @@ def main_procedure(wd: str, host: bool, virus: bool, full: bool, length: int, n_
 
 if __name__ == "__main__":
     # main_procedure()
-    # do not delete, this actually a main code
+    # do not delete, this is actually a main code
     parser = argparse.ArgumentParser(description="fastDNA+faiss virus-host interaction analysis")
     parser.add_argument("-w", "--wd", required=True,
                         help="Working directory, where all files will be deployed")

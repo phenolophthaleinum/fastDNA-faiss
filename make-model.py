@@ -109,7 +109,7 @@ def main_procedure(input_dir: str, out_dir: str, filter: str, dim: int, length: 
     # print(records)
 
     filtered_fasta_file = f"random_train-{filter}-dim_{dim}-len_{length}.fasta"
-    with open(f"{out_dir}{filtered_fasta_file}", "w") as w_fh:
+    with open(f"{out_dir}{filtered_fasta_file}", "w+") as w_fh:
         SeqIO.write(par, w_fh, "fasta")
 
     labels_file = f"random_labels-{filter}-dim_{dim}-len_{length}.txt"

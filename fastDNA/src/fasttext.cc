@@ -505,7 +505,7 @@ void FastText::predict(
   bool print_prob,
   real threshold
 ) {
-
+  std::cout << "[";
   std::vector<std::pair<real,std::string>> predictions;
   while (in.peek() != EOF) {
     predictions.clear();
@@ -519,17 +519,28 @@ void FastText::predict(
       std::cout << std::endl;
       continue;
     }
+    std::cout << "{";
     for (auto it = predictions.cbegin(); it != predictions.cend(); it++) {
       if (it != predictions.cbegin()) {
-        std::cout << " ";
+      // old
+      //  std::cout << " ";
+      //MM
+          std::cout << ",";
       }
-      std::cout << it->second;
+      std::cout << '"' << it->second << '"';
+      // MM editing predict-prob printing
       if (print_prob) {
-        std::cout << " " << std::exp(it->first);
+        std::cout << ": " << std::exp(it->first);
       }
     }
-    std::cout << std::endl;
+    //old
+    //std::cout << std::endl;
+    // MM
+    std::cout << "}";
+    if (in.peek() != EOF)
+        std::cout << ",";
   }
+  std::cout << "]";
 }
 
 void FastText::ngramVectors(std::string word) {
