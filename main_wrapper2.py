@@ -30,6 +30,7 @@ def run_procedure(
         workflow_n_nucleotide_threshold: float,
         workflow_k_best: int,
         search_final_rank: str,
+        search_scoring_func: str
         # bayes_best_score: float,
         # bayes_best_dir: str
 ):
@@ -56,8 +57,7 @@ def run_procedure(
         exit()
     # assign right model for the next steps
     # also, important, remember to change host and virus values in config.cfg accordingly
-    cfg['GENERAL']['active_model'] = glob.glob(f"{model_output}*.bin")[
-        0]  # trzeba sie umowic na konwencje nazwywania i organizacji folderow
+    cfg['GENERAL']['active_model'] = glob.glob(f"{model_output}*.bin")[0]  # trzeba sie umowic na konwencje nazwywania i organizacji folderow
     with open("config.cfg", "w") as cf:
         cfg.write(cf)
     # run file preprocessing
@@ -69,7 +69,7 @@ def run_procedure(
     # run faiss-search
     try:
         os.system(
-            f"python predict-prob2result.py -i {workflow_wd}virus/preds/ -o {workflow_wd}rank/{search_final_rank}")
+            f"python predict-prob2result.py -i {workflow_wd}virus/preds/ -o {workflow_wd}rank/{search_final_rank} -s {search_scoring_func}")
     except RuntimeError:
         exit()
 

@@ -5,8 +5,8 @@ import utils
 if __name__ == '__main__':
     ff2.run_procedure(
         model_input_dir="/home/hyperscroll/edwards2016/host/fasta/",
-        model_output="/home/hyperscroll/edwards2016/models/auto_pred_all/",
-        model_filter="species",
+        model_output="/home/hyperscroll/edwards2016/models/naming_test2/", # "/home/hyperscroll/edwards2016/models/auto_pred_all/"
+        model_filter="phylum", # species
         model_minn=6,
         model_maxn=6,
         model_reps=1,
@@ -16,9 +16,10 @@ if __name__ == '__main__':
         general_dim=10,  # 10
         general_length=125,
         general_threads=16,
-        workflow_wd="/home/hyperscroll/edwards2016/runs/auto_pred_all/",
+        workflow_wd="/home/hyperscroll/edwards2016/runs/naming_test2/", # "/home/hyperscroll/edwards2016/runs/auto_pred_all/"
         workflow_n_vir=200,  # 200
         workflow_n_nucleotide_threshold=5,
         workflow_k_best=10,
-        search_final_rank="wrapped_rank.json",
+        search_final_rank="testname2.json",
+        search_scoring_func="powmax"
     )

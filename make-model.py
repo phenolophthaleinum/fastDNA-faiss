@@ -5,6 +5,7 @@ import secrets
 from collections import defaultdict
 from timeit import default_timer as timer
 from typing import List, Union, Tuple
+from pathlib import Path
 
 from Bio.Seq import Seq
 from Bio import SeqIO
@@ -88,6 +89,10 @@ def main_procedure(input_dir: str, out_dir: str, filter: str, dim: int, length: 
 
     # timeit
     start = timer()
+
+    out_path = Path(out_dir)
+    if not out_path.exists():
+        os.system(f"mkdir {str(out_path)}")
 
     filenames = []
     labels = []

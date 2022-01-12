@@ -20,9 +20,16 @@ from colorama import Fore, init
 from multiprocessing import cpu_count
 
 
+scoring_functions = {
+    "max": None,
+    "powmax": None,
+    "harmonic": None
+}
+
+
 # @delayed
 # @wrap_non_picklable_objects
-def make_result(file: str) -> Dict[str, List[Tuple[str, float]]]:
+def make_result(file: str, func: str) -> Dict[str, List[Tuple[str, float]]]:
 
     with open(file) as jf:
         d = json.load(jf)
@@ -31,6 +38,12 @@ def make_result(file: str) -> Dict[str, List[Tuple[str, float]]]:
         data.append(dict(sorted(elem.items(), key=lambda x: x[1], reverse=False)))
     df = pd.DataFrame.from_records(data).fillna(0)
     df_means = df.apply(lambda x: x.mean())
+
+    ######
+    # with scoring function selection
+    # df_func = df.apply(lambda x: x.scoring_functions[func]())
+    ######
+
     df_means.sort_values(ascending=False, inplace=True)
     data_json = df_means.to_json()
     data_parsed = json.loads(data_json)
@@ -40,10 +53,10 @@ def make_result(file: str) -> Dict[str, List[Tuple[str, float]]]:
     return part
 
 
-def batch_exec(files: Tuple[str]) -> Dict[str, List[Tuple[str, float]]]:
+def batch_exec(files: Tuple[str], scoring_function: str) -> Dict[str, List[Tuple[str, float]]]:
     local_rank = {}
     for file in files:
-        local_rank.update(make_result(file))
+        local_rank.update(make_result(file, scoring_function))
     return local_rank
 
 
@@ -55,7 +68,7 @@ def partition_queries(files: Iterable[str], partitions: int = cpu_count() - 1) -
     return partitions
 
 
-def run_procedure(input_dir: str, output: str):
+def run_procedure(input_dir: str, output: str, scoring_function: str):
     # colorama
     init()
 
@@ -65,16 +78,18 @@ def run_procedure(input_dir: str, output: str):
     # temporarily changed to loky; add later: prefer="threads"
     # ranks = Parallel(verbose=True, n_jobs=-1)(
     #     delayed(do_search)(file, dim, n_samples, k_nearest, index, map_data) for file in glob.glob(f"{input_dir}*.vec"))
-    ranks = Parallel(verbose=True, n_jobs=-1)(delayed(batch_exec)(batch) for batch in
+    ranks = Parallel(verbose=True, n_jobs=-1)(delayed(batch_exec)(batch, scoring_function) for batch in
                                               partition_queries(glob.glob(f"{input_dir}*.json")))
 
     for result in ranks:
         global_rank.update(result)
 
-    rank_file = Path(output)
+    prename = Path(output)
+    rank_file = Path(f"{str(prename.with_suffix(''))}_{scoring_function}.json")
+    #rank_file = Path(rank_str)
     if rank_file.exists():
-        os.system(f"rm {output}")
-    with open(output, "w") as fd:
+        os.system(f"rm {str(rank_file)}")
+    with rank_file.open("w") as fd:
         json.dump(global_rank, fd, indent=4)
 
     end = timer()
@@ -88,8 +103,11 @@ if __name__ == "__main__":
                         help="Directory with virus samples of vectors.")
     parser.add_argument("-o", "--output", required=True,
                         help="Path to result file with rankings.")
+    parser.add_argument("-s", '--scoring', required=True,
+                        choices=["max", "powmax", "harmonic"],
+                        help="Scoring function to be applied to the dataset.")
 
     args = parser.parse_args()
 
     global_rank = {}
-    run_procedure(args.input_dir, args.output)
+    run_procedure(args.input_dir, args.output, args.scoring)
