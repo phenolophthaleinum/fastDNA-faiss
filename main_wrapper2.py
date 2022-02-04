@@ -5,7 +5,7 @@ import json
 from timeit import default_timer as timer
 from pathlib import Path
 
-import taxonomic_discordance as td
+import taxonomic_discordance2 as td
 
 from colorama import Fore, init
 
@@ -74,27 +74,30 @@ def run_procedure(
         exit()
 
     # run evaluation
-    # host_json = Path('host.json')
-    # with host_json.open() as hj:
-    #     host_dict = json.load(hj)
-    #
-    # virus_json = Path('virus.json')
-    # with virus_json.open() as hj:
-    #     virus_dict = json.load(hj)
+    host_json = Path('host.json')
+    with host_json.open() as hj:
+        host_dict = json.load(hj)
+
+    virus_json = Path('virus.json')
+    with virus_json.open() as hj:
+        virus_dict = json.load(hj)
     #
     # # tax_dists = td.load_matrix_parallel('tax_matrix_p2.lzma')
-    # dists = td.DistanceMatrix(host_dict)
+    dists = td.DistanceMatrix(host_dict)
     #
-    # with open(f"{workflow_wd}rank/{search_final_rank}", 'r') as ph:
-    #     preds = json.load(ph)
+    search_path_obj = Path(search_final_rank)
+    search_rank_fullname = f"{search_path_obj.stem}_{search_scoring_func}{search_path_obj.suffix}"
+    with open(f"{workflow_wd}rank/{search_rank_fullname}", 'r') as ph:
+        preds = json.load(ph)
 
     total_end = timer()
     total_runtime = total_end - total_start
     print(f"{Fore.GREEN} Total elapsed time: {total_runtime:.6f} seconds")
 
-    # # return td.taxonomic_accordance(tax_dists, preds, virus_dict)
+    # return td.taxonomic_accordance(tax_dists, preds, virus_dict)
     # accordance = td.taxonomic_accordance(dists, preds, virus_dict)
-    # print(f"[OPT]   Taxonomic accordance: {accordance}")
+    accordance = td.taxonomic_accordance_sp(dists, preds, virus_dict)
+    print(f"[OPT]   Taxonomic accordance: {accordance}")
     # print(f"[OPT]   Current best: {bayes_best_score}")
     # if accordance > bayes_best_score:
     #     model_p = Path(f'{bayes_best_dir}{model_output.split("/")[-2]}/')
@@ -103,4 +106,4 @@ def run_procedure(
     #     os.system(f"cp -R {workflow_wd} {bayes_best_dir}")
     #     os.system(f"cp -R {model_output} {bayes_best_dir}")
 
-    # return accordance
+    return accordance

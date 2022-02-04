@@ -13,6 +13,7 @@ from colorama import Fore, init
 from timeit import default_timer as timer
 import joblib
 import argparse
+import re
 
 import numpy as np
 
@@ -31,11 +32,16 @@ TAXONOMIC_RANKS = ('species',
                    'kingdom')
 
 
+def symbol(name: str) -> str:
+    return "_".join(re.split(' |\; |\. |\, ', name))
+
+
 class Species:
 
     def __init__(self,
                  lineage: tuple,
-                 ranks: tuple):
+                 ranks: tuple,
+                 taxid):
         self.lineage = lineage
         self.ranks = ranks
         self.id = self.lineage[0]
@@ -135,12 +141,14 @@ class DistanceMatrix:
         tmp_dict = {}
 
         for genome_id, genome_metadata in master_host_dict.items():
-            lineage = tuple(reversed(genome_metadata['lineage_names']))
+            lineage = tuple(reversed(genome_metadata[
+                                         'lineage_names']))  # TODO - SPECIFIC FOR EDWARDS SET, HAS TO BE CHANGED FOR OTHER JSONS!!!
+            sp_taxid = genome_metadata['taxid']
             ranks = tuple(reversed(genome_metadata['lineage_ranks']))
             assert ranks[0] == 'species'
             if lineage[0] not in tmp_dict:
-                tmp_dict[lineage[0]] = Species(lineage, ranks)
-            tmp_dict[lineage[0]].genomes.append(genome_id)
+                tmp_dict[sp_taxid] = Species(lineage, ranks, sp_taxid)
+            tmp_dict[sp_taxid].genomes.append(genome_id)
 
         remaining_species = list(tmp_dict.values())
         self.species = {}
@@ -156,7 +164,7 @@ class DistanceMatrix:
         bar.set_description('creating distance matrix')
         while remaining_species:
             query_s = remaining_species.pop(0)
-            self.sp_indices[genome_id] = query_index
+            self.sp_indices[query_s.id] = query_index
             for target_index, target_s in enumerate(remaining_species, query_index + 1):
                 self.matrix[query_index][target_index] = self.matrix[target_index][
                     query_index] = query_s.taxonomic_distance(target_s)
@@ -183,7 +191,7 @@ class DistanceMatrix:
         :param species_id:
         :return:
         """
-        return self.species[species_id_0][self.genome_indices[species_id_0]]
+        return self.species[species_id_0][self.sp_indices[species_id_1]]
 
     def save(self, path: PathLike):
         """
@@ -217,51 +225,51 @@ def load_matrix_parallel(path: PathLike) -> DistanceMatrix:
 
 # distances: DistanceMatrix
 # :param distances: species -> genome distances form TaxonomicDiscordance.get_distances()
-def taxonomic_discordance(distances: DistanceMatrix,
-                          sorted_predictions: Dict[str, List[Tuple[str, float]]],
-                          master_virus_dict: Dict[str, Dict[str, Any]],
-                          top_n: int = 3):
-    """
-    Calculate a "taxonomic discordance" for provided predictions.
-    This is metric that is a ration of:
-    taxonomic distances between true and predicted hosts
-    to
-    all possible on the hierarchical taxon tree (worst of possible predictions)
-    The calculated for "top_n" predictions extracted from probability-sorted prediction dict
-    Weight of each is prediction adjusted inversely to its rank.
-    :param sorted_predictions: {virus_id_0: [('host_id_BEST', p_BEST), (...), ('host_id_WORST', p_WORST)], virus_id_1 ...}
-    :param master_virus_dict: dictionary of virus metadata stored in 'virus.json'
-    :param top_n: number of top prediction to assess
-    :return: 0-1 (0 is perfect prediction 1 is total confusion)
-    """
-    prediction_count = 0
-    observed_shift = 0
-    overall = 0
-    skipped = 0
-    bar = tqdm(total=len(sorted_predictions))
-    bar.set_description('getting prediction-standard distances')
-    for virus_id, predictions in sorted_predictions.items():
-        true_host = master_virus_dict[virus_id]['host'][
-            'organism_name']  # TODO Edwards notation is VERY CONFUSING (should be master_virus_dict[virus_id]['host']['species/taxid']) !!!
-        if len(predictions) > top_n:
-            predictions = predictions[:top_n]
-        for rank, (host_id, confidence) in enumerate(predictions, 1):
-            prediction_count += 1 / rank
-            overall += 1
-            if host_id in distances.genomes and true_host in distances.species:
-                observed_shift += distances.get_distance(host_id, true_host) / rank
-            else:
-                # print(f'{host_id} OR {true_host} not in the matrix (please check original host.json)')
-                skipped += 1
-        bar.update()
-
-    bar.close()
-
-    print(f'{skipped} of {overall} predictions skipped due to missing matrix values')
-
-    max_shift = prediction_count * (len(TAXONOMIC_RANKS) + 1)
-
-    return observed_shift / max_shift
+# def taxonomic_discordance(distances: DistanceMatrix,
+#                           sorted_predictions: Dict[str, List[Tuple[str, float]]],
+#                           master_virus_dict: Dict[str, Dict[str, Any]],
+#                           top_n: int = 3):
+#     """
+#     Calculate a "taxonomic discordance" for provided predictions.
+#     This is metric that is a ration of:
+#     taxonomic distances between true and predicted hosts
+#     to
+#     all possible on the hierarchical taxon tree (worst of possible predictions)
+#     The calculated for "top_n" predictions extracted from probability-sorted prediction dict
+#     Weight of each is prediction adjusted inversely to its rank.
+#     :param sorted_predictions: {virus_id_0: [('host_id_BEST', p_BEST), (...), ('host_id_WORST', p_WORST)], virus_id_1 ...}
+#     :param master_virus_dict: dictionary of virus metadata stored in 'virus.json'
+#     :param top_n: number of top prediction to assess
+#     :return: 0-1 (0 is perfect prediction 1 is total confusion)
+#     """
+#     prediction_count = 0
+#     observed_shift = 0
+#     overall = 0
+#     skipped = 0
+#     bar = tqdm(total=len(sorted_predictions))
+#     bar.set_description('getting prediction-standard distances')
+#     for virus_id, predictions in sorted_predictions.items():
+#         true_host = master_virus_dict[virus_id]['host'][
+#             'organism_name']  # TODO Edwards notation is VERY CONFUSING (should be master_virus_dict[virus_id]['host']['species/taxid']) !!!
+#         if len(predictions) > top_n:
+#             predictions = predictions[:top_n]
+#         for rank, (host_id, confidence) in enumerate(predictions, 1):
+#             prediction_count += 1 / rank
+#             overall += 1
+#             if host_id in distances.genomes and true_host in distances.species:
+#                 observed_shift += distances.get_distance(host_id, true_host) / rank
+#             else:
+#                 # print(f'{host_id} OR {true_host} not in the matrix (please check original host.json)')
+#                 skipped += 1
+#         bar.update()
+#
+#     bar.close()
+#
+#     print(f'{skipped} of {overall} predictions skipped due to missing matrix values')
+#
+#     max_shift = prediction_count * (len(TAXONOMIC_RANKS) + 1)
+#
+#     return observed_shift / max_shift
 
 
 def taxonomic_discordance_sp(distances: DistanceMatrix,
@@ -288,8 +296,8 @@ def taxonomic_discordance_sp(distances: DistanceMatrix,
     bar = tqdm(total=len(sorted_predictions))
     bar.set_description('getting prediction-standard distances')
     for virus_id, predictions in sorted_predictions.items():
-        true_host = master_virus_dict[virus_id]['host'][
-            'organism_name']  # TODO Edwards notation is VERY CONFUSING (should be master_virus_dict[virus_id]['host']['species/taxid']) !!!
+        true_host = symbol(master_virus_dict[virus_id]['host']['lineage_names'][
+                               -1])  # TODO Edwards notation is VERY CONFUSING (should be master_virus_dict[virus_id]['host']['species/taxid']) !!!
         if len(predictions) > top_n:
             predictions = predictions[:top_n]
         for rank, (host_taxid, confidence) in enumerate(predictions, 1):
@@ -298,8 +306,9 @@ def taxonomic_discordance_sp(distances: DistanceMatrix,
             if host_taxid in distances.species and true_host in distances.species:
                 observed_shift += distances.get_distance_sp(host_taxid, true_host) / rank
             else:
-                # print(f'{host_id} OR {true_host} not in the matrix (please check original host.json)')
                 skipped += 1
+                nn = master_virus_dict[virus_id]['host']['organism_name']
+                print(f'{true_host} {true_host in distances.species}, {nn}')
         bar.update()
 
     bar.close()
@@ -313,23 +322,23 @@ def taxonomic_discordance_sp(distances: DistanceMatrix,
 
 # distance_dict: DistanceMatrix
 # :param distance_dict: species -> genome distances form TaxonomicDiscordance.get_distances()
-def taxonomic_accordance(distance_dict: DistanceMatrix,
-                         sorted_predictions: Dict[str, List[Tuple[str, float]]],
-                         master_virus_dict: Dict[str, Dict[str, Any]],
-                         top_n: int = 3):
-    """
-    Reverse of taxonomic discordance (1 - taxonomic_discordance)
-    This is 0-1 metric that is getting closer to maximum
-    when predictions align with known host taxonomy
-    :param sorted_predictions: {virus_id_0: [('host_id_BEST', p_BEST), (...), ('host_id_WORST', p_WORST)], virus_id_1 ...}
-    :param master_virus_dict: dictionary of virus metadata stored in 'virus.json'
-    :param top_n: number of top prediction to assess
-    :return: 0-1 (1 is perfect prediction 0 is total confusion)
-    """
-    return 1 - taxonomic_discordance(distance_dict,
-                                     sorted_predictions,
-                                     master_virus_dict,
-                                     top_n)
+# def taxonomic_accordance(distance_dict: DistanceMatrix,
+#                          sorted_predictions: Dict[str, List[Tuple[str, float]]],
+#                          master_virus_dict: Dict[str, Dict[str, Any]],
+#                          top_n: int = 3):
+#     """
+#     Reverse of taxonomic discordance (1 - taxonomic_discordance)
+#     This is 0-1 metric that is getting closer to maximum
+#     when predictions align with known host taxonomy
+#     :param sorted_predictions: {virus_id_0: [('host_id_BEST', p_BEST), (...), ('host_id_WORST', p_WORST)], virus_id_1 ...}
+#     :param master_virus_dict: dictionary of virus metadata stored in 'virus.json'
+#     :param top_n: number of top prediction to assess
+#     :return: 0-1 (1 is perfect prediction 0 is total confusion)
+#     """
+#     return 1 - taxonomic_discordance(distance_dict,
+#                                      sorted_predictions,
+#                                      master_virus_dict,
+#                                      top_n)
 
 
 def taxonomic_accordance_sp(distance_dict: DistanceMatrix,
@@ -370,6 +379,11 @@ if __name__ == '__main__':
         virus_dict = json.load(hj)
 
     dists = DistanceMatrix(host_dict)
+    # print(dists.matrix)
+    # np.savetxt("distancematix_test.out", dists.matrix, fmt='%i')
+    # print(dists.species)
+    # print(dists.sp_indices)
+    # print(dists.genome_indices)
     # # # dists.save('tax_matrix.pkl')
     # dists.save_parallel('tax_matrix_p2.lzma', ('lzma', 3))
 
@@ -378,27 +392,31 @@ if __name__ == '__main__':
     # print(o.matrix)
 
     # old test:  "X:/edwards2016/runs/run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim/rank/rank-k_60-new_score.json"
-    with open("X:/edwards2016/runs/auto_pred_all/rank/wrapped_rank.json", 'r') as preds:
-        preds_d = json.load(preds)
-    with open("X:/edwards2016/runs/run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim/rank/rank-k_60-new_score.json", 'r') as preds2:
-        preds_d2 = json.load(preds2)
+    # with open("X:/edwards2016/runs/auto_pred_all/rank/wrapped_rank.json", 'r') as preds:
+    #     preds_d = json.load(preds)
+    # with open("X:/edwards2016/runs/run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim/rank/rank-k_60-new_score.json",
+    #           'r') as preds2:
+    #     preds_d2 = json.load(preds2)
     # pred_json = Path('predictions/blastn.json')
     #
     # with pred_json.open() as pj:
     #     preds = json.load(pj)
 
+    with open("X:/edwards2016/runs/naming_test/rank/testname_powmax.json", 'r') as preds:
+        preds_d = json.load(preds)
+
     print(taxonomic_accordance_sp(dists,
                                   preds_d,
                                   virus_dict))
-    print(taxonomic_discordance_sp(dists,
-                                   preds_d,
-                                   virus_dict))
-    print(taxonomic_accordance_sp(dists,
-                                  preds_d2,
-                                  virus_dict))
-    print(taxonomic_discordance_sp(dists,
-                                   preds_d2,
-                                   virus_dict))
+    # print(taxonomic_discordance_sp(dists,
+    #                                preds_d,
+    #                                virus_dict))
+    # print(taxonomic_accordance_sp(dists,
+    #                               preds_d2,
+    #                               virus_dict))
+    # print(taxonomic_discordance_sp(dists,
+    #                                preds_d2,
+    #                                virus_dict))
 
     total_end = timer()
     total_runtime = total_end - total_start

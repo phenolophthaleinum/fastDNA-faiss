@@ -6,6 +6,7 @@ from collections import defaultdict
 from timeit import default_timer as timer
 from typing import List, Union, Tuple
 from pathlib import Path
+import re
 
 from Bio.Seq import Seq
 from Bio import SeqIO
@@ -68,7 +69,8 @@ def tax_filtering(filter: str, reps: int) -> Tuple[List[str], List[str]]:
     print(filenames)
 
     # get list of taxid (labels in fastDNA)
-    labels = [host_data[host]["taxid"] for host in filenames]
+    labels = ["_".join(re.split(' |\; |\. |\, ', host_data[host]["lineage_names"][-1])) for host in filenames]
+    # labels = [host_data[host]["taxid"] for host in filenames]
     print(len(labels))
 
     return filenames, labels
@@ -77,7 +79,8 @@ def tax_filtering(filter: str, reps: int) -> Tuple[List[str], List[str]]:
 def no_filtering(input_dir: str) -> Tuple[List[str], List[str]]:
     filenames = [path.split("/")[-1].split(".")[0] for path in glob.glob(f"{input_dir}*.fna")]
     print(filenames)
-    labels = [host_data[host]["taxid"] for host in filenames]
+    # labels = [host_data[host]["taxid"] for host in filenames]
+    labels = ["_".join(re.split(' |\; |\. |\, ', host_data[host]["lineage_names"][-1])) for host in filenames]
 
     return filenames, labels
 
@@ -174,5 +177,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    main_procedure(args.input_dir, args.output, args.filter, int(args.dim), int(args.length), int(args.minn), int(args.maxn), int(args.epoch),
+    main_procedure(args.input_dir, args.output, args.filter, int(args.dim), int(args.length), int(args.minn),
+                   int(args.maxn), int(args.epoch),
                    int(args.thread), int(args.reps), args.rm, args.saveVec)
