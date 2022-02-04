@@ -308,7 +308,7 @@ def taxonomic_discordance_sp(distances: DistanceMatrix,
             else:
                 skipped += 1
                 nn = master_virus_dict[virus_id]['host']['organism_name']
-                print(f'{true_host} {true_host in distances.species}, {nn}')
+                # print(f'{true_host} {true_host in distances.species}, {nn}')
         bar.update()
 
     bar.close()
