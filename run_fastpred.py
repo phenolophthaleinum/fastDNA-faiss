@@ -21,5 +21,5 @@ if __name__ == '__main__':
         workflow_n_nucleotide_threshold=5,
         workflow_k_best=10,
         search_final_rank="testname2.json",
-        search_scoring_func="powmax"
+        search_scoring_func="avg"
     )

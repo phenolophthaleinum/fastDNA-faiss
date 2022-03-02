@@ -18,12 +18,14 @@ from joblib import wrap_non_picklable_objects
 from timeit import default_timer as timer
 from colorama import Fore, init
 from multiprocessing import cpu_count
+import scoring_func
 
 
 scoring_functions = {
-    "max": None,
+    "max": scoring_func.choose_max,
     "powmax": None,
-    "harmonic": None
+    "avg": scoring_func.avg,
+    "harmonic": scoring_func.harmonic
 }
 
 
@@ -37,15 +39,24 @@ def make_result(file: str, func: str) -> Dict[str, List[Tuple[str, float]]]:
     for elem in d:
         data.append(dict(sorted(elem.items(), key=lambda x: x[1], reverse=False)))
     df = pd.DataFrame.from_records(data).fillna(0)
-    df_means = df.apply(lambda x: x.mean())
+    # df_means = df.apply(lambda x: x.mean())
+
+    # df ranking: max value from column takes 1 and so on
+    df_rank = df.rank(method='max', ascending=False)
+
+    # df division: original/rank
+    df_div = df.div(df_rank)
+    print(df_div)
 
     ######
     # with scoring function selection
-    # df_func = df.apply(lambda x: x.scoring_functions[func]())
+    df_func = df_div.apply(lambda x: scoring_functions[func](x))
     ######
 
-    df_means.sort_values(ascending=False, inplace=True)
-    data_json = df_means.to_json()
+    # df_means.sort_values(ascending=False, inplace=True)
+    df_func.sort_values(ascending=False, inplace=True)
+    # data_json = df_means.to_json()
+    data_json = df_func.to_json()
     data_parsed = json.loads(data_json)
     ranks = data_parsed.items()
     p = Path(file)
@@ -104,7 +115,7 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--output", required=True,
                         help="Path to result file with rankings.")
     parser.add_argument("-s", '--scoring', required=True,
-                        choices=["max", "powmax", "harmonic"],
+                        choices=["max", "powmax", "avg", "harmonic"],
                         help="Scoring function to be applied to the dataset.")
 
     args = parser.parse_args()
