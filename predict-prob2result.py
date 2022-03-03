@@ -46,11 +46,11 @@ def make_result(file: str, func: str) -> Dict[str, List[Tuple[str, float]]]:
 
     # df division: original/rank
     df_div = df.div(df_rank)
-    print(df_div)
+    #print(df_div)
 
     ######
     # with scoring function selection
-    df_func = df_div.apply(lambda x: scoring_functions[func](x))
+    df_func = scoring_functions[func](df_div)
     ######
 
     # df_means.sort_values(ascending=False, inplace=True)

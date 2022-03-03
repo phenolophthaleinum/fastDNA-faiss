@@ -1,13 +1,16 @@
 import statistics as stat
 
 
-def avg(values):
-    return stat.mean(values)
+def avg(df):
+    df_out = df.apply(lambda x: stat.mean(x))
+    return df_out
 
 
-def harmonic(values):
-    return stat.harmonic_mean(values)
+def harmonic(df):
+    df_out = df.apply(lambda x: stat.harmonic_mean(x))
+    return df_out
 
 
-def choose_max(values):
-    return max(values)
+def choose_max(df):
+    df_out = df.apply(lambda x: max(x))
+    return df_out
