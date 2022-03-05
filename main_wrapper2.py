@@ -6,6 +6,7 @@ from timeit import default_timer as timer
 from pathlib import Path
 
 import taxonomic_discordance2 as td
+import predict_prob2result as pred
 
 from colorama import Fore, init
 
@@ -30,7 +31,7 @@ def run_procedure(
         workflow_n_nucleotide_threshold: float,
         workflow_k_best: int,
         search_final_rank: str,
-        search_scoring_func: str
+        # search_scoring_func: str
         # bayes_best_score: float,
         # bayes_best_dir: str
 ):
@@ -67,13 +68,13 @@ def run_procedure(
     except RuntimeError:
         exit()
     # run faiss-search
-    try:
-        os.system(
-            f"python predict-prob2result.py -i {workflow_wd}virus/preds/ -o {workflow_wd}rank/{search_final_rank} -s {search_scoring_func}")
-    except RuntimeError:
-        exit()
+    # try:
+    #     os.system(
+    #         f"python predict_prob2result.py -i {workflow_wd}virus/preds/ -o {workflow_wd}rank/{search_final_rank} -s {search_scoring_func}")
+    # except RuntimeError:
+    #     exit()
+    results_table = {}
 
-    # run evaluation
     host_json = Path('host.json')
     with host_json.open() as hj:
         host_dict = json.load(hj)
@@ -84,11 +85,24 @@ def run_procedure(
     #
     # # tax_dists = td.load_matrix_parallel('tax_matrix_p2.lzma')
     dists = td.DistanceMatrix(host_dict)
+
+    for name in pred.scoring_functions.keys():
+        preds = pred.run_procedure(input_dir=f"{workflow_wd}virus/preds/",
+                                   scoring_function=name)
+        accordance = td.taxonomic_accordance_sp(dists, preds, virus_dict)
+        results_table[name] = {'result_dict': preds,
+                               'accordance': accordance}
+
+    best_score = max(d['accordance'] for d in results_table.values())
+    best_func = [name for name, data in results_table.items() if data['accordance'] == best_score][0]
+    pred.dump_result(output=f'{workflow_wd}rank/{search_final_rank}',
+                     result_rank=results_table[best_func]['result_dict'],
+                     scoring_function=best_func)
     #
-    search_path_obj = Path(search_final_rank)
-    search_rank_fullname = f"{search_path_obj.stem}_{search_scoring_func}{search_path_obj.suffix}"
-    with open(f"{workflow_wd}rank/{search_rank_fullname}", 'r') as ph:
-        preds = json.load(ph)
+    # search_path_obj = Path(search_final_rank)
+    # search_rank_fullname = f"{search_path_obj.stem}_{search_scoring_func}{search_path_obj.suffix}"
+    # with open(f"{workflow_wd}rank/{search_rank_fullname}", 'r') as ph:
+    #     preds = json.load(ph)
 
     total_end = timer()
     total_runtime = total_end - total_start
@@ -96,8 +110,9 @@ def run_procedure(
 
     # return td.taxonomic_accordance(tax_dists, preds, virus_dict)
     # accordance = td.taxonomic_accordance(dists, preds, virus_dict)
-    accordance = td.taxonomic_accordance_sp(dists, preds, virus_dict)
-    print(f"[OPT]   Taxonomic accordance: {accordance}")
+    # accordance = td.taxonomic_accordance_sp(dists, preds, virus_dict)
+    print(f"[OPT]   Taxonomic accordance: {best_score}")
+    print({name: data['accordance'] for name, data in results_table.items()})
     # print(f"[OPT]   Current best: {bayes_best_score}")
     # if accordance > bayes_best_score:
     #     model_p = Path(f'{bayes_best_dir}{model_output.split("/")[-2]}/')

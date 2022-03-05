@@ -23,9 +23,11 @@ import scoring_func
 
 scoring_functions = {
     "max": scoring_func.choose_max,
-    "powmax": None,
+    "poly": scoring_func.polynomial,
     "avg": scoring_func.avg,
-    "harmonic": scoring_func.harmonic
+    "harmonic": scoring_func.harmonic,
+    "rank_row": scoring_func.rank_adjusted_row,
+    "rank_column": scoring_func.rank_adjusted_col
 }
 
 
@@ -41,16 +43,16 @@ def make_result(file: str, func: str) -> Dict[str, List[Tuple[str, float]]]:
     df = pd.DataFrame.from_records(data).fillna(0)
     # df_means = df.apply(lambda x: x.mean())
 
-    # df ranking: max value from column takes 1 and so on
-    df_rank = df.rank(method='max', ascending=False)
-
-    # df division: original/rank
-    df_div = df.div(df_rank)
-    #print(df_div)
+    # # df ranking: max value from column takes 1 and so on
+    # df_rank = df.rank(method='max', ascending=False)
+    #
+    # # df division: original/rank
+    # df_div = df.div(df_rank)
+    # #print(df_div)
 
     ######
     # with scoring function selection
-    df_func = scoring_functions[func](df_div)
+    df_func = scoring_functions[func](df)
     ######
 
     # df_means.sort_values(ascending=False, inplace=True)
@@ -79,7 +81,17 @@ def partition_queries(files: Iterable[str], partitions: int = cpu_count() - 1) -
     return partitions
 
 
-def run_procedure(input_dir: str, output: str, scoring_function: str):
+def dump_result(output: str, result_rank: dict, scoring_function: str):
+    prename = Path(output)
+    rank_file = Path(f"{str(prename.with_suffix(''))}_{scoring_function}.json")
+    # rank_file = Path(rank_str)
+    if rank_file.exists():
+        os.system(f"rm {str(rank_file)}")
+    with rank_file.open("w") as fd:
+        json.dump(result_rank, fd, indent=4)
+
+
+def run_procedure(input_dir: str, scoring_function: str):
     # colorama
     init()
 
@@ -91,34 +103,35 @@ def run_procedure(input_dir: str, output: str, scoring_function: str):
     #     delayed(do_search)(file, dim, n_samples, k_nearest, index, map_data) for file in glob.glob(f"{input_dir}*.vec"))
     ranks = Parallel(verbose=True, n_jobs=-1)(delayed(batch_exec)(batch, scoring_function) for batch in
                                               partition_queries(glob.glob(f"{input_dir}*.json")))
-
+    global_rank = {}
     for result in ranks:
         global_rank.update(result)
 
-    prename = Path(output)
-    rank_file = Path(f"{str(prename.with_suffix(''))}_{scoring_function}.json")
-    #rank_file = Path(rank_str)
-    if rank_file.exists():
-        os.system(f"rm {str(rank_file)}")
-    with rank_file.open("w") as fd:
-        json.dump(global_rank, fd, indent=4)
+    # prename = Path(output)
+    # rank_file = Path(f"{str(prename.with_suffix(''))}_{scoring_function}.json")
+    # #rank_file = Path(rank_str)
+    # if rank_file.exists():
+    #     os.system(f"rm {str(rank_file)}")
+    # with rank_file.open("w") as fd:
+    #     json.dump(global_rank, fd, indent=4)
 
     end = timer()
     runtime = end - start
     print(f"{Fore.GREEN} Done in {runtime:.6f} seconds")
+    return global_rank
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="predict-prob results 2 one big result")
-    parser.add_argument("-i", "--input_dir", required=True,
-                        help="Directory with virus samples of vectors.")
-    parser.add_argument("-o", "--output", required=True,
-                        help="Path to result file with rankings.")
-    parser.add_argument("-s", '--scoring', required=True,
-                        choices=["max", "powmax", "avg", "harmonic"],
-                        help="Scoring function to be applied to the dataset.")
-
-    args = parser.parse_args()
-
-    global_rank = {}
-    run_procedure(args.input_dir, args.output, args.scoring)
+# if __name__ == "__main__":
+#     parser = argparse.ArgumentParser(description="predict-prob results 2 one big result")
+#     parser.add_argument("-i", "--input_dir", required=True,
+#                         help="Directory with virus samples of vectors.")
+#     parser.add_argument("-o", "--output", required=True,
+#                         help="Path to result file with rankings.")
+#     parser.add_argument("-s", '--scoring', required=True,
+#                         choices=["max", "powmax", "avg", "harmonic"],
+#                         help="Scoring function to be applied to the dataset.")
+#
+#     args = parser.parse_args()
+#
+#     global_rank = {}
+#     run_procedure(args.input_dir, args.scoring)
