@@ -32,8 +32,8 @@ def run_procedure(
         workflow_k_best: int,
         search_final_rank: str,
         # search_scoring_func: str
-        # bayes_best_score: float,
-        # bayes_best_dir: str
+        bayes_best_score: float,
+        bayes_best_dir: str
 ):
     # colorama
     init()
@@ -113,12 +113,12 @@ def run_procedure(
     # accordance = td.taxonomic_accordance_sp(dists, preds, virus_dict)
     print(f"[OPT]   Taxonomic accordance: {best_score}")
     print({name: data['accordance'] for name, data in results_table.items()})
-    # print(f"[OPT]   Current best: {bayes_best_score}")
-    # if accordance > bayes_best_score:
-    #     model_p = Path(f'{bayes_best_dir}{model_output.split("/")[-2]}/')
-    #     if model_p.exists():
-    #         os.system(f'rm -r {str(model_p)}')
-    #     os.system(f"cp -R {workflow_wd} {bayes_best_dir}")
-    #     os.system(f"cp -R {model_output} {bayes_best_dir}")
+    print(f"[OPT]   Current total best: {bayes_best_score}")
+    if best_score > bayes_best_score:
+        model_p = Path(f'{bayes_best_dir}{model_output.split("/")[-2]}/')
+        if model_p.exists():
+            os.system(f'rm -r {str(model_p)}')
+        os.system(f"cp -R {workflow_wd} {bayes_best_dir}")
+        os.system(f"cp -R {model_output} {bayes_best_dir}")
 
     return best_score, best_func

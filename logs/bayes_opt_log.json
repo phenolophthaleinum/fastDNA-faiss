@@ -1,3 +1,1 @@
-{"target": 0.26741962305985856, "params": {"general_dim": 10.834044009405147, "general_length": 86.01622467210791, "model_maxn": 6.000114374817345}, "datetime": {"datetime": "2021-12-23 11:24:39", "elapsed": 0.0, "delta": 0.0}}
-{"target": 0.26717017738358306, "params": {"general_dim": 10.604665145263679, "general_length": 57.337794540855654, "model_maxn": 6.092338594768798}, "datetime": {"datetime": "2021-12-23 11:25:58", "elapsed": 79.001153, "delta": 79.001153}}
-{"target": 0.2752910199556461, "params": {"general_dim": 10.400831532796843, "general_length": 87.04912862588706, "model_maxn": 6.6847851010731665}, "datetime": {"datetime": "2021-12-23 11:27:19", "elapsed": 160.358821, "delta": 81.357668}}
+{"target": 0.15227272727272212, "params": {"general_dim": 10.834044009405147, "general_length": 86.01622467210791, "model_maxn": 6.000114374817345}, "datetime": {"datetime": "2022-03-06 15:16:48", "elapsed": 0.0, "delta": 0.0}}
