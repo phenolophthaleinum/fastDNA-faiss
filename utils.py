@@ -55,6 +55,26 @@ def get_tax_data() -> dict:
     return tax_data
 
 
+def make_hostvir_json():
+    host_data = get_host_data()
+    virus_data = get_virus_data()
+    for host in host_data:
+        lineage_name = host_data[host]['lineage_names'][6]
+        viruses = []
+        for virus in virus_data:
+            if virus_data[virus]['host']['organism_name'] == lineage_name:
+                viruses.append(virus)
+            host_data[host]['virus_id'] = viruses
+    with open('hostvir.json', 'w') as fh:
+        json.dump(host_data, fh)
+
+
+def get_hostvir_data() -> dict:
+    with open('hostvir.json', 'r') as fh:
+        hostvir_data = json.load(fh)
+    return hostvir_data
+
+
 def time_this(func):
     """
         Decorator which returns information about execution of decorated function.

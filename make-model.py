@@ -24,11 +24,26 @@ all_tax_levels = {
     "order": 3,
     "family": 4,
     "genus": 5,
-    "species": 6
+    "species": 6,
+    "hybrid": {
+        "superkingdom": 0,
+        "phylum": 1,
+        "class": 2,
+        "order": 3,
+        "family": 4,
+        "genus": 5,
+        "species": 6,
+    }
 }
 
 # importing json data about hosts
 host_data = utils.get_host_data()
+
+# importing json data about hostvir
+hostvir_data = utils.get_hostvir_data()
+
+#importing json data about viruses
+virus_data = utils.get_virus_data()
 
 # read config
 config = utils.get_config()
@@ -85,6 +100,69 @@ def no_filtering(input_dir: str) -> Tuple[List[str], List[str]]:
     return filenames, labels
 
 
+def hybrid_filtering(filter: str, reps: int) -> Tuple[List[str], List[str]]:
+    # filtering all hosts by a chosen level
+    filter_host = defaultdict(list)
+    for host in host_data:
+        level = host_data[host]["lineage_names"][all_tax_levels[filter]['species']]  # tax level code
+        filter_host[level].append(host)
+
+    # random sampling of a single host from a level
+    random_level_host = {
+        level: random.sample(filter_host[level], len(filter_host[level]) if len(filter_host[level]) < reps else reps)
+        for
+        level in filter_host}
+    # print(random_level_host)
+
+    # list with full paths
+    random_level_host_paths = {}
+    for level in random_level_host:
+        random_level_host_paths.update({level: [f"{config['HOST']['host_genomes']}{host}.fna" for host in random_level_host[level]]})
+
+    # add known viruses
+    for level in random_level_host:
+        to_add = []
+        for host in random_level_host[level]:
+            try:
+                # virus_sample = random.sample(hostvir_data[host]['virus_id'], len(random_level_host[level]) if len(random_level_host[level]) < reps else reps)
+                #virus_sample = random.sample(hostvir_data[host]['virus_id'], 1)
+                virus_sample = random.sample(hostvir_data[host]['virus_id'], len(hostvir_data[host]['virus_id']))
+                to_add.extend(virus_sample)
+            except:
+                continue
+        random_level_host_paths[level].extend([f"{config['VIRUS']['virus_genomes']}{virus}.fna" for virus in to_add])
+        random_level_host[level].extend(to_add)
+    print(random_level_host)
+
+    # list of filenames to be used
+    filenames = list(random_level_host.values())
+    # print(filenames)
+
+    # list of paths to be returned
+    filepaths = list(random_level_host_paths.values())
+
+    # flatten if needed
+    if isinstance(filenames[0], list):
+        temp_files = [item for sublist in filenames for item in sublist]
+        temp_files_path = [item for sublist in filepaths for item in sublist]
+        filenames = temp_files
+        filepaths = temp_files_path
+    print(filenames)
+
+    # get list of taxid (labels in fastDNA)
+    labels = []
+    for org in filenames:
+        try:
+            labels.append("_".join(re.split(' |\; |\. |\, ', host_data[org]["lineage_names"][-1])))
+        except KeyError:
+            labels.append("_".join(re.split(' |\; |\. |\, ', virus_data[org]["host"]["lineage_names"][-1])))
+    #labels = ["_".join(re.split(' |\; |\. |\, ', host_data[host]["lineage_names"][-1])) for host in filenames]
+    # labels = [host_data[host]["taxid"] for host in filenames]
+    print(len(labels))
+
+    return filepaths, labels
+
+
 def main_procedure(input_dir: str, out_dir: str, filter: str, dim: int, length: int, minn: int, maxn: int, epoch: int,
                    thread: int, reps: int, rm: bool, save_vec: bool):
     # colorama
@@ -100,18 +178,23 @@ def main_procedure(input_dir: str, out_dir: str, filter: str, dim: int, length: 
     filenames = []
     labels = []
 
-    if filter != "none":
+    if filter not in ["none", "hybrid"]:
         filenames, labels = tax_filtering(filter, reps)
     if filter == "none":
         filenames, labels = no_filtering(input_dir)
+    if filter == "hybrid":
+        filenames, labels = hybrid_filtering(filter, reps)
 
     # parse selected files and merge them into single fasta file; create labels file
     # records = [list(SeqIO.parse(f"D:/praktyki2020/edwards2016/host/fasta/{file}.fna", "fasta"))[0] for file in filenames]
     # for file, label in zip(filenames, labels):
     #     print(f"{file} - {label}")
-
-    par = Parallel(n_jobs=-1, verbose=11, pre_dispatch='all', batch_size="auto", backend="loky")(
-        delayed(fasta_parallel)(f"{input_dir}{file}.fna") for file in filenames)
+    if filter != "hybrid":
+        par = Parallel(n_jobs=-1, verbose=11, pre_dispatch='all', batch_size="auto", backend="loky")(
+            delayed(fasta_parallel)(f"{input_dir}{file}.fna") for file in filenames)
+    if filter == 'hybrid':
+        par = Parallel(n_jobs=-1, verbose=11, pre_dispatch='all', batch_size="auto", backend="loky")(
+            delayed(fasta_parallel)(file) for file in filenames)
     # print(par)
     # print(len(records))
     # print(records)
@@ -154,7 +237,7 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--output", required=True,
                         help="Path to result FASTA file, labels file and model file.")
     parser.add_argument("-f", "--filter", required=True,
-                        choices=["phylum", "class", "order", "family", "genus", "species", "none"],
+                        choices=["phylum", "class", "order", "family", "genus", "species", "none", 'hybrid'],
                         help="Taxonomy level to which genomes should be filtered. Choosing 'none' implies no taxonomy filtering.")
     parser.add_argument("-r", "--reps", required=False, default=1,
                         help="Maximum number of representatives from the filtered group. Default value is 1.")

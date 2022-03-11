@@ -52,8 +52,8 @@ def bayes():
         global ff_func
         ff_score, ff_func = ff.run_procedure(
             model_input_dir="/home/hyperscroll/edwards2016/host/fasta/",  # slim
-            model_output="/home/hyperscroll/edwards2016/models/bayes_test/",
-            model_filter="phylum",  # none
+            model_output="/home/hyperscroll/edwards2016/models/bayes_test_hybrid/",
+            model_filter="hybrid",  # none
             model_minn=6,
             model_maxn=model_maxn_d,
             model_reps=1,
@@ -63,7 +63,7 @@ def bayes():
             general_dim=general_dim_d,
             general_length=general_length_d,
             general_threads=16,
-            workflow_wd="/home/hyperscroll/edwards2016/runs/bayes_test/",
+            workflow_wd="/home/hyperscroll/edwards2016/runs/bayes_test_hybrid/",
             workflow_n_vir=100,  # 500
             workflow_n_nucleotide_threshold=5,
             workflow_k_best=10,
@@ -93,7 +93,7 @@ def bayes():
     optimizer.subscribe(Events.OPTIMIZATION_STEP, observer)
     optimizer.maximize(
         init_points=2,  # 30
-        n_iter=2,  # 90
+        n_iter=3,  # 90
     )
 
     return optimizer.max
