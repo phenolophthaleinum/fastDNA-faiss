@@ -33,6 +33,15 @@ all_tax_levels = {
         "family": 4,
         "genus": 5,
         "species": 6,
+    },
+    "debug": {
+        "superkingdom": 0,
+        "phylum": 1,
+        "class": 2,
+        "order": 3,
+        "family": 4,
+        "genus": 5,
+        "species": 6,
     }
 }
 
@@ -104,7 +113,7 @@ def hybrid_filtering(filter: str, reps: int) -> Tuple[List[str], List[str]]:
     # filtering all hosts by a chosen level
     filter_host = defaultdict(list)
     for host in host_data:
-        level = host_data[host]["lineage_names"][all_tax_levels[filter]['species']]  # tax level code
+        level = host_data[host]["lineage_names"][all_tax_levels[filter]['family']]  # tax level code
         filter_host[level].append(host)
 
     # random sampling of a single host from a level
@@ -163,6 +172,41 @@ def hybrid_filtering(filter: str, reps: int) -> Tuple[List[str], List[str]]:
     return filepaths, labels
 
 
+def debug_filtering(filter: str) -> Tuple[List[str], List[str]]:
+    # filtering all hosts by a chosen level
+    filter_host = defaultdict(list)
+    target = ["Clostridiales"]
+    filenames = []
+    for name in target:
+        for host in host_data:
+            if host_data[host]["lineage_names"][all_tax_levels[filter]['order']] == name:
+                filenames.append(host)
+
+    # list of paths to be returned
+    filepaths = [f"{config['HOST']['host_genomes']}{host}.fna" for host in filenames]
+
+    # flatten if needed
+    if isinstance(filenames[0], list):
+        temp_files = [item for sublist in filenames for item in sublist]
+        temp_files_path = [item for sublist in filepaths for item in sublist]
+        filenames = temp_files
+        filepaths = temp_files_path
+    print(filenames)
+
+    # get list of taxid (labels in fastDNA)
+    # labels = []
+    # for org in filenames:
+    #     try:
+    #         labels.append("_".join(re.split(' |\; |\. |\, ', host_data[org]["lineage_names"][-1])))
+    #     except KeyError:
+    #         labels.append("_".join(re.split(' |\; |\. |\, ', virus_data[org]["host"]["lineage_names"][-1])))
+    labels = ["_".join(re.split(' |\; |\. |\, ', host_data[host]["lineage_names"][-1])) for host in filenames]
+    # labels = [host_data[host]["taxid"] for host in filenames]
+    print(len(labels))
+
+    return filepaths, labels
+
+
 def main_procedure(input_dir: str, out_dir: str, filter: str, dim: int, length: int, minn: int, maxn: int, epoch: int,
                    thread: int, reps: int, rm: bool, save_vec: bool):
     # colorama
@@ -178,21 +222,23 @@ def main_procedure(input_dir: str, out_dir: str, filter: str, dim: int, length: 
     filenames = []
     labels = []
 
-    if filter not in ["none", "hybrid"]:
+    if filter not in ["none", "hybrid", "debug"]:
         filenames, labels = tax_filtering(filter, reps)
     if filter == "none":
         filenames, labels = no_filtering(input_dir)
     if filter == "hybrid":
         filenames, labels = hybrid_filtering(filter, reps)
+    if filter == "debug":
+        filenames, labels = debug_filtering(filter)
 
     # parse selected files and merge them into single fasta file; create labels file
     # records = [list(SeqIO.parse(f"D:/praktyki2020/edwards2016/host/fasta/{file}.fna", "fasta"))[0] for file in filenames]
     # for file, label in zip(filenames, labels):
     #     print(f"{file} - {label}")
-    if filter != "hybrid":
+    if filter not in ["hybrid", "debug"]:
         par = Parallel(n_jobs=-1, verbose=11, pre_dispatch='all', batch_size="auto", backend="loky")(
             delayed(fasta_parallel)(f"{input_dir}{file}.fna") for file in filenames)
-    if filter == 'hybrid':
+    if filter in ['hybrid', "debug"]:
         par = Parallel(n_jobs=-1, verbose=11, pre_dispatch='all', batch_size="auto", backend="loky")(
             delayed(fasta_parallel)(file) for file in filenames)
     # print(par)
@@ -237,7 +283,7 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--output", required=True,
                         help="Path to result FASTA file, labels file and model file.")
     parser.add_argument("-f", "--filter", required=True,
-                        choices=["phylum", "class", "order", "family", "genus", "species", "none", 'hybrid'],
+                        choices=["phylum", "class", "order", "family", "genus", "species", "none", 'hybrid', 'debug'],
                         help="Taxonomy level to which genomes should be filtered. Choosing 'none' implies no taxonomy filtering.")
     parser.add_argument("-r", "--reps", required=False, default=1,
                         help="Maximum number of representatives from the filtered group. Default value is 1.")
