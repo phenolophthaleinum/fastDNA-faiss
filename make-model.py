@@ -77,6 +77,16 @@ def fasta_parallel(file: str) -> SeqRecord:
 
 
 def tax_filtering(filter: str, reps: int) -> Tuple[List[str], List[str]]:
+    """Edwards' dataset of host is filtered to certain taxonomy level and specific host genomes that represent
+    taxonomy level are randomly chosen.
+
+    Args:
+        filter: A taxonomy level by which filtering is conducted
+        reps: A number of representatives chosen randomly at selected level (defined by `filter`)
+
+    Returns:
+        Tuple[List[str], List[str]]: A list of ncbi_id of selected hosts genomes and a list of taxid of selected hosts.
+    """
     # filtering all hosts by a chosen level
     filter_host = defaultdict(list)
     for host in host_data:

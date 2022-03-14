@@ -1,7 +1,7 @@
 site_name: Sequence composition virus-host matching project
 repo_url: https://github.com/phenolophthaleinum/fastDNA-faiss
 repo_name: phenolophthaleinum/fastDNA-faiss
-edit_uri: "edit/master/docs/"
+edit_uri: "blob/master/docs/"
 plugins:
   - search
   - mkdocstrings:
