@@ -1,3 +1,6 @@
+from _typeshed import SupportsLessThan
+from typing import Union, Tuple, Any
+
 import utils
 import os
 import glob
@@ -34,7 +37,7 @@ def run_procedure(
         # search_scoring_func: str
         # bayes_best_score: float,
         # bayes_best_dir: str
-):
+) -> Tuple[Union[SupportsLessThan, Any], Any]:
     # colorama
     init()
 

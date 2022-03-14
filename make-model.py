@@ -59,6 +59,14 @@ config = utils.get_config()
 
 
 def fasta_parallel(file: str) -> SeqRecord:
+    """Reads FASTA files and returns parsed data. This function is run in parallel.
+
+    Args:
+        file: Path to FASTA file.
+
+    Returns:
+        SeqRecord: Parsed data from FASTA file as a SeqRecord object.
+    """
     record = SeqIO.read(file, "fasta")
     return record
     # with open("X:/edwards2016/host/random_phylum-training_fastDNA.fasta", "a") as w_fh:

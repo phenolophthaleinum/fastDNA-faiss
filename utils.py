@@ -6,8 +6,10 @@ from colorama import init, Fore
 
 
 def get_host_data() -> dict:
-    """
-        Reads Edwards' dataset host information.
+    """Reads Edwards' dataset of host information.
+
+    Returns:
+        dict: Returns dictionary of data parsed from `host.json`
     """
     with open("host.json", "r") as fh:
         host_data = json.load(fh)
@@ -15,14 +17,21 @@ def get_host_data() -> dict:
 
 
 def get_virus_data() -> dict:
+    """Reads Edwards' dataset of virus information.
+
+    Returns:
+        dict: Returns dictionary of data parsed from `virus.json`
+    """
     with open("virus.json", "r") as fh:
         virus_data = json.load(fh)
     return virus_data
 
 
 def get_config() -> dict:
-    """
-        Reads important settings and variables to run the analysis properly
+    """Reads important settings and variables to run the analysis properly
+
+    Returns:
+        dict: Returns dictionary of program variables parsed from `config.cfg`
     """
     config = configparser.ConfigParser()
     config.read("config.cfg")
@@ -30,13 +39,22 @@ def get_config() -> dict:
     return config_dict
 
 
-def get_config_obj():
+def get_config_obj() -> configparser.ConfigParser:
+    """Creates program configuration object from configuration file
+
+    Returns:
+        ConfigParser: Returns ConfigParser object created from `config.cfg`
+    """
     config = configparser.ConfigParser()
     config.read("config.cfg")
     return config
 
 
 def make_tax_json():
+    """Creates `tax.json` file which is a modified Edwards' `host.json` file where keys are represented as taxid but
+    ncbi_id information is still retained as one of the values
+
+    """
     host_data = get_host_data()
     keys = list(host_data.keys())
     for key in keys:
@@ -50,12 +68,21 @@ def make_tax_json():
 
 
 def get_tax_data() -> dict:
+    """Reads modified dataset of host information (taxid as a key).
+
+    Returns:
+        dict: Returns dictionary of data parsed from `tax.json`
+    """
     with open("tax.json", "r") as fh:
         tax_data = json.load(fh)
     return tax_data
 
 
 def make_hostvir_json():
+    """Creates `hostvir.json` file which is a modified Edwards' `host.json` file with additional information about
+    infecting viruses. Each record has a value with a list of infecting viruses.
+
+    """
     host_data = get_host_data()
     virus_data = get_virus_data()
     for host in host_data:
@@ -70,14 +97,18 @@ def make_hostvir_json():
 
 
 def get_hostvir_data() -> dict:
+    """Reads modified dataset of host information (additional information about infecting viruses).
+
+    Returns:
+        dict: Returns dictionary of data parsed from `hostvir.json`
+    """
     with open('hostvir.json', 'r') as fh:
         hostvir_data = json.load(fh)
     return hostvir_data
 
 
 def time_this(func):
-    """
-        Decorator which returns information about execution of decorated function.
+    """*UNUSED* Decorator which returns information about execution of decorated function.
     """
     @functools.wraps(func)
     def wrapper_timer(*args, **kwargs):
