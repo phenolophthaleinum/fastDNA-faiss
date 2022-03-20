@@ -8,6 +8,7 @@ import pandas as pd
 
 # fh = open('X:/edwards2016/runs/run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim/rank/rank-k_60-new_score.json')
 fh = open('X:/edwards2016/runs/debugF_test/rank/testdebugF_harmonic.json')
+#fh = open('bayes_test_avg.json')
 db = json.load(fh)
 fh.close()
 
@@ -17,6 +18,10 @@ fh.close()
 
 fh = open('host.json')
 hjson = json.load(fh)
+fh.close()
+
+fh = open("hostname.json")
+hostname = json.load(fh)
 fh.close()
 
 
@@ -44,6 +49,7 @@ def compare_taxranks(vd, hd, rank):
 
 d = {}
 d2 = {}
+#print(list(db.items())[0])
 for vid, hids in db.items():
     d[vid] = []
     d2[vid] = []
@@ -51,6 +57,8 @@ for vid, hids in db.items():
         match = False
         for tup in hids[:1]:
             hid = tup[0]
+            #mm
+            hid = hostname[hid]['ncbi_id']
             #print(hid)
             match = compare_taxranks(vjson[vid], hjson[hid], taxlevel)
             if match:

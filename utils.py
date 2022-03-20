@@ -1,6 +1,7 @@
 import json
 import functools
 import configparser
+import re
 from timeit import default_timer as timer
 from colorama import init, Fore
 
@@ -105,6 +106,33 @@ def get_hostvir_data() -> dict:
     with open('hostvir.json', 'r') as fh:
         hostvir_data = json.load(fh)
     return hostvir_data
+
+
+def make_hostname_json():
+    """Creates `hostname.json` file which is a modified Edwards' `host.json` file where keys are represented as organism name but
+    ncbi_id information is still retained as one of the values
+
+    """
+    host_data = get_host_data()
+    keys = list(host_data.keys())
+    for key in keys:
+        temp_name = host_data[key]['lineage_names'][-1]
+        host_data[key]["ncbi_id"] = key
+        name = "_".join(re.split(' |\; |\. |\, ', temp_name))
+        host_data[name] = host_data.pop(key)
+    with open("hostname.json", "w") as fh:
+        json.dump(host_data, fh, indent=4)
+
+
+def get_hostname_data() -> dict:
+    """Reads modified dataset of host information (organism name as a key).
+
+    Returns:
+        dict: Returns dictionary of data parsed from `hostname.json`
+    """
+    with open("hostname.json", "r") as fh:
+        hostname_data = json.load(fh)
+    return hostname_data
 
 
 def time_this(func):
