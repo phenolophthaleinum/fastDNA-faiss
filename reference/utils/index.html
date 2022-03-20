@@ -199,7 +199,7 @@
 
   <li class="md-tabs__item">
     <a href="../.." class="md-tabs__link">
-      Welcome to MkDocs
+      Main page
     </a>
   </li>
 
@@ -276,7 +276,7 @@
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        Welcome to MkDocs
+        Main page
       </a>
     </li>
   
@@ -393,6 +393,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#utils.get_hostname_data" class="md-nav__link">
+    get_hostname_data()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#utils.get_hostvir_data" class="md-nav__link">
     get_hostvir_data()
   </a>
@@ -409,6 +416,13 @@
         <li class="md-nav__item">
   <a href="#utils.get_virus_data" class="md-nav__link">
     get_virus_data()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#utils.make_hostname_json" class="md-nav__link">
+    make_hostname_json()
   </a>
   
 </li>
@@ -503,6 +517,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#utils.get_hostname_data" class="md-nav__link">
+    get_hostname_data()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#utils.get_hostvir_data" class="md-nav__link">
     get_hostvir_data()
   </a>
@@ -519,6 +540,13 @@
         <li class="md-nav__item">
   <a href="#utils.get_virus_data" class="md-nav__link">
     get_virus_data()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#utils.make_hostname_json" class="md-nav__link">
+    make_hostname_json()
   </a>
   
 </li>
@@ -730,6 +758,54 @@
 
 
 
+<h2 class="doc doc-heading" id="utils.get_hostname_data">
+<code class="highlight language-python"><span class="n">get_hostname_data</span><span class="p">()</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Reads modified dataset of host information (organism name as a key).</p>
+
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>dict</code></td>
+      <td><p>Returns dictionary of data parsed from <code>hostname.json</code></p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>fastdna-faiss\utils.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_hostname_data</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Reads modified dataset of host information (organism name as a key).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Returns dictionary of data parsed from `hostname.json`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;hostname.json&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+        <span class="n">hostname_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">hostname_data</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
 <h2 class="doc doc-heading" id="utils.get_hostvir_data">
 <code class="highlight language-python"><span class="n">get_hostvir_data</span><span class="p">()</span></code>
 
@@ -862,6 +938,45 @@
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;virus.json&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
         <span class="n">virus_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">virus_data</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 class="doc doc-heading" id="utils.make_hostname_json">
+<code class="highlight language-python"><span class="n">make_hostname_json</span><span class="p">()</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Creates <code>hostname.json</code> file which is a modified Edwards' <code>host.json</code> file where keys are represented as organism name but
+ncbi_id information is still retained as one of the values</p>
+
+        <details class="quote">
+          <summary>Source code in <code>fastdna-faiss\utils.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">make_hostname_json</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Creates `hostname.json` file which is a modified Edwards&#39; `host.json` file where keys are represented as organism name but</span>
+<span class="sd">    ncbi_id information is still retained as one of the values</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">host_data</span> <span class="o">=</span> <span class="n">get_host_data</span><span class="p">()</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">host_data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+        <span class="n">temp_name</span> <span class="o">=</span> <span class="n">host_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;lineage_names&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">host_data</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;ncbi_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; |\; |\. |\, &#39;</span><span class="p">,</span> <span class="n">temp_name</span><span class="p">))</span>
+        <span class="n">host_data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">host_data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;hostname.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">host_data</span><span class="p">,</span> <span class="n">fh</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 </code></pre></div>
         </details>
     </div>
