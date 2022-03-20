@@ -391,12 +391,11 @@
                 <h1 id="main-page">Main page</h1>
 <p>Landing page</p>
 <h1 id="current-workflow">Current workflow</h1>
-<pre class="mermaid"><code>graph LR
-  A[Start] --&gt; B{Error?};
-  B --&gt;|Yes| C[Hmm...];
-  C --&gt; D[Debug];
-  D --&gt; B;
-  B ----&gt;|No| E[Yay!];</code></pre>
+<figure>
+<p><img alt="Image title" src="main_wrapper2_workflow.svg" width="300" />
+  </p>
+<figcaption>Image caption</figcaption>
+</figure>
                 
               
               
@@ -458,6 +457,8 @@
     
     
       <script src="assets/javascripts/bundle.bc35569b.min.js"></script>
+      
+        <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
       
     
   </body>
