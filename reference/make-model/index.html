@@ -892,7 +892,10 @@ into model training.</p>
       <tr>
         <td><code>filter</code></td>
         <td><code>str</code></td>
-        <td><p>A taxonomy level by which filtering is conducted / A flag to filter through this function (TODO: this is not final, this will act as an actual filter value in the future)</p></td>
+        <td><p>A taxonomy level by which filtering is conducted / A flag to filter through this function
+!!! todo</p>
+<pre><code>This is not final, this will act as an actual filter value in the future
+</code></pre></td>
         <td><em>required</em></td>
       </tr>
       <tr>
@@ -960,7 +963,10 @@ into model training.</p>
 <span class="sd">    Args:</span>
 <span class="sd">        input_dir: Path to directory with all host genomes.</span>
 <span class="sd">        out_dir: Path to directory where all output files are saved (chosen genomes - `.fasta` file, taxid list - `.txt` file, model file - `.bin` file)</span>
-<span class="sd">        filter: A taxonomy level by which filtering is conducted / A flag to filter through this function (TODO: this is not final, this will act as an actual filter value in the future)</span>
+<span class="sd">        filter: A taxonomy level by which filtering is conducted / A flag to filter through this function</span>
+<span class="sd">            !!! todo</span>
+
+<span class="sd">                This is not final, this will act as an actual filter value in the future</span>
 <span class="sd">        dim: Dimensionality of vectors to be used during the training process.</span>
 <span class="sd">        length: Length of fragments of the genomes to be used during the training process.</span>
 <span class="sd">        minn: Minimum size of a k-mer to be used during the training process.</span>
