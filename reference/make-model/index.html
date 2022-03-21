@@ -892,7 +892,11 @@ into model training.</p>
       <tr>
         <td><code>filter</code></td>
         <td><code>str</code></td>
-        <td><p>A taxonomy level by which filtering is conducted / A flag to filter through this function</p></td>
+        <td><p>A taxonomy level by which filtering is conducted / A flag to filter through this function</p>
+<div class="admonition todo">
+<p class="admonition-title">Todo</p>
+</div>
+<p><code>filter</code> argument is ambiguous at this moment. This is not final, this will act as an actual filter value in the future</p></td>
         <td><em>required</em></td>
       </tr>
       <tr>
@@ -950,9 +954,10 @@ into model training.</p>
         <td><em>required</em></td>
       </tr>
   </tbody>
-</table>      <p>!!! todo</p>
-<pre><code>`filter` argument is ambiguous at this moment. This is not final, this will act as an actual filter value in the future
-</code></pre>
+</table>      <div class="admonition todo">
+<p class="admonition-title">Todo</p>
+<p><code>filter</code> argument is ambiguous at this moment. This is not final, this will act as an actual filter value in the future</p>
+</div>
 
         <details class="quote">
           <summary>Source code in <code>fastdna-faiss\make-model.py</code></summary>
@@ -964,6 +969,9 @@ into model training.</p>
 <span class="sd">        input_dir: Path to directory with all host genomes.</span>
 <span class="sd">        out_dir: Path to directory where all output files are saved (chosen genomes - `.fasta` file, taxid list - `.txt` file, model file - `.bin` file)</span>
 <span class="sd">        filter: A taxonomy level by which filtering is conducted / A flag to filter through this function</span>
+<span class="sd">            !!! todo</span>
+
+<span class="sd">            `filter` argument is ambiguous at this moment. This is not final, this will act as an actual filter value in the future</span>
 <span class="sd">        dim: Dimensionality of vectors to be used during the training process.</span>
 <span class="sd">        length: Length of fragments of the genomes to be used during the training process.</span>
 <span class="sd">        minn: Minimum size of a k-mer to be used during the training process.</span>
