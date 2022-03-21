@@ -7,6 +7,11 @@ plugins:
   - mkdocstrings:
       watch:
         - utils
+extra_javascript:
+    - https://unpkg.com/mermaid/dist/mermaid.min.js
+markdown_extensions:
+  - attr_list
+  - md_in_html
 theme:
   name: material
   palette:
