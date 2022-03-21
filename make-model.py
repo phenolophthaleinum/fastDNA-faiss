@@ -119,6 +119,14 @@ def tax_filtering(filter: str, reps: int) -> Tuple[List[str], List[str]]:
 
 
 def no_filtering(input_dir: str) -> Tuple[List[str], List[str]]:
+    """Edwards' dataset of host is not filtered and all genomes from selected directory are passed to model training.
+
+        Args:
+            input_dir: Path to directory with all host genomes.
+
+        Returns:
+            Tuple[List[str], List[str]]: A list of ncbi_id of selected hosts genomes and a list of taxid of selected hosts.
+    """
     filenames = [path.split("/")[-1].split(".")[0] for path in glob.glob(f"{input_dir}*.fna")]
     print(filenames)
     # labels = [host_data[host]["taxid"] for host in filenames]
@@ -128,6 +136,17 @@ def no_filtering(input_dir: str) -> Tuple[List[str], List[str]]:
 
 
 def hybrid_filtering(filter: str, reps: int) -> Tuple[List[str], List[str]]:
+    """Edwards' dataset of host is filtered to certain taxonomy level and specific host genomes that represent
+    taxonomy level are randomly chosen. Additionally, virus genomes associated with each chosen host are also passed
+    into model training.
+
+    Args:
+        filter: A flag to filter through this function (TODO: this is not final, this will act as an actual filter value in the future)
+        reps: A number of representatives chosen randomly at selected level (defined by `filter`)
+
+    Returns:
+        Tuple[List[str], List[str]]: A list of ncbi_id of selected hosts genomes and a list of taxid of selected hosts.
+    """
     # filtering all hosts by a chosen level
     filter_host = defaultdict(list)
     for host in host_data:
@@ -191,6 +210,15 @@ def hybrid_filtering(filter: str, reps: int) -> Tuple[List[str], List[str]]:
 
 
 def debug_filtering(filter: str) -> Tuple[List[str], List[str]]:
+    """Edwards' dataset of host is filtered to one, specific taxonomy level and from it, all host genomes that represent
+    this taxonomy level are chosen.
+
+    Args:
+        filter: A flag to filter through this function (TODO: this is not final, this will act as an actual filter value in the future)
+
+    Returns:
+        Tuple[List[str], List[str]]: A list of ncbi_id of selected hosts genomes and a list of taxid of selected hosts.
+    """
     # filtering all hosts by a chosen level
     filter_host = defaultdict(list)
     target = ["Clostridiales"]
@@ -227,6 +255,28 @@ def debug_filtering(filter: str) -> Tuple[List[str], List[str]]:
 
 def main_procedure(input_dir: str, out_dir: str, filter: str, dim: int, length: int, minn: int, maxn: int, epoch: int,
                    thread: int, reps: int, rm: bool, save_vec: bool):
+    """Main function of the module that runs model making.
+
+    Args:
+        input_dir: Path to directory with all host genomes.
+        out_dir: Path to directory where all output files are saved (chosen genomes - `.fasta` file, taxid list - `.txt` file, model file - `.bin` file)
+        filter: A taxonomy level by which filtering is conducted / A flag to filter through this function
+            !!! todo
+            `filter` argument is ambiguous at this moment. This is not final, this will act as an actual filter value in the future
+        dim: Dimensionality of vectors to be used during the training process.
+        length: Length of fragments of the genomes to be used during the training process.
+        minn: Minimum size of a k-mer to be used during the training process.
+        maxn: Maximum size of a k-mer to be used during the training process (it is advised to be kept the same as `minn` and **less than 15, otherwise fastDNA fails**).
+        epoch: Number of training epochs (each added epoch increases runtime significantly, but in most cases increases model quality).
+        thread: Number of CPU threads to be used during training process (more threads - faster training, but higher CPU usage)
+        reps: A number of representatives chosen randomly at selected level (defined by `filter`)
+        rm: Remove potentially redundant files after model creation. Default is `false` and it is advised to be set default.
+        save_vec: Enables saving of a readable model file `.vec`. Enabling this may significantly increase execution time. Default is 'false'.
+
+    !!! todo
+
+        `filter` argument is ambiguous at this moment. This is not final, this will act as an actual filter value in the future
+    """
     # colorama
     init()
 

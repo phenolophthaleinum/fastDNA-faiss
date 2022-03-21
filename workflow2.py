@@ -6,7 +6,6 @@ from timeit import default_timer as timer
 import argparse
 import utils
 import random_sampling
-import index_building
 import pathlib
 import numpy as np
 from typing import Dict, Tuple, List, Iterable
@@ -14,6 +13,13 @@ from multiprocessing import cpu_count
 
 
 def run_predict_prob(file: str, k_best: int, wd: str):
+    """Runs fastdna predict-prob module. This function is run from [`batch_exec` function](#workflow2.batch_exec)
+
+    Args:
+        file: Path to FASTA file to be used in prediction
+        k_best: Number of best results from prediction
+        wd: Path to working directory, which completes path to output file
+    """
     name = file.split("/")[-1].split(".")[0]
     os.system(
         f"{config['GENERAL']['fastdna_dir']}fastdna predict-prob {config['GENERAL']['active_model']} {file} {k_best} > {wd}virus/preds/{name}_pred.json"
@@ -21,11 +27,29 @@ def run_predict_prob(file: str, k_best: int, wd: str):
 
 
 def batch_exec(files: Tuple[str], k_best: int, wd: str):
+    """Batch fastdna predict-prob module execution
+
+    Args:
+        files: Tuple of paths to FASTA files to be used in prediction
+        k_best: Number of best results from prediction
+        wd: Path to working directory, which completes path to output file
+    """
     for file in files:
         run_predict_prob(file, k_best, wd)
 
 
 def partition_queries(files: Iterable[str], partitions: int = cpu_count() - 1) -> np.ndarray:
+    """Partitions set of paths to FASTA files with virus genomes to be batched.
+
+    Args:
+        files: Iterable of paths FASTA files with virus genomes
+        partitions: Number of paths to be collected into a batch.
+            !!! info
+            Currently, it is a predefined parameter which equals a number of CPU threads.
+
+    Returns:
+        ndarray: n-dimensional Numpy array with batches of file paths
+    """
     partitions = np.array_split(np.array(files), partitions)
     # debug for partitions
     # print(partitions)
@@ -34,6 +58,19 @@ def partition_queries(files: Iterable[str], partitions: int = cpu_count() - 1) -
 
 
 def main_procedure(wd: str, length: int, n_vir_samples: int, thread: int, n_nuc_threshold: float, k_best: int):
+    """Main function of the module that runs:
+        - filesystem creation for working directory
+        - random sampling of virus genomes
+        - fastna predict-prob
+
+    Args:
+        wd: Path to working directory
+        length: Length of fragments of the genomes
+        n_vir_samples: Number of samples to take from a virus genome
+        thread: Number of CPU threads to be used (more threads - faster execution, but higher CPU usage)
+        n_nuc_threshold: Maximum allowed ambiguous nucleotide content threshold in sampled sequences (in percents)
+        k_best: Number of best results from prediction
+    """
     # colorama
     init()
 

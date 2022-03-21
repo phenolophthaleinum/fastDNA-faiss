@@ -62,6 +62,24 @@ def sample_sequences(file: str, length: int, n: int, wd: str, n_nuc_threshold: f
 # DONE new sample sources - not only from all edwards host genomes but from each species representative
 def main_procedure(wd: str, host: bool, virus: bool, full: bool, host_dir: str, virus_dir: str, length: int,
                    n_vir_samples: int, n_host_samples: int, n_nuc_threshold: float):
+    """Main function of the module that samples genomes randomly:
+
+    Args:
+        wd: Working directory path
+        host: Flag, which allows sampling only host genomes
+            !!! p-obsolete "Obsolete"
+                In current vision of the whole process, this parameter is obsolete. Using it might be undesirable and cause program to fail. Might be removed in later version.
+        virus: Flag, which allows sampling only virus genomes.
+        full: Flag, which allows sampling both virus and host genomes.
+            !!! p-obsolete "Obsolete"
+                In current vision of the whole process, this parameter is obsolete. Using it might be undesirable and cause program to fail. Might be removed in later version.
+        host_dir: Path to directory where sampled host fragments will be saved
+        virus_dir: Path to directory where sampled virus fragments will be saved
+        length: Length of sampled fragments
+        n_vir_samples: Number of samples to take from a virus genome
+        n_host_samples: Number of samples to take from a host genome
+        n_nuc_threshold: Maximum allowed ambiguous nucleotide content threshold in sampled sequences (in percents)
+    """
     # colorama
     init()
 
