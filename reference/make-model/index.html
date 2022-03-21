@@ -358,8 +358,36 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#make-model.debug_filtering" class="md-nav__link">
+    debug_filtering()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#make-model.fasta_parallel" class="md-nav__link">
     fasta_parallel()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#make-model.hybrid_filtering" class="md-nav__link">
+    hybrid_filtering()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#make-model.main_procedure" class="md-nav__link">
+    main_procedure()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#make-model.no_filtering" class="md-nav__link">
+    no_filtering()
   </a>
   
 </li>
@@ -433,8 +461,36 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#make-model.debug_filtering" class="md-nav__link">
+    debug_filtering()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#make-model.fasta_parallel" class="md-nav__link">
     fasta_parallel()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#make-model.hybrid_filtering" class="md-nav__link">
+    hybrid_filtering()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#make-model.main_procedure" class="md-nav__link">
+    main_procedure()
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#make-model.no_filtering" class="md-nav__link">
+    no_filtering()
   </a>
   
 </li>
@@ -486,6 +542,106 @@
 
 
 
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 class="doc doc-heading" id="make-model.debug_filtering">
+<code class="highlight language-python"><span class="n">debug_filtering</span><span class="p">(</span><span class="nb">filter</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Edwards' dataset of host is filtered to one, specific taxonomy level and from it, all host genomes that represent
+this taxonomy level are chosen.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>filter</code></td>
+        <td><code>str</code></td>
+        <td><p>A flag to filter through this function (TODO: this is not final, this will act as an actual filter value in the future)</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Tuple[List[str], List[str]]</code></td>
+      <td><p>A list of ncbi_id of selected hosts genomes and a list of taxid of selected hosts.</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>fastdna-faiss\make-model.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">debug_filtering</span><span class="p">(</span><span class="nb">filter</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Edwards&#39; dataset of host is filtered to one, specific taxonomy level and from it, all host genomes that represent</span>
+<span class="sd">    this taxonomy level are chosen.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filter: A flag to filter through this function (TODO: this is not final, this will act as an actual filter value in the future)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[List[str], List[str]]: A list of ncbi_id of selected hosts genomes and a list of taxid of selected hosts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># filtering all hosts by a chosen level</span>
+    <span class="n">filter_host</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Clostridiales&quot;</span><span class="p">]</span>
+    <span class="n">filenames</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">target</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">host</span> <span class="ow">in</span> <span class="n">host_data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">host_data</span><span class="p">[</span><span class="n">host</span><span class="p">][</span><span class="s2">&quot;lineage_names&quot;</span><span class="p">][</span><span class="n">all_tax_levels</span><span class="p">[</span><span class="nb">filter</span><span class="p">][</span><span class="s1">&#39;order&#39;</span><span class="p">]]</span> <span class="o">==</span> <span class="n">name</span><span class="p">:</span>
+                <span class="n">filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">host</span><span class="p">)</span>
+
+    <span class="c1"># list of paths to be returned</span>
+    <span class="n">filepaths</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;HOST&#39;</span><span class="p">][</span><span class="s1">&#39;host_genomes&#39;</span><span class="p">]</span><span class="si">}{</span><span class="n">host</span><span class="si">}</span><span class="s2">.fna&quot;</span> <span class="k">for</span> <span class="n">host</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">]</span>
+
+    <span class="c1"># flatten if needed</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filenames</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">temp_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">filenames</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+        <span class="n">temp_files_path</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">filepaths</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+        <span class="n">filenames</span> <span class="o">=</span> <span class="n">temp_files</span>
+        <span class="n">filepaths</span> <span class="o">=</span> <span class="n">temp_files_path</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span>
+
+    <span class="c1"># get list of taxid (labels in fastDNA)</span>
+    <span class="c1"># labels = []</span>
+    <span class="c1"># for org in filenames:</span>
+    <span class="c1">#     try:</span>
+    <span class="c1">#         labels.append(&quot;_&quot;.join(re.split(&#39; |\; |\. |\, &#39;, host_data[org][&quot;lineage_names&quot;][-1])))</span>
+    <span class="c1">#     except KeyError:</span>
+    <span class="c1">#         labels.append(&quot;_&quot;.join(re.split(&#39; |\; |\. |\, &#39;, virus_data[org][&quot;host&quot;][&quot;lineage_names&quot;][-1])))</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; |\; |\. |\, &#39;</span><span class="p">,</span> <span class="n">host_data</span><span class="p">[</span><span class="n">host</span><span class="p">][</span><span class="s2">&quot;lineage_names&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="k">for</span> <span class="n">host</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">]</span>
+    <span class="c1"># labels = [host_data[host][&quot;taxid&quot;] for host in filenames]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">filepaths</span><span class="p">,</span> <span class="n">labels</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
 
 
 
@@ -558,6 +714,407 @@
 
 
 
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 class="doc doc-heading" id="make-model.hybrid_filtering">
+<code class="highlight language-python"><span class="n">hybrid_filtering</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">reps</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Edwards' dataset of host is filtered to certain taxonomy level and specific host genomes that represent
+taxonomy level are randomly chosen. Additionally, virus genomes associated with each chosen host are also passed
+into model training.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>filter</code></td>
+        <td><code>str</code></td>
+        <td><p>A flag to filter through this function (TODO: this is not final, this will act as an actual filter value in the future)</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>reps</code></td>
+        <td><code>int</code></td>
+        <td><p>A number of representatives chosen randomly at selected level (defined by <code>filter</code>)</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Tuple[List[str], List[str]]</code></td>
+      <td><p>A list of ncbi_id of selected hosts genomes and a list of taxid of selected hosts.</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>fastdna-faiss\make-model.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">hybrid_filtering</span><span class="p">(</span><span class="nb">filter</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">reps</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Edwards&#39; dataset of host is filtered to certain taxonomy level and specific host genomes that represent</span>
+<span class="sd">    taxonomy level are randomly chosen. Additionally, virus genomes associated with each chosen host are also passed</span>
+<span class="sd">    into model training.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filter: A flag to filter through this function (TODO: this is not final, this will act as an actual filter value in the future)</span>
+<span class="sd">        reps: A number of representatives chosen randomly at selected level (defined by `filter`)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple[List[str], List[str]]: A list of ncbi_id of selected hosts genomes and a list of taxid of selected hosts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># filtering all hosts by a chosen level</span>
+    <span class="n">filter_host</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">host</span> <span class="ow">in</span> <span class="n">host_data</span><span class="p">:</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="n">host_data</span><span class="p">[</span><span class="n">host</span><span class="p">][</span><span class="s2">&quot;lineage_names&quot;</span><span class="p">][</span><span class="n">all_tax_levels</span><span class="p">[</span><span class="nb">filter</span><span class="p">][</span><span class="s1">&#39;family&#39;</span><span class="p">]]</span>  <span class="c1"># tax level code</span>
+        <span class="n">filter_host</span><span class="p">[</span><span class="n">level</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">host</span><span class="p">)</span>
+
+    <span class="c1"># random sampling of a single host from a level</span>
+    <span class="n">random_level_host</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">level</span><span class="p">:</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">filter_host</span><span class="p">[</span><span class="n">level</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">filter_host</span><span class="p">[</span><span class="n">level</span><span class="p">])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filter_host</span><span class="p">[</span><span class="n">level</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">reps</span> <span class="k">else</span> <span class="n">reps</span><span class="p">)</span>
+        <span class="k">for</span>
+        <span class="n">level</span> <span class="ow">in</span> <span class="n">filter_host</span><span class="p">}</span>
+    <span class="c1"># print(random_level_host)</span>
+
+    <span class="c1"># list with full paths</span>
+    <span class="n">random_level_host_paths</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="n">random_level_host</span><span class="p">:</span>
+        <span class="n">random_level_host_paths</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">level</span><span class="p">:</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;HOST&#39;</span><span class="p">][</span><span class="s1">&#39;host_genomes&#39;</span><span class="p">]</span><span class="si">}{</span><span class="n">host</span><span class="si">}</span><span class="s2">.fna&quot;</span> <span class="k">for</span> <span class="n">host</span> <span class="ow">in</span> <span class="n">random_level_host</span><span class="p">[</span><span class="n">level</span><span class="p">]]})</span>
+
+    <span class="c1"># add known viruses</span>
+    <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="n">random_level_host</span><span class="p">:</span>
+        <span class="n">to_add</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">host</span> <span class="ow">in</span> <span class="n">random_level_host</span><span class="p">[</span><span class="n">level</span><span class="p">]:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># virus_sample = random.sample(hostvir_data[host][&#39;virus_id&#39;], len(random_level_host[level]) if len(random_level_host[level]) &lt; reps else reps)</span>
+                <span class="c1">#virus_sample = random.sample(hostvir_data[host][&#39;virus_id&#39;], 1)</span>
+                <span class="n">virus_sample</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">hostvir_data</span><span class="p">[</span><span class="n">host</span><span class="p">][</span><span class="s1">&#39;virus_id&#39;</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">hostvir_data</span><span class="p">[</span><span class="n">host</span><span class="p">][</span><span class="s1">&#39;virus_id&#39;</span><span class="p">]))</span>
+                <span class="n">to_add</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">virus_sample</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">continue</span>
+        <span class="n">random_level_host_paths</span><span class="p">[</span><span class="n">level</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;VIRUS&#39;</span><span class="p">][</span><span class="s1">&#39;virus_genomes&#39;</span><span class="p">]</span><span class="si">}{</span><span class="n">virus</span><span class="si">}</span><span class="s2">.fna&quot;</span> <span class="k">for</span> <span class="n">virus</span> <span class="ow">in</span> <span class="n">to_add</span><span class="p">])</span>
+        <span class="n">random_level_host</span><span class="p">[</span><span class="n">level</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">to_add</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">random_level_host</span><span class="p">)</span>
+
+    <span class="c1"># list of filenames to be used</span>
+    <span class="n">filenames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">random_level_host</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="c1"># print(filenames)</span>
+
+    <span class="c1"># list of paths to be returned</span>
+    <span class="n">filepaths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">random_level_host_paths</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="c1"># flatten if needed</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filenames</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">temp_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">filenames</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+        <span class="n">temp_files_path</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">sublist</span> <span class="ow">in</span> <span class="n">filepaths</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">sublist</span><span class="p">]</span>
+        <span class="n">filenames</span> <span class="o">=</span> <span class="n">temp_files</span>
+        <span class="n">filepaths</span> <span class="o">=</span> <span class="n">temp_files_path</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span>
+
+    <span class="c1"># get list of taxid (labels in fastDNA)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">org</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; |\; |\. |\, &#39;</span><span class="p">,</span> <span class="n">host_data</span><span class="p">[</span><span class="n">org</span><span class="p">][</span><span class="s2">&quot;lineage_names&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; |\; |\. |\, &#39;</span><span class="p">,</span> <span class="n">virus_data</span><span class="p">[</span><span class="n">org</span><span class="p">][</span><span class="s2">&quot;host&quot;</span><span class="p">][</span><span class="s2">&quot;lineage_names&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span>
+    <span class="c1">#labels = [&quot;_&quot;.join(re.split(&#39; |\; |\. |\, &#39;, host_data[host][&quot;lineage_names&quot;][-1])) for host in filenames]</span>
+    <span class="c1"># labels = [host_data[host][&quot;taxid&quot;] for host in filenames]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">filepaths</span><span class="p">,</span> <span class="n">labels</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 class="doc doc-heading" id="make-model.main_procedure">
+<code class="highlight language-python"><span class="n">main_procedure</span><span class="p">(</span><span class="n">input_dir</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">minn</span><span class="p">,</span> <span class="n">maxn</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">thread</span><span class="p">,</span> <span class="n">reps</span><span class="p">,</span> <span class="n">rm</span><span class="p">,</span> <span class="n">save_vec</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Main function of the module that runs model making.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>input_dir</code></td>
+        <td><code>str</code></td>
+        <td><p>Path to directory with all host genomes.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>out_dir</code></td>
+        <td><code>str</code></td>
+        <td><p>Path to directory where all output files are saved (chosen genomes - <code>.fasta</code> file, taxid list - <code>.txt</code> file, model file - <code>.bin</code> file)</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>filter</code></td>
+        <td><code>str</code></td>
+        <td><p>A taxonomy level by which filtering is conducted / A flag to filter through this function (TODO: this is not final, this will act as an actual filter value in the future)</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>dim</code></td>
+        <td><code>int</code></td>
+        <td><p>Dimensionality of vectors to be used during the training process.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>length</code></td>
+        <td><code>int</code></td>
+        <td><p>Length of fragments of the genomes to be used during the training process.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>minn</code></td>
+        <td><code>int</code></td>
+        <td><p>Minimum size of a k-mer to be used during the training process.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>maxn</code></td>
+        <td><code>int</code></td>
+        <td><p>Maximum size of a k-mer to be used during the training process (it is advised to be kept the same as <code>minn</code> and <strong>less than 15, otherwise fastDNA fails</strong>).</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>epoch</code></td>
+        <td><code>int</code></td>
+        <td><p>Number of training epochs (each added epoch increases runtime significantly, but in most cases increases model quality).</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>thread</code></td>
+        <td><code>int</code></td>
+        <td><p>Number of CPU threads to be used during training process (more threads - faster training, but higher CPU usage)</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>reps</code></td>
+        <td><code>int</code></td>
+        <td><p>A number of representatives chosen randomly at selected level (defined by <code>filter</code>)</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>rm</code></td>
+        <td><code>bool</code></td>
+        <td><p>Remove potentially redundant files after model creation. Default is <code>false</code> and it is advised to be set default.</p></td>
+        <td><em>required</em></td>
+      </tr>
+      <tr>
+        <td><code>save_vec</code></td>
+        <td><code>bool</code></td>
+        <td><p>Enables saving of a readable model file <code>.vec</code>. Enabling this may significantly increase execution time. Default is 'false'.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>fastdna-faiss\make-model.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">main_procedure</span><span class="p">(</span><span class="n">input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">filter</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">minn</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">maxn</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                   <span class="n">thread</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">reps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">rm</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">save_vec</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Main function of the module that runs model making.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_dir: Path to directory with all host genomes.</span>
+<span class="sd">        out_dir: Path to directory where all output files are saved (chosen genomes - `.fasta` file, taxid list - `.txt` file, model file - `.bin` file)</span>
+<span class="sd">        filter: A taxonomy level by which filtering is conducted / A flag to filter through this function (TODO: this is not final, this will act as an actual filter value in the future)</span>
+<span class="sd">        dim: Dimensionality of vectors to be used during the training process.</span>
+<span class="sd">        length: Length of fragments of the genomes to be used during the training process.</span>
+<span class="sd">        minn: Minimum size of a k-mer to be used during the training process.</span>
+<span class="sd">        maxn: Maximum size of a k-mer to be used during the training process (it is advised to be kept the same as `minn` and **less than 15, otherwise fastDNA fails**).</span>
+<span class="sd">        epoch: Number of training epochs (each added epoch increases runtime significantly, but in most cases increases model quality).</span>
+<span class="sd">        thread: Number of CPU threads to be used during training process (more threads - faster training, but higher CPU usage)</span>
+<span class="sd">        reps: A number of representatives chosen randomly at selected level (defined by `filter`)</span>
+<span class="sd">        rm: Remove potentially redundant files after model creation. Default is `false` and it is advised to be set default.</span>
+<span class="sd">        save_vec: Enables saving of a readable model file `.vec`. Enabling this may significantly increase execution time. Default is &#39;false&#39;.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># colorama</span>
+    <span class="n">init</span><span class="p">()</span>
+
+    <span class="c1"># timeit</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span>
+
+    <span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">out_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;mkdir </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">filenames</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="nb">filter</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="s2">&quot;hybrid&quot;</span><span class="p">,</span> <span class="s2">&quot;debug&quot;</span><span class="p">]:</span>
+        <span class="n">filenames</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">tax_filtering</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">reps</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">filter</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+        <span class="n">filenames</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">no_filtering</span><span class="p">(</span><span class="n">input_dir</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">filter</span> <span class="o">==</span> <span class="s2">&quot;hybrid&quot;</span><span class="p">:</span>
+        <span class="n">filenames</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">hybrid_filtering</span><span class="p">(</span><span class="nb">filter</span><span class="p">,</span> <span class="n">reps</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">filter</span> <span class="o">==</span> <span class="s2">&quot;debug&quot;</span><span class="p">:</span>
+        <span class="n">filenames</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">debug_filtering</span><span class="p">(</span><span class="nb">filter</span><span class="p">)</span>
+
+    <span class="c1"># parse selected files and merge them into single fasta file; create labels file</span>
+    <span class="c1"># records = [list(SeqIO.parse(f&quot;D:/praktyki2020/edwards2016/host/fasta/{file}.fna&quot;, &quot;fasta&quot;))[0] for file in filenames]</span>
+    <span class="c1"># for file, label in zip(filenames, labels):</span>
+    <span class="c1">#     print(f&quot;{file} - {label}&quot;)</span>
+    <span class="k">if</span> <span class="nb">filter</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;hybrid&quot;</span><span class="p">,</span> <span class="s2">&quot;debug&quot;</span><span class="p">]:</span>
+        <span class="n">par</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">pre_dispatch</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;loky&quot;</span><span class="p">)(</span>
+            <span class="n">delayed</span><span class="p">(</span><span class="n">fasta_parallel</span><span class="p">)(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_dir</span><span class="si">}{</span><span class="n">file</span><span class="si">}</span><span class="s2">.fna&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">filter</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;hybrid&#39;</span><span class="p">,</span> <span class="s2">&quot;debug&quot;</span><span class="p">]:</span>
+        <span class="n">par</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">pre_dispatch</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;loky&quot;</span><span class="p">)(</span>
+            <span class="n">delayed</span><span class="p">(</span><span class="n">fasta_parallel</span><span class="p">)(</span><span class="n">file</span><span class="p">)</span> <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">)</span>
+    <span class="c1"># print(par)</span>
+    <span class="c1"># print(len(records))</span>
+    <span class="c1"># print(records)</span>
+
+    <span class="n">filtered_fasta_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;random_train-</span><span class="si">{</span><span class="nb">filter</span><span class="si">}</span><span class="s2">-dim_</span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">-len_</span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s2">.fasta&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">out_dir</span><span class="si">}{</span><span class="n">filtered_fasta_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;w+&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">w_fh</span><span class="p">:</span>
+        <span class="n">SeqIO</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">par</span><span class="p">,</span> <span class="n">w_fh</span><span class="p">,</span> <span class="s2">&quot;fasta&quot;</span><span class="p">)</span>
+
+    <span class="n">labels_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;random_labels-</span><span class="si">{</span><span class="nb">filter</span><span class="si">}</span><span class="s2">-dim_</span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">-len_</span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s2">.txt&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">out_dir</span><span class="si">}{</span><span class="n">labels_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+            <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">label</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># run fastDNA training</span>
+    <span class="n">model_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;random_model-</span><span class="si">{</span><span class="nb">filter</span><span class="si">}</span><span class="s2">-dim_</span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">-len_</span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s2">-epoch</span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">save_vec</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;GENERAL&#39;</span><span class="p">][</span><span class="s1">&#39;fastdna_dir&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">fastdna supervised -input </span><span class="si">{</span><span class="n">out_dir</span><span class="si">}{</span><span class="n">filtered_fasta_file</span><span class="si">}</span><span class="s2"> -labels </span><span class="si">{</span><span class="n">out_dir</span><span class="si">}{</span><span class="n">labels_file</span><span class="si">}</span><span class="s2"> -output </span><span class="si">{</span><span class="n">out_dir</span><span class="si">}{</span><span class="n">model_file</span><span class="si">}</span><span class="s2"> -dim </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2"> -length </span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s2"> -minn </span><span class="si">{</span><span class="n">minn</span><span class="si">}</span><span class="s2"> -maxn </span><span class="si">{</span><span class="n">maxn</span><span class="si">}</span><span class="s2"> -epoch </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2"> -thread </span><span class="si">{</span><span class="n">thread</span><span class="si">}</span><span class="s2"> -saveVec&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;GENERAL&#39;</span><span class="p">][</span><span class="s1">&#39;fastdna_dir&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">fastdna supervised -input </span><span class="si">{</span><span class="n">out_dir</span><span class="si">}{</span><span class="n">filtered_fasta_file</span><span class="si">}</span><span class="s2"> -labels </span><span class="si">{</span><span class="n">out_dir</span><span class="si">}{</span><span class="n">labels_file</span><span class="si">}</span><span class="s2"> -output </span><span class="si">{</span><span class="n">out_dir</span><span class="si">}{</span><span class="n">model_file</span><span class="si">}</span><span class="s2"> -dim </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2"> -length </span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s2"> -minn </span><span class="si">{</span><span class="n">minn</span><span class="si">}</span><span class="s2"> -maxn </span><span class="si">{</span><span class="n">maxn</span><span class="si">}</span><span class="s2"> -epoch </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2"> -thread </span><span class="si">{</span><span class="n">thread</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># par = Parallel(n_jobs=-1)(delayed(SeqIO.write)(records, &quot;D:/praktyki2020/edwards2016/host/random_phylum-training_fastDNA.fasta&quot;, &quot;fasta&quot;) for record in records)</span>
+    <span class="c1"># SeqIO.write(records, &quot;X:/edwards2016/host/random_phylum-training_fastDNA.fasta&quot;, &quot;fasta&quot;)</span>
+    <span class="c1"># print(f&quot;Written {len(records)} records.&quot;)</span>
+
+    <span class="k">if</span> <span class="n">rm</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;removing&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rm </span><span class="si">{</span><span class="n">out_dir</span><span class="si">}{</span><span class="n">filtered_fasta_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rm </span><span class="si">{</span><span class="n">out_dir</span><span class="si">}{</span><span class="n">labels_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">end</span> <span class="o">=</span> <span class="n">timer</span><span class="p">()</span>
+    <span class="n">runtime</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Fore</span><span class="o">.</span><span class="n">GREEN</span><span class="si">}</span><span class="s2">[make-model] Done in </span><span class="si">{</span><span class="n">runtime</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
+
+
+
+  <div class="doc doc-object doc-function">
+
+
+
+<h2 class="doc doc-heading" id="make-model.no_filtering">
+<code class="highlight language-python"><span class="n">no_filtering</span><span class="p">(</span><span class="n">input_dir</span><span class="p">)</span></code>
+
+
+</h2>
+
+    <div class="doc doc-contents ">
+
+      <p>Edwards' dataset of host is not filtered and all genomes from selected directory are passed to model training.</p>
+
+<p><strong>Parameters:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+      <th>Default</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <td><code>input_dir</code></td>
+        <td><code>str</code></td>
+        <td><p>Path to directory with all host genomes.</p></td>
+        <td><em>required</em></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>Returns:</strong></p>
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Tuple[List[str], List[str]]</code></td>
+      <td><p>A list of ncbi_id of selected hosts genomes and a list of taxid of selected hosts.</p></td>
+    </tr>
+  </tbody>
+</table>
+        <details class="quote">
+          <summary>Source code in <code>fastdna-faiss\make-model.py</code></summary>
+          <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">no_filtering</span><span class="p">(</span><span class="n">input_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Edwards&#39; dataset of host is not filtered and all genomes from selected directory are passed to model training.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            input_dir: Path to directory with all host genomes.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple[List[str], List[str]]: A list of ncbi_id of selected hosts genomes and a list of taxid of selected hosts.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">filenames</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_dir</span><span class="si">}</span><span class="s2">*.fna&quot;</span><span class="p">)]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">filenames</span><span class="p">)</span>
+    <span class="c1"># labels = [host_data[host][&quot;taxid&quot;] for host in filenames]</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; |\; |\. |\, &#39;</span><span class="p">,</span> <span class="n">host_data</span><span class="p">[</span><span class="n">host</span><span class="p">][</span><span class="s2">&quot;lineage_names&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="k">for</span> <span class="n">host</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">filenames</span><span class="p">,</span> <span class="n">labels</span>
+</code></pre></div>
+        </details>
+    </div>
+
+  </div>
 
 
 
