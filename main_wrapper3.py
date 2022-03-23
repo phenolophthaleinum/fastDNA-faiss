@@ -90,7 +90,7 @@ def run_procedure(
     dists = td.DistanceMatrix(host_dict)
 
     for name in pred.scoring_functions.keys():
-        preds = pred.run_procedure(input_dir=f"{workflow_wd}virus/preds/",
+        preds, preds_tax = pred.run_procedure_division(input_dir=f"{workflow_wd}virus/preds/",
                                    scoring_function=name)
         accordance = td.taxonomic_accordance_sp(dists, preds, virus_dict)
         results_table[name] = {'result_dict': preds,
@@ -101,6 +101,16 @@ def run_procedure(
     pred.dump_result(output=f'{workflow_wd}rank/{search_final_rank}',
                      result_rank=results_table[best_func]['result_dict'],
                      scoring_function=best_func)
+    with open("preds_tax_test.json", 'w') as fh:
+        json.dump(preds_tax, fh, indent=4) # division dict
+    # by order scoring
+    try:
+        os.system(
+            f"python workflow3.py -w {workflow_wd} --length {general_length} --n_vir {workflow_n_vir} -t {general_threads} --n_nucleotide_threshold {workflow_n_nucleotide_threshold} -k {workflow_k_best} --div preds_tax_test.json")
+    except RuntimeError:
+        exit()
+    # with open("preds_tax_test.json", 'w') as fh:
+    #     json.dump(preds_tax, fh, indent=4) # division dict
     #
     # search_path_obj = Path(search_final_rank)
     # search_rank_fullname = f"{search_path_obj.stem}_{search_scoring_func}{search_path_obj.suffix}"

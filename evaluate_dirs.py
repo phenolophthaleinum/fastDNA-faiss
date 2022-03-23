@@ -12,11 +12,13 @@ from collections import defaultdict
 #fh = open('X:/edwards2016/runs/run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim/rank/rank-k_60-new_score.json')
 #fh = open('X:/edwards2016/runs/debugF_test/rank/testdebugF_harmonic.json')
 #fh = open('bayes_test_avg.json')
-filename = 'X:/edwards2016/runs/debugF_test_Lactobacillales_premodel/rank/testdebugF_Lactobacillales_premodel_max.json'
-# filename = 'bayes_test_avg.json'
-fh = open(filename)
-db = json.load(fh)
-fh.close()
+p = Path('X:/edwards2016/runs/')
+subdirectories = [str(x) for x in p.iterdir() if x.is_dir()]
+print(subdirectories)
+dirs_to_find = '\n'.join(subdirectories)
+dirs = [re.match(r'.*\\debugF_test.*$', x).group(0) for x in subdirectories if re.match(r'.*\\debugF_test.*$', x)]
+#filename = 'X:/edwards2016/runs/hybrid_test/rank/testhybrid_avg.json'
+print(dirs)
 
 fh = open('virus.json')
 vjson = json.load(fh)
@@ -51,46 +53,56 @@ def compare_taxranks(vd, hd, rank):
     return False
 
 
+final_dict = defaultdict(list)
+for d in dirs:
+    for filename in glob.glob(f"{d}\\rank\\*.json"):
+        key_name = filename.split("\\")[-1]
+        print(key_name)
+        fh = open(filename)
+        db = json.load(fh)
+        fh.close()
+        d = {}
+        d2 = {}
+        all_vid = len(list(db.keys()))
+        #print(list(db.items())[0])
+        for vid, hids in db.items():
+            d[vid] = []
+            d2[vid] = []
+            for taxlevel in TAX_RANKS:
+                match = False
+                for tup in hids[:1]:
+                    hid = tup[0]
+                    #mm
+                    hid = hostname[hid]['ncbi_id']
+                    #print(hid)
+                    match = compare_taxranks(vjson[vid], hjson[hid], taxlevel)
+                    if match:
+                        break
+                d[vid].append(match)
+                tax_index = hjson[hid]['lineage_ranks'].index(taxlevel)
+                d2[vid].append((hjson[hid]['lineage_names'][tax_index], vjson[vid]["host"]["lineage_names"][tax_index], match))
+        #print(d2)
+        #print(d)
+        l = [0 for _i in TAX_RANKS]
+        #print(l)
+        for vid in d:
+            for i, taxlevel in enumerate(TAX_RANKS):
+                if d[vid][i]:
+                    l[i] += 1
+        print(l)
 
-d = {}
-d2 = {}
-all_vid = len(list(db.keys()))
-#print(list(db.items())[0])
-for vid, hids in db.items():
-    d[vid] = []
-    d2[vid] = []
-    for taxlevel in TAX_RANKS:
-        match = False
-        for tup in hids[:1]:
-            hid = tup[0]
+
+        d = {}
+        for i, tax_rank in enumerate(TAX_RANKS):
             #mm
-            hid = hostname[hid]['ncbi_id']
-            #print(hid)
-            match = compare_taxranks(vjson[vid], hjson[hid], taxlevel)
-            if match:
-                break
-        d[vid].append(match)
-        tax_index = hjson[hid]['lineage_ranks'].index(taxlevel)
-        d2[vid].append((hjson[hid]['lineage_names'][tax_index], vjson[vid]["host"]["lineage_names"][tax_index], match))
-#print(d2)
-#print(d)
-l = [0 for _i in TAX_RANKS]
-#print(l)
-for vid in d:
-    for i, taxlevel in enumerate(TAX_RANKS):
-        if d[vid][i]:
-            l[i] += 1
-print(l)
+            #d[tax_rank] = l[i] / len(vjson) * 100
+            d[tax_rank] = l[i] / all_vid * 100
 
 
-d = {}
-for i, tax_rank in enumerate(TAX_RANKS):
-    #mm
-    #d[tax_rank] = l[i] / len(vjson) * 100
-    d[tax_rank] = l[i] / all_vid * 100
-
-
-print(d)
+        print(d)
+        final_dict[key_name].append(d)
+with open('new_evaluation_final.json', 'w') as fh:
+    json.dump(final_dict, fh, indent=4)
 # print(data)
 # data['Year'] = data['Year'].astype(str)
 # data = data.set_index('Year')
