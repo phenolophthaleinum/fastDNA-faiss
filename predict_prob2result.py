@@ -96,10 +96,15 @@ def make_result_divison(file: str, func: str) -> Tuple[dict, dict]:
 def make_result(file: str, func: str) -> dict:
     with open(file) as jf:
         d = json.load(jf)
-    data = []
-    for elem in d:
-        data.append(dict(sorted(elem.items(), key=lambda x: x[1], reverse=False)))
-    df = pd.DataFrame.from_records(data).fillna(0)
+    df = pd.DataFrame.from_dict(d).fillna(0)
+    # old way - unnecessary for loop and sorting
+    # data = []
+    # for elem in d:
+    #     data.append(dict(sorted(elem.items(), key=lambda x: x[1], reverse=False)))
+    # df = pd.DataFrame.from_records(data).fillna(0)
+    ##############
+
+
     # df_means = df.apply(lambda x: x.mean())
 
     # # df ranking: max value from column takes 1 and so on
