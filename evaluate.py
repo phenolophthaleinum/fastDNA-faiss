@@ -12,7 +12,7 @@ from collections import defaultdict
 #fh = open('X:/edwards2016/runs/run-dim_60-len_125-n_600_600-epoch_2-k_7-none_Slim/rank/rank-k_60-new_score.json')
 #fh = open('X:/edwards2016/runs/debugF_test/rank/testdebugF_harmonic.json')
 #fh = open('bayes_test_avg.json')
-filename = 'X:/edwards2016/runs/debugF_test_Lactobacillales_premodel/rank/testdebugF_Lactobacillales_premodel_max.json'
+filename = 'X:/edwards2016/runs/debugF_test_hybrid_2/rank/testdebugF_hybrid_2_avg.json'
 # filename = 'bayes_test_avg.json'
 fh = open(filename)
 db = json.load(fh)

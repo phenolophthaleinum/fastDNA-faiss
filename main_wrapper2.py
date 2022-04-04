@@ -60,8 +60,7 @@ def run_procedure(
             exit()
         # assign right model for the next steps
         # also, important, remember to change host and virus values in config.cfg accordingly
-        cfg['GENERAL']['active_model'] = glob.glob(f"{model_output}*.bin")[
-            0]  # trzeba sie umowic na konwencje nazwywania i organizacji folderow
+        cfg['GENERAL']['active_model'] = glob.glob(f"{model_output}*.bin")[0]  # trzeba sie umowic na konwencje nazwywania i organizacji folderow
         with open("config.cfg", "w") as cf:
             cfg.write(cf)
     # run file preprocessing

@@ -118,6 +118,38 @@ def tax_filtering(filter: str, reps: int) -> Tuple[List[str], List[str]]:
     return filenames, labels
 
 
+def general_filtering(filter: str, reps: int) -> Tuple[List[str], List[str]]:
+    # filtering all hosts by a chosen level
+    filter_host = defaultdict(list)
+    for host in host_data:
+        level = host_data[host]["lineage_names"][all_tax_levels["species"]]  # tax level code
+        filter_host[level].append(host)
+
+    # random sampling of a single host from a level
+    random_level_host = {
+        level: random.sample(filter_host[level], len(filter_host[level]) if len(filter_host[level]) < reps else reps)
+        for
+        level in filter_host}
+    print(random_level_host)
+
+    # list of filenames to be used
+    filenames = list(random_level_host.values())
+    # print(filenames)
+
+    # flatten if needed
+    if isinstance(filenames[0], list):
+        temp_files = [item for sublist in filenames for item in sublist]
+        filenames = temp_files
+    print(filenames)
+
+    # get list of taxid (labels in fastDNA)
+    labels = [host_data[host]["lineage_names"][all_tax_levels["order"]] for host in filenames]
+    # labels = [host_data[host]["taxid"] for host in filenames]
+    print(len(labels))
+
+    return filenames, labels
+
+
 def no_filtering(input_dir: str) -> Tuple[List[str], List[str]]:
     """Edwards' dataset of host is not filtered and all genomes from selected directory are passed to model training.
 
@@ -150,7 +182,7 @@ def hybrid_filtering(filter: str, reps: int) -> Tuple[List[str], List[str]]:
     # filtering all hosts by a chosen level
     filter_host = defaultdict(list)
     for host in host_data:
-        level = host_data[host]["lineage_names"][all_tax_levels[filter]['family']]  # tax level code
+        level = host_data[host]["lineage_names"][all_tax_levels[filter]['order']]  # tax level code
         filter_host[level].append(host)
 
     # random sampling of a single host from a level
@@ -290,7 +322,7 @@ def main_procedure(input_dir: str, out_dir: str, filter: str, dim: int, length: 
     filenames = []
     labels = []
 
-    if filter not in ["none", "hybrid", "debug"]:
+    if filter not in ["none", "hybrid", "debug", "general"]:
         filenames, labels = tax_filtering(filter, reps)
     if filter == "none":
         filenames, labels = no_filtering(input_dir)
@@ -298,6 +330,8 @@ def main_procedure(input_dir: str, out_dir: str, filter: str, dim: int, length: 
         filenames, labels = hybrid_filtering(filter, reps)
     if filter == "debug":
         filenames, labels = debug_filtering(filter)
+    if filter == "general":
+        filenames, labels = general_filtering(filter, reps)
 
     # parse selected files and merge them into single fasta file; create labels file
     # records = [list(SeqIO.parse(f"D:/praktyki2020/edwards2016/host/fasta/{file}.fna", "fasta"))[0] for file in filenames]
@@ -351,7 +385,7 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--output", required=True,
                         help="Path to result FASTA file, labels file and model file.")
     parser.add_argument("-f", "--filter", required=True,
-                        choices=["phylum", "class", "order", "family", "genus", "species", "none", 'hybrid', 'debug'],
+                        choices=["phylum", "class", "order", "family", "genus", "species", "none", 'hybrid', 'debug', 'general'],
                         help="Taxonomy level to which genomes should be filtered. Choosing 'none' implies no taxonomy filtering.")
     parser.add_argument("-r", "--reps", required=False, default=1,
                         help="Maximum number of representatives from the filtered group. Default value is 1.")
