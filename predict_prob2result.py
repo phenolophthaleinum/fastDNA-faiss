@@ -19,6 +19,7 @@ from timeit import default_timer as timer
 from colorama import Fore, init
 from multiprocessing import cpu_count
 import scoring_func
+import re
 
 scoring_functions = {
     "max": scoring_func.choose_max,
@@ -93,10 +94,34 @@ def make_result_divison(file: str, func: str) -> Tuple[dict, dict]:
     return part, part_tax
 
 
+class Succesfully:
+    pass
+
+
 def make_result(file: str, func: str) -> dict:
     with open(file) as jf:
         d = json.load(jf)
+
+    ## important; with json fixing
+    # try:
+    #     with open(file) as jf:
+    #         d = json.load(jf)
+    # except json.JSONDecodeError:
+    #     print(f"Fixing bad json: {file}")
+    #     try:
+    #         with open(file) as jf:
+    #             dfix = jf.read()
+    #             dfix = dfix.replace('\n', '')
+    #             dfix = re.sub(r',]', ']', dfix)
+    #             d = json.loads(dfix)
+    #             print(f"Succesfully fixed {file}")
+    #     except:
+    #         print("Couldn't fix json. Skipping...")
+    #         return {}
+
     df = pd.DataFrame.from_dict(d).fillna(0)
+
+
     # old way - unnecessary for loop and sorting
     # data = []
     # for elem in d:
