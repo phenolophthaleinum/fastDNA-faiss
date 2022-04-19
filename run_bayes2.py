@@ -52,8 +52,8 @@ def bayes():
         global ff_func
         ff_score, ff_func = ff.run_procedure(
             model_input_dir="/home/hyperscroll/edwards2016/host/fasta/",  # slim
-            model_output="/home/hyperscroll/edwards2016/models/bayes_test_hybrid/",
-            model_filter="hybrid",  # none
+            model_output="/home/hyperscroll/edwards2016/models/bayes_test_rework/",
+            model_filter="order",  # none
             model_minn=6,
             model_maxn=model_maxn_d,
             model_reps=1,
@@ -63,13 +63,13 @@ def bayes():
             general_dim=general_dim_d,
             general_length=general_length_d,
             general_threads=16,
-            workflow_wd="/home/hyperscroll/edwards2016/runs/bayes_test_hybrid/",
+            workflow_wd="/home/hyperscroll/edwards2016/runs/bayes_test_rework/",
             workflow_n_vir=100,  # 500
             workflow_n_nucleotide_threshold=5,
             workflow_k_best=10,
-            search_final_rank="bayes_test.json",
+            search_final_rank="bayes_test_rework.json",
             bayes_best_score=best,
-            bayes_best_dir="/home/hyperscroll/edwards2016/bayes/"
+            bayes_best_dir="/home/hyperscroll/edwards2016/bayes_rework/"
         )
         if ff_score > best:
             best = ff_score
@@ -88,7 +88,7 @@ def bayes():
         verbose=2
     )
     # logger = JSONLogger(path="./logs/bayes_opt_log.json")
-    observer = FastpredLogger(path="./logs/bayes_opt_log2.json")
+    observer = FastpredLogger(path="./logs/bayes_opt_log_rework.json")
     # optimizer.subscribe(Events.OPTIMIZATION_STEP, logger)
     optimizer.subscribe(Events.OPTIMIZATION_STEP, observer)
     optimizer.maximize(

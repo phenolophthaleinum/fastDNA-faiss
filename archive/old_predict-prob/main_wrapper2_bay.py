@@ -58,8 +58,7 @@ def run_procedure(
         exit()
     # assign right model for the next steps
     # also, important, remember to change host and virus values in config.cfg accordingly
-    cfg['GENERAL']['active_model'] = glob.glob(f"{model_output}*.bin")[
-        0]  # trzeba sie umowic na konwencje nazwywania i organizacji folderow
+    cfg['GENERAL']['active_model'] = glob.glob(f"{model_output}*.bin")[0]  # trzeba sie umowic na konwencje nazwywania i organizacji folderow
     with open("config.cfg", "w") as cf:
         cfg.write(cf)
     # run file preprocessing
@@ -74,15 +73,11 @@ def run_procedure(
     #         f"python predict_prob2result.py -i {workflow_wd}virus/preds/ -o {workflow_wd}rank/{search_final_rank} -s {search_scoring_func}")
     # except RuntimeError:
     #     exit()
-    results_table = []
+    results_table = {}
 
     host_json = Path('host.json')
     with host_json.open() as hj:
         host_dict = json.load(hj)
-
-    hostname_json = Path('hostname.json')
-    with hostname_json.open() as hj:
-        hostname = json.load(hj)
 
     virus_json = Path('virus.json')
     with virus_json.open() as hj:
@@ -91,26 +86,33 @@ def run_procedure(
     # # tax_dists = td.load_matrix_parallel('tax_matrix_p2.lzma')
     dists = td.DistanceMatrix(host_dict)
 
-    for fun in pred.scoring:
-        preds = pred.score_and_rank(input_dir=f"{workflow_wd}virus/preds/",
-                                    scoring_function=fun)
-        # accordance = td.taxonomic_accordance_sp(dists, preds, virus_dict)
-        score = pred.evaluate_ranks(preds, virus_dict, host_dict, hostname, 'order')
-        results_table.append((fun.__name__, preds, score))
+    for name in pred.scoring_functions.keys():
+        preds = pred.run_procedure(input_dir=f"{workflow_wd}virus/preds/",
+                                   scoring_function=name)
+        accordance = td.taxonomic_accordance_sp(dists, preds, virus_dict)
+        results_table[name] = {'result_dict': preds,
+                               'accordance': accordance}
 
-    function_ranking = sorted(results_table, key=lambda result: result[2], reverse=True)
-    best_func, best_pred, best_score = function_ranking[0]
+    best_score = max(d['accordance'] for d in results_table.values())
+    best_func = [name for name, data in results_table.items() if data['accordance'] == best_score][0]
+    pred.dump_result(output=f'{workflow_wd}rank/{search_final_rank}',
+                     result_rank=results_table[best_func]['result_dict'],
+                     scoring_function=best_func)
+    #
+    # search_path_obj = Path(search_final_rank)
+    # search_rank_fullname = f"{search_path_obj.stem}_{search_scoring_func}{search_path_obj.suffix}"
+    # with open(f"{workflow_wd}rank/{search_rank_fullname}", 'r') as ph:
+    #     preds = json.load(ph)
 
     total_end = timer()
     total_runtime = total_end - total_start
-    print(f"{Fore.GREEN} Total elapsed time: {total_runtime:.6f} seconds {Fore.WHITE}")
+    print(f"{Fore.GREEN} Total elapsed time: {total_runtime:.6f} seconds")
 
-    for n, (fun_name, _, score) in enumerate(function_ranking):
-        line = f'{n + 1}. {fun_name}: {score}'
-        if n:
-            print(line)
-        else:
-            print("\033[1m" + line + " ←" + "\033[0m")
+    # return td.taxonomic_accordance(tax_dists, preds, virus_dict)
+    # accordance = td.taxonomic_accordance(dists, preds, virus_dict)
+    # accordance = td.taxonomic_accordance_sp(dists, preds, virus_dict)
+    print(f"[OPT]   Taxonomic accordance: {best_score}")
+    print({name: data['accordance'] for name, data in results_table.items()})
     print(f"[OPT]   Current total best: {bayes_best_score}")
     if best_score > bayes_best_score:
         model_p = Path(f'{bayes_best_dir}{model_output.split("/")[-2]}/')
@@ -118,13 +120,5 @@ def run_procedure(
             os.system(f'rm -r {str(model_p)}')
         os.system(f"cp -R {workflow_wd} {bayes_best_dir}")
         os.system(f"cp -R {model_output} {bayes_best_dir}")
-        dump_path = Path(f'{workflow_wd}rank/{search_final_rank}_{best_func}.json')
-        pred.dump_result(output=dump_path,
-                         result_rank=best_pred)
-        print(f'[OPT]   Top-scoring prediction saved at: {dump_path}')
-        # ??
-        # pred.evaluate_ranks(best_pred,
-        #                     virus_dict,
-        #                     host_dict,
-        #                     hostname)
+
     return best_score, best_func

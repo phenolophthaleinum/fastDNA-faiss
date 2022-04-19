@@ -1,0 +1,154 @@
+{
+    "testdebugF_avg.json": [
+        {
+            "species": 48.34123222748815,
+            "genus": 48.34123222748815,
+            "family": 100.0,
+            "order": 100.0,
+            "class": 100.0,
+            "phylum": 100.0,
+            "superkingdom": 100.0
+        }
+    ],
+    "testdebugF_harmonic.json": [
+        {
+            "species": 49.28909952606635,
+            "genus": 49.28909952606635,
+            "family": 100.0,
+            "order": 100.0,
+            "class": 100.0,
+            "phylum": 100.0,
+            "superkingdom": 100.0
+        }
+    ],
+    "testdebugF_Bacillaless_avg.json": [
+        {
+            "species": 56.33802816901409,
+            "genus": 61.97183098591549,
+            "family": 61.97183098591549,
+            "order": 100.0,
+            "class": 100.0,
+            "phylum": 100.0,
+            "superkingdom": 100.0
+        }
+    ],
+    "testdebugF_Campylobacterales_rank_column.json": [
+        {
+            "species": 100.0,
+            "genus": 100.0,
+            "family": 100.0,
+            "order": 100.0,
+            "class": 100.0,
+            "phylum": 100.0,
+            "superkingdom": 100.0
+        }
+    ],
+    "testdebugF_Chlamydiales_avg.json": [
+        {
+            "species": 0.0,
+            "genus": 83.33333333333334,
+            "family": 100.0,
+            "order": 100.0,
+            "class": 100.0,
+            "phylum": 100.0,
+            "superkingdom": 100.0
+        }
+    ],
+    "testdebugF_Clostridiales_rank_column.json": [
+        {
+            "species": 25.0,
+            "genus": 75.0,
+            "family": 75.0,
+            "order": 100.0,
+            "class": 100.0,
+            "phylum": 100.0,
+            "superkingdom": 100.0
+        },
+        {
+            "species": 30.0,
+            "genus": 70.0,
+            "family": 70.0,
+            "order": 100.0,
+            "class": 100.0,
+            "phylum": 100.0,
+            "superkingdom": 100.0
+        }
+    ],
+    "testdebugF_Lactobacillales_rank_column.json": [
+        {
+            "species": 35.84905660377358,
+            "genus": 67.9245283018868,
+            "family": 77.35849056603774,
+            "order": 100.0,
+            "class": 100.0,
+            "phylum": 100.0,
+            "superkingdom": 100.0
+        }
+    ],
+    "testdebugF_Mycoplasmatales_poly.json": [
+        {
+            "species": 0.0,
+            "genus": 100.0,
+            "family": 100.0,
+            "order": 100.0,
+            "class": 100.0,
+            "phylum": 100.0,
+            "superkingdom": 100.0
+        }
+    ],
+    "testdebugF_Pseudomonadales_avg.json": [
+        {
+            "species": 52.475247524752476,
+            "genus": 91.0891089108911,
+            "family": 91.0891089108911,
+            "order": 100.0,
+            "class": 100.0,
+            "phylum": 100.0,
+            "superkingdom": 100.0
+        }
+    ],
+    "testdebugF_Rhizobiales_avg.json": [
+        {
+            "species": 50.0,
+            "genus": 75.0,
+            "family": 100.0,
+            "order": 100.0,
+            "class": 100.0,
+            "phylum": 100.0,
+            "superkingdom": 100.0
+        }
+    ],
+    "testdebugF_Thermales_poly.json": [
+        {
+            "species": 40.0,
+            "genus": 40.0,
+            "family": 100.0,
+            "order": 100.0,
+            "class": 100.0,
+            "phylum": 100.0,
+            "superkingdom": 100.0
+        }
+    ],
+    "testdebugF_Vibrionales_avg.json": [
+        {
+            "species": 71.42857142857143,
+            "genus": 94.28571428571428,
+            "family": 100.0,
+            "order": 100.0,
+            "class": 100.0,
+            "phylum": 100.0,
+            "superkingdom": 100.0
+        }
+    ],
+    "testdebugF_Xanthomonadales_harmonic.json": [
+        {
+            "species": 38.88888888888889,
+            "genus": 38.88888888888889,
+            "family": 100.0,
+            "order": 100.0,
+            "class": 100.0,
+            "phylum": 100.0,
+            "superkingdom": 100.0
+        }
+    ]
+}
