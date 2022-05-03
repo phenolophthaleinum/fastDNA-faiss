@@ -1,6 +1,7 @@
 #import treepoem
 import math
 
+import numpy as np
 from Bio import SeqIO
 import json
 from pylibdmtx.pylibdmtx import encode
@@ -57,7 +58,7 @@ from timeit import default_timer as timer
 total_start = timer()
 # seq_obj, = SeqIO.parse("X:/edwards2016/virus/fasta/NC_000866.fna", 'fasta')
 # seq_obj, = SeqIO.parse("X:/edwards2016/caenorhabditis_elegans.fna", 'fasta')
-seq_obj, = SeqIO.parse("X:/edwards2016/virus/fasta/NC_007461.fna", 'fasta')
+seq_obj, = SeqIO.parse("X:/edwards2016/host/fasta/NC_008253.fna", 'fasta')
 # p_seq = dill.dumps(str(seq_obj.seq))
 p_seq = str.encode(str(seq_obj.seq))
 # with open("NC_dilled.dill", 'wb') as f:
@@ -69,7 +70,16 @@ diff = target - len(p_seq)
 n_seq = p_seq + bytes(diff)
 dim = int(math.sqrt(len(n_seq)))
 img = Image.frombytes('P', (dim, dim), n_seq)
-img.save(f"NC_007461_v_seq2.png")
+
+# P to RGBA
+img_conv = img.convert('RGBA')
+img_arr = np.array(img_conv)
+# set empty pixels alpha to 0 (full transparent)
+img_arr[img_arr[:, :, 0] == 0] = 0
+img = Image.fromarray(img_arr)
+####
+
+img.save(f"NC_008253_h_seq2_A.png")
 total_end = timer()
 total_runtime = total_end - total_start
 print(f"Total elapsed time (SeqRecord save to png file): {total_runtime:.6f} seconds")
