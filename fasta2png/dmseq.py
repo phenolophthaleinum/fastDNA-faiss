@@ -1,13 +1,11 @@
-import treepoem
 from Bio import SeqIO
 from Bio import SeqRecord
 import json
 import base64
-from pylibdmtx.pylibdmtx import decode
-from PIL import Image
 import dill
 from timeit import default_timer as timer
 import gzip
+from PIL import Image
 # treepoem._read_file("NC_000866.png")
 # with open('NC_000866.png', 'rb') as f:
 #     o = f.read()
@@ -23,7 +21,7 @@ import gzip
 
 # tests on 10 mb NC_017186 - Amycolatopsis mediterranei
 
-# second fastest to load, file about 70% smaller in size, quite fast to make (1.6 s)
+# second/first fastest to load, file about 70% smaller in size, quite fast to make (1.6 s)
 total_start = timer()
 r_img = Image.open("NC_017186.png")
 obj = dill.loads(r_img.tobytes())
@@ -41,7 +39,7 @@ print(f"Total elapsed time (SeqRecord read from compressed dill file): {total_ru
 
 # second slowest to load, no space saving
 total_start = timer()
-seq_obj, = SeqIO.parse("X:/edwards2016/host/fasta/NC_017186.fna", 'fasta')
+seq_obj, = SeqIO.parse("NC_017186.fna", 'fasta')
 total_end = timer()
 total_runtime = total_end - total_start
 print(f"Total elapsed time (biopython parse from normal fasta): {total_runtime:.6f} seconds")

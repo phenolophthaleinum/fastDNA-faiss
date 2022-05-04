@@ -1,10 +1,8 @@
-#import treepoem
 import math
 
 import numpy as np
 from Bio import SeqIO
 import json
-from pylibdmtx.pylibdmtx import encode
 from PIL import Image
 import dill
 import glob
@@ -72,11 +70,11 @@ dim = int(math.sqrt(len(n_seq)))
 img = Image.frombytes('P', (dim, dim), n_seq)
 
 # P to RGBA
-img_conv = img.convert('RGBA')
-img_arr = np.array(img_conv)
-# set empty pixels alpha to 0 (full transparent)
-img_arr[img_arr[:, :, 0] == 0] = 0
-img = Image.fromarray(img_arr)
+# img_conv = img.convert('RGBA')
+# img_arr = np.array(img_conv)
+# # set empty pixels alpha to 0 (full transparent)
+# img_arr[img_arr[:, :, 0] == 0] = 0
+# img = Image.fromarray(img_arr)
 ####
 
 img.save(f"NC_008253_h_seq2_A.png")
