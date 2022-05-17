@@ -90,11 +90,11 @@ def make_hostvir_json():
         lineage_name = host_data[host]['lineage_names'][6]
         viruses = []
         for virus in virus_data:
-            if virus_data[virus]['host']['organism_name'] == lineage_name:
+            if virus_data[virus]['host']['lineage_names'][6] == lineage_name:
                 viruses.append(virus)
             host_data[host]['virus_id'] = viruses
     with open('hostvir.json', 'w') as fh:
-        json.dump(host_data, fh)
+        json.dump(host_data, fh, indent=4)
 
 
 def get_hostvir_data() -> dict:
